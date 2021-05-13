@@ -7,7 +7,6 @@ clean:
 
 layer:
    name
-   definedBy
 
 rules:
     "Presentation" accessedBy
@@ -23,19 +22,34 @@ package:
 class:
     implement
     annotation
+    annotatedWith
+
+    dependent -> resideIn
+
+    public
 
 checks
     cycle
 
 not accessedBy
+    definedBy
 
 expression:
     and
     or
     not
+    equals
+    only
+
+    contains
+    endingWith
+    startingWith
 
 file:
     ending
     start
     contains
     matching (regex)
+
+ignore:
+    ""

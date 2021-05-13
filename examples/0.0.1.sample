@@ -9,5 +9,11 @@ file:
 class:
     implementation
 
+file.name contains "Usecase"
+class.name contains "Controller"
+
+method:
+    name
+
 rule:
     check:
