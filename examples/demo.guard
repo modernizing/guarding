@@ -1,0 +1,31 @@
+onion:
+    domain:
+    application:
+    adapter
+
+clean:
+
+layer:
+   name
+   definedBy
+
+rules:
+    "Presentation" accessedBy
+
+module:
+    resideIn
+    access:
+        only
+
+package:
+    dependOn
+
+class:
+    implement
+    annotation
+
+checks
+    cycle
+
+not accessedBy
+
