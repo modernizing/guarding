@@ -14,21 +14,17 @@ fn main() {
 const x = 1;
 console.log(x);";
     let tree = parser.parse(source_code, None).unwrap();
-
-    let node = tree.root_node().child(0).unwrap();
-    // println!("{:?}", tree.root_node().children_by_field_name());
-    // println!("{:?}", node.kind());
-    // let mut cursor = tree.walk();
-    // let alternatives = node.children_by_field_name("function", &mut cursor);
-    //
-    // alternatives.for_each(|s| {
-    //     println!("{:?}", s);
-    // });
-    // println!("{:?}", alternatives);
-
     let mut nodes_before = get_all_nodes(&tree);
-    for node in nodes_before {
-        println!("{:?}", node);
+    for node in &nodes_before {
+        match node.kind() {
+            "import_statement" => {
+                println!("{:?}", node.child(0));
+                println!("{:?}", node.child(1));
+                println!("{:?}", node.child(2));
+                println!("{:?}", node.child(3));
+            }
+            _ => {}
+        }
     }
 }
 
