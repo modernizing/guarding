@@ -17,3 +17,10 @@ method:
 
 rule:
     check:
+
+class extends "Connection.class" endsWith "Connection"
+class assignableTo "EntityManager.class" resideInPackage "..persistence."
+
+class in "com.myapp.(*).." should freeOfCycles
+
+

@@ -1,7 +1,8 @@
 onion:
-    domain:
-    application:
-    adapter
+    domainModel:
+    domainService:
+    applicationService:
+    adapter:
 
 clean:
 
