@@ -1,0 +1,13 @@
+layer:
+
+module:
+
+package:
+
+file:
+
+class:
+    implementation
+
+rule:
+    check:
