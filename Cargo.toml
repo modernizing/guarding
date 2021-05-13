@@ -19,3 +19,7 @@ exclude = [
 ]
 
 [dependencies]
+tree-sitter = "0.19.3"
+
+[build-dependencies]
+cc="*"
