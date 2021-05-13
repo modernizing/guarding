@@ -26,10 +26,6 @@ console.log(x);";
     // });
     // println!("{:?}", alternatives);
 
-    // println!("{:?}", tree.root_node().to_sexp().to_string());
-    // println!("{:?}", tree.root_node().child(0));
-    // println!("{:?}", tree.root_node().child(1));
-
     let mut nodes_before = get_all_nodes(&tree);
     for node in nodes_before {
         println!("{:?}", node);
