@@ -7,6 +7,11 @@ todo:
  - [ ] option git hooks for staged files
  - [ ] guarding DSL design
  - [ ] setup projects
+ - [ ] languages
+    - [ ] Java normal
+    - [ ] Java ArchUnit generator
+    - [ ] JavaScript / TypeScript
+    - [ ] Rust
 
 License
 ---
