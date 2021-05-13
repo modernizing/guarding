@@ -29,3 +29,13 @@ checks
 
 not accessedBy
 
+expression:
+    and
+    or
+    not
+
+file:
+    ending
+    start
+    contains
+    matching (regex)
