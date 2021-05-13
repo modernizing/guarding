@@ -7,6 +7,8 @@ todo:
  - [ ] option git hooks for staged files
  - [ ] guarding DSL design
  - [ ] setup projects
+ - [ ] parser
+    - [x] tree-sitter
  - [ ] languages
     - [ ] Java normal
     - [ ] Java ArchUnit generator
