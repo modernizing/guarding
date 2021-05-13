@@ -1,9 +1,21 @@
 [package]
 name = "guarding"
-version = "0.1.0"
-authors = ["Phodal Huang <h@phodal.com>"]
+version = "0.1.1"
+authors = ["Inherd Group <group@inherd.org>"]
 edition = "2018"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/inherd/guarding"
+documentation = "https://github.com/inherd/guarding"
+homepage = "https://github.com/inherd/guarding"
+description = """
+Guarding is a guardians for code, architecture, layered. Using git hooks and DSL for design guard rules.
+"""
+categories = ["text-processing", "command-line-interface", "development-tools"]
+exclude = [
+    ".github/*",
+    ".gitattributes",
+    ".adr.json",
+]
 
 [dependencies]
