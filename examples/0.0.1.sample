@@ -1,26 +1,25 @@
-layer:
+layer("onion")
+    domainModel("")
+    domainService("")
+    applicationService("")
+    adapter("com.phodal.com", "blalba")
 
-module:
+module::package.len should <= 20;
 
-package:
+class::name contains "Controller"
+class("..myapp..")::method::name should contains("")
+class implementation "Connection.class" should endsWith "Connection";
+class extends "Connection.class" endsWith "Connection";
+class assignable "EntityManager.class" resideIn package("..persistence.");
+class("com.myapp.(*)..") should freeOfCycles;
 
-file:
+file("..myapp.(**)") not dependOn;
+file("..service..") only accessed(["..controller..", "..service.."]);
+file::name contains "Usecase"
 
-class:
-    implementation
+package("..home..") file.len should < 20;
 
-file.name contains "Usecase"
-class.name contains "Controller"
-
-method:
-    name
-
-rule:
-    check:
-
-class extends "Connection.class" endsWith "Connection"
-class assignableTo "EntityManager.class" resideInPackage "..persistence."
-
-class in "com.myapp.(*).." should freeOfCycles
+class::name.len should < 20;
+method::name.len should < 30;
 
 
