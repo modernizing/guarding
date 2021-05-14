@@ -1,5 +1,5 @@
 use crate::{tree_sitter_javascript};
-use tree_sitter::{Parser, Tree, Node};
+use tree_sitter::{Parser, Tree, Node, Query, QueryCursor};
 
 pub struct JsIdent {
 
@@ -38,26 +38,40 @@ fn get_all_nodes(tree: &Tree) -> Vec<Node> {
 
 impl JsIdent {
     pub fn parse(code: &str) {
+        let query_source = "
+(import_specifier
+	name: (identifier) @import-name)
+(namespace_import (identifier) @import-name)
+(import_statement
+	source: (string) @source)
+(import_clause (identifier) @import-name)"
+;
         let mut parser = Parser::new();
 
         let language = unsafe { tree_sitter_javascript() };
         parser.set_language(language).unwrap();
+        let text_callback = |n: Node| &code[n.byte_range()];
 
         let tree = parser.parse(code, None).unwrap();
-        let nodes_before = get_all_nodes(&tree);
 
-        for node in &nodes_before {
-            match node.kind() {
-                "import_statement" => {
-                    // println!("{:?}", node.child(0));
-                    // println!("{:?}", node.child(1));
-                    // println!("{:?}", node.child(2));
-                    // println!("{:?}", node.child(3));
-                    // println!("{:?}", node.child_by_field_name("string"));
-                }
-                _ => {}
-            }
+        let query = Query::new(language, &query_source)
+            .map_err(|e| println!("{}", format!("Query compilation failed: {:?}", e))).unwrap();
+
+        let mut query_cursor = QueryCursor::new();
+        for (mat, capture_index) in
+        query_cursor.captures(&query, tree.root_node(), text_callback)
+        {
+            let capture = mat.captures[capture_index];
+            let capture_name = &query.capture_names()[capture.index as usize];
+            println!(
+                "    pattern: {}, capture: {}, row: {}, text: {:?}",
+                mat.pattern_index,
+                capture_name,
+                capture.node.start_position().row,
+                capture.node.utf8_text((&code).as_ref()).unwrap_or("")
+            );
         }
+
     }
 }
 
