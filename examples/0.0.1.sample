@@ -8,14 +8,14 @@ module::package.len should <= 20;
 
 class::name contains "Controller"
 
-class("..myapp..")::method.name should contains("")
-class("..myapp..")::method.name contains("")
+class("..myapp..")::function.name should contains("")
+class("..myapp..")::function.name contains("")
 
-class("..myapp..")::method.name should not contains("")
-class("..myapp..")::method.name !contains("")
+class("..myapp..")::function.name should not contains("")
+class("..myapp..")::function.name !contains("")
 
 class("..myapp..")::vars.len should <= 20;
-class("..myapp..")::method.vars.len should <= 20;
+class("..myapp..")::function.vars.len should <= 20;
 
 class(implementation "Connection.class")::name should endsWith "Connection";
 class(extends "Connection.class")::name endsWith "Connection";
@@ -27,9 +27,10 @@ file("..myapp.(**)") not dependBy "";
 file("..service..") only accessed(["..controller..", "..service.."]);
 file("..service..")::name contains "Usecase"
 
+package("..home..")::file.len should < 20;
 package("..home..") -> file.len should < 20;
 
 class::name.len should < 20;
-method::name.len should < 30;
+function::name.len should < 30;
 
 
