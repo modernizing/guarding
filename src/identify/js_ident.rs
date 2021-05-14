@@ -21,7 +21,11 @@ impl JsIdent {
   name: (identifier) @class-name
   body: (class_body
     (method_definition
-      name: (property_identifier) @class-method-name)))
+      name: (property_identifier) @class-method-name
+      parameters: (formal_parameters (identifier)? @parameter)
+    )
+  )
+)
 
 (program (function_declaration
       name: * @function-name))
