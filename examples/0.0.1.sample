@@ -2,22 +2,32 @@ layer("onion")
     domainModel("")
     domainService("")
     applicationService("")
-    adapter("com.phodal.com", "blalba")
+    adapter("com.phodal.com", "zero")
 
 module::package.len should <= 20;
 
 class::name contains "Controller"
-class("..myapp..")::method::name should contains("")
-class implementation "Connection.class" should endsWith "Connection";
-class extends "Connection.class" endsWith "Connection";
-class assignable "EntityManager.class" resideIn package("..persistence.");
+
+class("..myapp..")::method.name should contains("")
+class("..myapp..")::method.name contains("")
+
+class("..myapp..")::method.name should not contains("")
+class("..myapp..")::method.name !contains("")
+
+class("..myapp..")::vars.len should <= 20;
+class("..myapp..")::method.vars.len should <= 20;
+
+class(implementation "Connection.class")::name should endsWith "Connection";
+class(extends "Connection.class")::name endsWith "Connection";
+class(assignable "EntityManager.class") resideIn package("..persistence.");
+
 class("com.myapp.(*)..") should freeOfCycles;
 
-file("..myapp.(**)") not dependOn;
+file("..myapp.(**)") not dependBy "";
 file("..service..") only accessed(["..controller..", "..service.."]);
-file::name contains "Usecase"
+file("..service..")::name contains "Usecase"
 
-package("..home..") file.len should < 20;
+package("..home..") -> file.len should < 20;
 
 class::name.len should < 20;
 method::name.len should < 30;
