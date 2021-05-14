@@ -2,17 +2,17 @@ layer("onion")
     domainModel("")
     domainService("")
     applicationService("")
-    adapter("com.phodal.com", "zero")
+    adapter("com.phodal.com", "zero");
 
 module::package.len should <= 20;
 
-class::name contains "Controller"
+class::name contains "Controller";
 
-class("..myapp..")::function.name should contains("")
-class("..myapp..")::function.name contains("")
+class("..myapp..")::function.name should contains("");
+class("..myapp..")::function.name contains("");
 
-class("..myapp..")::function.name should not contains("")
-class("..myapp..")::function.name !contains("")
+class("..myapp..")::function.name should not contains("");
+class("..myapp..")::function.name !contains("");
 
 class("..myapp..")::vars.len should <= 20;
 class("..myapp..")::function.vars.len should <= 20;
