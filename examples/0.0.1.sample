@@ -25,6 +25,9 @@ class(assignable "EntityManager.class") resideIn package("..persistence.");
 
 class("com.myapp.(*)..") should freeOfCycles;
 
+# 模型之间的关系
+model("..myapp.model..")::relation.len should <= 5;
+
 file("..myapp.(**)") not dependBy "";
 file("..service..") only accessed(["..controller..", "..service.."]);
 file("..service..")::name contains "Usecase"
