@@ -4,6 +4,8 @@ use tree_sitter::{Parser, Language, Tree, Node};
 
 extern "C" { fn tree_sitter_javascript() -> Language; }
 
+pub mod code_model;
+
 fn main() {
     let mut parser = Parser::new();
 
