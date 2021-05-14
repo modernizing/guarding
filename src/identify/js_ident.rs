@@ -5,37 +5,6 @@ pub struct JsIdent {
 
 }
 
-fn get_all_nodes(tree: &Tree) -> Vec<Node> {
-    let mut result = Vec::new();
-
-    let mut cursor = tree.walk();
-    let mut did_visit_children = false;
-    loop {
-        let node = cursor.node();
-        let is_named = node.is_named();
-        if did_visit_children {
-            if cursor.goto_next_sibling() {
-                did_visit_children = false;
-            } else if cursor.goto_parent() {
-                did_visit_children = true;
-            } else {
-                break;
-            }
-        } else {
-            if is_named {
-                result.push(node);
-            }
-            if cursor.goto_first_child() {
-                did_visit_children = false;
-            } else {
-                did_visit_children = true;
-            }
-        }
-    }
-    return result;
-}
-
-
 impl JsIdent {
     pub fn parse(code: &str) {
         let query_source = "
@@ -90,7 +59,20 @@ mod tests {
 
     #[test]
     fn should_parse_import() {
-        let source_code = "import {sayHi} from './say.js'";
+        let source_code = "import {sayHi} from './say.js'\
+
+class Rectangle {
+  constructor(height, width) {
+    this.height = height;
+    this.width = width;
+  }
+}
+
+function abc() {
+
+}
+
+";
         JsIdent::parse(source_code);
     }
 }
