@@ -1,7 +1,7 @@
 use tree_sitter::{Node, Parser, Query, QueryCursor};
 
 use crate::tree_sitter_javascript;
-use crate::code_model::{CodeClass, CodeFile, CodeFunction};
+use crate::code_model::{CodeClass, CodeFile, CodeFunction, CodePoint};
 
 pub struct JsIdent {
 
@@ -23,8 +23,8 @@ impl JsIdent {
     (method_definition
       name: (property_identifier) @class-method-name)))
 
-(function_declaration
-      name: * @function-name)
+(program (function_declaration
+      name: * @function-name))
 ";
         let mut parser = Parser::new();
 
@@ -55,8 +55,16 @@ impl JsIdent {
                 }
                 "class-name" => {
                     class.name = text.to_string();
-                    last_class_end_line = capture.node.parent().unwrap().end_position().row;
-                    println!("{:?}", capture.node.parent().unwrap().end_position());
+                    let class_node = capture.node.parent().unwrap();
+                    last_class_end_line = class_node.end_position().row;
+                    class.start = CodePoint {
+                        row: class_node.start_position().row,
+                        column: class_node.start_position().column,
+                    };
+                    class.end = CodePoint {
+                        row: class_node.end_position().row,
+                        column: class_node.end_position().column,
+                    };
                 }
                 "class-method-name" => {
                     let mut function = CodeFunction::default();

@@ -43,6 +43,23 @@ pub struct CodeClass {
     pub path: String,
     pub constant: Vec<ClassConstant>,
     pub functions: Vec<CodeFunction>,
+    pub start: CodePoint,
+    pub end: CodePoint
+}
+
+#[derive(Clone, Debug)]
+pub struct CodePoint {
+    pub row: usize,
+    pub column: usize
+}
+
+impl Default for CodePoint {
+    fn default() -> Self {
+        CodePoint {
+            row: 0,
+            column: 0
+        }
+    }
 }
 
 impl Default for CodeClass {
@@ -52,6 +69,8 @@ impl Default for CodeClass {
             path: "".to_string(),
             constant: vec![],
             functions: vec![],
+            start: Default::default(),
+            end: Default::default()
         }
     }
 }
