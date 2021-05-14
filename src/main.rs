@@ -14,7 +14,7 @@ fn main() {
 const x = 1;
 console.log(x);";
     let tree = parser.parse(source_code, None).unwrap();
-    let mut nodes_before = get_all_nodes(&tree);
+    let nodes_before = get_all_nodes(&tree);
     for node in &nodes_before {
         match node.kind() {
             "import_statement" => {
@@ -30,18 +30,37 @@ console.log(x);";
 
 fn get_all_nodes(tree: &Tree) -> Vec<Node> {
     let mut result = Vec::new();
-    let mut visited_children = false;
+
     let mut cursor = tree.walk();
+    let mut needs_newline = false;
+    let mut indent_level = 0;
+    let mut did_visit_children = false;
     loop {
-        result.push(cursor.node());
-        if !visited_children && cursor.goto_first_child() {
-            continue;
-        } else if cursor.goto_next_sibling() {
-            visited_children = false;
-        } else if cursor.goto_parent() {
-            visited_children = true;
+        let node = cursor.node();
+        let is_named = node.is_named();
+        if did_visit_children {
+            if is_named {
+                needs_newline = true;
+            }
+            if cursor.goto_next_sibling() {
+                did_visit_children = false;
+            } else if cursor.goto_parent() {
+                did_visit_children = true;
+                indent_level -= 1;
+            } else {
+                break;
+            }
         } else {
-            break;
+            if is_named {
+                result.push(node);
+                needs_newline = true;
+            }
+            if cursor.goto_first_child() {
+                did_visit_children = false;
+                indent_level += 1;
+            } else {
+                did_visit_children = true;
+            }
         }
     }
     return result;

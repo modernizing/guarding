@@ -9,6 +9,7 @@ module::package.len should <= 20;
 class::name contains "Controller";
 
 # 类::名 包含 "Controller";
+# 中文分词：("..myapp..") 类名称中包含 "Controller"
 
 class("..myapp..")::function.name should contains("");
 class("..myapp..")::function.name contains("");
@@ -33,6 +34,7 @@ file("..service..") only accessed(["..controller..", "..service.."]);
 file("..service..")::name contains "Usecase"
 
 package("..home..")::file.len should < 20;
+# :: is Rust style, -> is C++ Style, so combine them
 package("..home..") -> file.len should < 20;
 
 # regex
