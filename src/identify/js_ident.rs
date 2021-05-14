@@ -14,7 +14,6 @@ impl JsIdent {
 
         let tree = parser.parse(code, None).unwrap();
         let nodes_before = get_all_nodes(&tree);
-        let mut cursor = tree.walk();
 
         for node in &nodes_before {
             match node.kind() {
@@ -23,6 +22,8 @@ impl JsIdent {
                     println!("{:?}", node.child(1));
                     println!("{:?}", node.child(2));
                     println!("{:?}", node.child(3));
+                    let cursor = node.walk();
+                    println!("{:?}", cursor.node());
                 }
                 _ => {}
             }
