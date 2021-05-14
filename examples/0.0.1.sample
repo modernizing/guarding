@@ -8,6 +8,8 @@ module::package.len should <= 20;
 
 class::name contains "Controller";
 
+# 类::名 包含 "Controller";
+
 class("..myapp..")::function.name should contains("");
 class("..myapp..")::function.name contains("");
 
@@ -29,6 +31,9 @@ file("..service..")::name contains "Usecase"
 
 package("..home..")::file.len should < 20;
 package("..home..") -> file.len should < 20;
+
+# regex
+package(matching("^/app"))
 
 class::name.len should < 20;
 function::name.len should < 30;
