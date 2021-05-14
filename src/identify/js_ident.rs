@@ -44,8 +44,17 @@ impl JsIdent {
 (namespace_import (identifier) @import-name)
 (import_statement
 	source: (string) @source)
-(import_clause (identifier) @import-name)"
-;
+(import_clause (identifier) @import-name)
+
+(class_declaration
+  name: (identifier) @class-name
+  body: (class_body
+    (method_definition
+      name: (property_identifier) @class-method-name)))
+
+(function_declaration
+      name: * @function-name)
+";
         let mut parser = Parser::new();
 
         let language = unsafe { tree_sitter_javascript() };
