@@ -61,14 +61,7 @@ impl JsIdent {
                     class.name = text.to_string();
                     let class_node = capture.node.parent().unwrap();
                     last_class_end_line = class_node.end_position().row;
-                    class.start = CodePoint {
-                        row: class_node.start_position().row,
-                        column: class_node.start_position().column,
-                    };
-                    class.end = CodePoint {
-                        row: class_node.end_position().row,
-                        column: class_node.end_position().column,
-                    };
+                    JsIdent::insert_location(&mut class, class_node);
                 }
                 "class-method-name" => {
                     let mut function = CodeFunction::default();
@@ -102,6 +95,17 @@ impl JsIdent {
         }
 
         code_file
+    }
+
+    fn insert_location(class: &mut CodeClass, node: Node) {
+        class.start = CodePoint {
+            row: node.start_position().row,
+            column: node.start_position().column,
+        };
+        class.end = CodePoint {
+            row: node.end_position().row,
+            column: node.end_position().column,
+        };
     }
 }
 
