@@ -1,7 +1,8 @@
 use tree_sitter::{Node, Parser, Query, QueryCursor};
 
+use crate::code_model::{CodeClass, CodeFile, CodeFunction};
+use crate::location::Location;
 use crate::tree_sitter_javascript;
-use crate::code_model::{CodeClass, CodeFile, CodeFunction, CodePoint};
 
 pub struct JsIdent {
 
@@ -61,7 +62,7 @@ impl JsIdent {
                     class.name = text.to_string();
                     let class_node = capture.node.parent().unwrap();
                     last_class_end_line = class_node.end_position().row;
-                    JsIdent::insert_location(&mut class, class_node);
+                    JsIdent::insert_class_location(&mut class, class_node);
                 }
                 "class-method-name" => {
                     let mut function = CodeFunction::default();
@@ -97,15 +98,9 @@ impl JsIdent {
         code_file
     }
 
-    fn insert_location(class: &mut CodeClass, node: Node) {
-        class.start = CodePoint {
-            row: node.start_position().row,
-            column: node.start_position().column,
-        };
-        class.end = CodePoint {
-            row: node.end_position().row,
-            column: node.end_position().column,
-        };
+    fn insert_class_location<T: Location>(model: &mut T, node: Node) {
+        model.set_start(node.start_position().row, node.start_position().column);
+        model.set_end(node.end_position().row, node.end_position().column);
     }
 }
 
