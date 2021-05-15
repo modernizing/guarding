@@ -1,7 +1,7 @@
 use tree_sitter::{Node, Parser, Query, QueryCursor, QueryCapture};
 
-use crate::code_model::{CodeClass, CodeFile, CodeFunction};
-use crate::code_model::Location;
+use crate::identify::code_model::{CodeClass, CodeFile, CodeFunction};
+use crate::identify::code_model::Location;
 use crate::{tree_sitter_java};
 
 pub struct JavaIdent {

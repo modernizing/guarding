@@ -1,8 +1,8 @@
 use tree_sitter::{Node, Parser, Query, QueryCapture, QueryCursor};
 
 use crate::tree_sitter_rust;
-use crate::code_model::{CodeClass, CodeFile, CodeFunction};
-use crate::code_model::Location;
+use crate::identify::code_model::{CodeClass, CodeFile, CodeFunction};
+use crate::identify::code_model::Location;
 
 pub struct RustIdent {
 
