@@ -1,4 +1,4 @@
-use tree_sitter::{Node, Parser, Query, QueryCursor};
+use tree_sitter::{Node, Parser, Query, QueryCursor, QueryCapture};
 
 use crate::code_model::{CodeClass, CodeFile, CodeFunction};
 use crate::location::Location;
@@ -62,16 +62,16 @@ impl JsIdent {
                     class.name = text.to_string();
                     let class_node = capture.node.parent().unwrap();
                     last_class_end_line = class_node.end_position().row;
-                    JsIdent::insert_class_location(&mut class, class_node);
+                    JsIdent::insert_location(&mut class, class_node);
                 }
                 "class-method-name" => {
-                    let mut function = CodeFunction::default();
-                    function.name = text.to_string();
+                    let function = JsIdent::create_function(capture, text);
+
                     class.functions.push(function);
                 }
                 "function-name" => {
-                    let mut function = CodeFunction::default();
-                    function.name = text.to_string();
+                    let function = JsIdent::create_function(capture, text);
+
                     code_file.functions.push(function);
                 }
                 "import-name" => {},
@@ -98,7 +98,16 @@ impl JsIdent {
         code_file
     }
 
-    fn insert_class_location<T: Location>(model: &mut T, node: Node) {
+    fn create_function(capture: QueryCapture, text: &str) -> CodeFunction {
+        let mut function = CodeFunction::default();
+        function.name = text.to_string();
+
+        let node = capture.node.parent().unwrap();
+        JsIdent::insert_location(&mut function, node);
+        function
+    }
+
+    fn insert_location<T: Location>(model: &mut T, node: Node) {
         model.set_start(node.start_position().row, node.start_position().column);
         model.set_end(node.end_position().row, node.end_position().column);
     }
@@ -122,9 +131,9 @@ class Rectangle {
 function abc() {
 
 }
-
 ";
         let file = JsIdent::parse(source_code);
+        println!("{:?}", file);
 
         let funcs = &file.functions[0];
 
@@ -137,5 +146,23 @@ function abc() {
         assert_eq!("constructor", class.functions[0].name);
 
         assert_eq!("abc", funcs.name);
+    }
+
+    #[test]
+    fn should_parse_func_location() {
+        let source_code = "function abc() {
+
+}
+";
+        let file = JsIdent::parse(source_code);
+        println!("{:?}", file);
+
+        let funcs = &file.functions[0];
+        assert_eq!("abc", funcs.name);
+
+        assert_eq!(0, funcs.start.row);
+        assert_eq!(0, funcs.start.column);
+        assert_eq!(2, funcs.end.row);
+        assert_eq!(1, funcs.end.column);
     }
 }
