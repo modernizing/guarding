@@ -14,6 +14,22 @@ impl RustIdent {
 (use_declaration
 	(scoped_identifier) @import-name)
 
+(struct_item
+	name: (type_identifier) @struct-name
+    body: (field_declaration_list
+    	(field_declaration
+			name: (field_identifier) @field-name
+            type: (type_identifier) @type-name
+)))
+
+(impl_item
+	type: (type_identifier) @impl-struct-name
+    body: (declaration_list (
+	    (function_item
+        	name: (identifier) @impl-function-name
+        ))
+    )
+)
 ";
         let mut parser = Parser::new();
 
