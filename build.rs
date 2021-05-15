@@ -13,4 +13,11 @@ fn main() {
         .include(&java_dir)
         .file(java_dir.join("parser.c"))
         .compile("tree-sitter-java");
+
+    let rust_dir: PathBuf = ["tree-sitter-rust", "src"].iter().collect();
+    cc::Build::new()
+        .include(&rust_dir)
+        .file(rust_dir.join("parser.c"))
+        .file(rust_dir.join("scanner.c"))
+        .compile("tree-sitter-rust");
 }
