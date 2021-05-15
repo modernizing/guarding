@@ -1,11 +1,16 @@
 use std::path::PathBuf;
 
 fn main() {
-    let dir: PathBuf = ["tree-sitter-javascript", "src"].iter().collect();
-
+    let js_dir: PathBuf = ["tree-sitter-javascript", "src"].iter().collect();
     cc::Build::new()
-        .include(&dir)
-        .file(dir.join("parser.c"))
-        .file(dir.join("scanner.c"))
+        .include(&js_dir)
+        .file(js_dir.join("parser.c"))
+        .file(js_dir.join("scanner.c"))
         .compile("tree-sitter-javascript");
+
+    let java_dir: PathBuf = ["tree-sitter-java", "src"].iter().collect();
+    cc::Build::new()
+        .include(&java_dir)
+        .file(java_dir.join("parser.c"))
+        .compile("tree-sitter-java");
 }
