@@ -21,5 +21,10 @@ exclude = [
 [dependencies]
 tree-sitter = "0.19.3"
 
+# serialize
+serde          = "1"
+serde_derive   = "1"
+serde_json     = "1"
+
 [build-dependencies]
 cc="*"

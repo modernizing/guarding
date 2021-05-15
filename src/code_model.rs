@@ -10,7 +10,7 @@ pub struct CodePackage {
     pub class: Vec<CodeClass>,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct CodeFile {
     pub name: String,
     pub path: String,
@@ -37,7 +37,7 @@ pub struct CodeImport {
     pub source: String,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct CodeClass {
     pub name: String,
     pub path: String,
@@ -47,7 +47,7 @@ pub struct CodeClass {
     pub end: CodePoint
 }
 
-#[derive(Clone, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct CodePoint {
     pub row: usize,
     pub column: usize
@@ -75,13 +75,13 @@ impl Default for CodeClass {
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct ClassConstant {
     pub name: String,
     pub typ: String,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct CodeFunction {
     pub name: String,
     pub vars: Vec<String>,
