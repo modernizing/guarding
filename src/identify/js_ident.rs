@@ -120,7 +120,12 @@ function abc() {
 ";
         let file = JsIdent::parse(source_code);
 
-        assert_eq!("Rectangle", file.classes[0].name);
-        assert_eq!("constructor", file.classes[0].functions[0].name);
+        let class = &file.classes[0];
+        assert_eq!("Rectangle", class.name);
+        assert_eq!(0, class.start.column);
+        assert_eq!(2, class.start.row);
+        assert_eq!(7, class.end.row);
+        assert_eq!(1, class.end.column);
+        assert_eq!("constructor", class.functions[0].name);
     }
 }
