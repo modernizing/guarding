@@ -1,7 +1,5 @@
 use serde::{Deserialize, Serialize};
 
-use crate::location::Location;
-
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct CodeModule {
     pub name: String,
@@ -128,4 +126,9 @@ impl Location for CodeFunction {
         self.end.row = row;
         self.end.column = column;
     }
+}
+
+pub trait Location {
+    fn set_start(&mut self, row: usize, column: usize);
+    fn set_end(&mut self, row: usize, column: usize);
 }
