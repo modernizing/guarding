@@ -1,9 +1,13 @@
+use serde::{Deserialize, Serialize};
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct CodeModule {
     pub name: String,
     pub path: String,
     pub package: Vec<CodePackage>,
 }
 
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct CodePackage {
     pub name: String,
     pub path: String,

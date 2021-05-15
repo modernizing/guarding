@@ -1,3 +1,5 @@
+extern crate serde;
+
 use tree_sitter::{Language};
 
 // extern "C" { fn tree_sitter_c() -> Language; }
