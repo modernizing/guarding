@@ -33,4 +33,10 @@ mod tests {
         let code = "class(\"..myapp..\")::function.name should contains(\"\");";
         parse(code);
     }
+
+    #[test]
+    fn should_parse_package_extends() {
+        let code = "class(extends \"Connection.class\")::name endsWith \"Connection\";";
+        parse(code);
+    }
 }

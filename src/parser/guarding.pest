@@ -12,7 +12,7 @@ declarations = {
 }
 
 class_rule = {
-	"class" ~ scope? ~ "::" ~ expression ~ should? ~ operation ~ assert ~ ";"?
+	"class" ~ ("(" ~ scope ~ ")")? ~ "::" ~ expression ~ should? ~ operation ~ assert ~ ";"?
 }
 
 package_rule = {
@@ -32,11 +32,26 @@ function_rule = {
 }
 
 scope = {
-  "(" ~ string ~ ")"
+    string |
+    impl_scope |
+    extend_scope |
+    assignable_scope
+}
+
+assignable_scope = {
+    "assignable" ~ string
+}
+extend_scope = {
+    "extends" ~ string
+}
+
+impl_scope = {
+    "implementation" ~ string
 }
 
 expression = {
-    identifier ~ dot ~ identifier
+    identifier ~ dot ~ identifier |
+    identifier
 }
 
 assert = {
