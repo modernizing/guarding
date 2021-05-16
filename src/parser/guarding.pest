@@ -3,16 +3,16 @@ start = _{ SOI ~ declarations* ~ EOI}
 identifier = @{ (ASCII_ALPHA | ASCII_ALPHANUMERIC | "_") ~ (ASCII_ALPHANUMERIC | "_")* }
 
 declarations = {
-  module_rule |
-  package_rule |
-  class_rule |
-  file_rule |
-  function_rule |
-  layer_rule
+//   module_rule |
+//   package_rule |
+  class_rule
+//   file_rule |
+//   function_rule |
+//   layer_rule
 }
 
 class_rule = {
-	"class" ~ ("(" ~ scope ~ ")")? ~ ("::" ~ expression)? ~ should? ~ operation ~ assert ~ ";"?
+	container ~ ("(" ~ scope ~ ")")? ~ ("::" ~ expression)? ~ should? ~ operation ~ assert ~ ";"?
 }
 
 package_rule = {
@@ -35,9 +35,13 @@ scope = {
     string |
     impl_scope |
     extend_scope |
-    assignable_scope
+    assignable_scope |
+    match_scope
 }
 
+match_scope = {
+    "match" ~ "(" ~ string ~ ")"
+}
 assignable_scope = {
     "assignable" ~ string
 }

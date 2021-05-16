@@ -38,7 +38,7 @@ package("..home..")::file.len should < 20;
 package("..home..") -> file.len should < 20;
 
 # regex
-package(matching("^/app"))
+package(match("^/app")) endsWith "Connection";
 
 class::name.len should < 20;
 function::name.len should < 30;
