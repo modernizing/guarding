@@ -27,4 +27,10 @@ mod tests {
         let code = "class::name contains \"Controller\";";
         parse(code);
     }
+
+    #[test]
+    fn should_parse_package_asset() {
+        let code = "class(\"..myapp..\")::function.name should contains(\"\");";
+        parse(code);
+    }
 }

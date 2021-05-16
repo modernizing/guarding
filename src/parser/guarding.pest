@@ -1,29 +1,34 @@
 start = _{ SOI ~ declarations* ~ EOI}
 
-chars = @{ (ASCII_ALPHA | ASCII_ALPHANUMERIC | "_") ~ (ASCII_ALPHANUMERIC | "_")* }
-
-// todo: simplify code
-// ~[\u0000-\u007F\uD800-\uDBFF]
-// [\uD800-\uDBFF] [\uDC00-\uDFFF]
-Char = _{ "\u{0009}" | "\u{000A}" | "\u{000D}" |
-          '\u{0020}'..'\u{D7FF}' | '\u{E000}'..'\u{FFFD}' |
-          '\u{10000}'..'\u{10FFFF}' }
-
-S = _{ "\u{0020}" | "\u{0009}" | "\u{000D}" | "\u{000A}" }
-utf8 = { (!S ~ Char)* }
-
-identifier = { chars | utf8 }
+identifier = @{ (ASCII_ALPHA | ASCII_ALPHANUMERIC | "_") ~ (ASCII_ALPHANUMERIC | "_")* }
 
 declarations = {
   class_rule
 }
 
 class_rule = {
-	"class" ~ "::" ~ identifier ~ operation ~ string ~ ";"
+	"class" ~ scope? ~ "::" ~ expression ~ should? ~ operation ~ assert ~ ";"
+}
+
+scope = {
+  "(" ~ string ~ ")"
+}
+
+expression = {
+    identifier ~ dot ~ identifier
+}
+
+assert = {
+   string |
+   opening_paren~ string ~ closing_paren
 }
 
 operation = {
 	"contains"
+}
+
+should = {
+    "should"
 }
 
 double_quoted_string  = @{ "\"" ~ (!("\"") ~ ANY)* ~ "\""}
@@ -36,7 +41,23 @@ string = @{
     backquoted_quoted_string
 }
 
+dot                 = { "." }
+opening_paren       = { "(" }
+closing_paren       = { ")" }
+
 newline    = _{ "\n" | "\r\n" }
 WHITESPACE = _{ " " | "\t" | newline }
 block_comment = _{ "/*" ~ (block_comment | !"*/" ~ ANY)* ~ "*/" }
 COMMENT    = _{ block_comment | ("//" ~ (!newline ~ ANY)*) }
+
+
+// todo: simplify code
+// ~[\u0000-\u007F\uD800-\uDBFF]
+// [\uD800-\uDBFF] [\uDC00-\uDFFF]
+// Char = _{ "\u{0009}" | "\u{000A}" | "\u{000D}" |
+//           '\u{0020}'..'\u{D7FF}' | '\u{E000}'..'\u{FFFD}' |
+//           '\u{10000}'..'\u{10FFFF}' }
+//
+// S = _{ "\u{0020}" | "\u{0009}" | "\u{000D}" | "\u{000A}" }
+// utf8 = { (!S ~ Char)* }
+// identifier = { chars }
