@@ -1,7 +1,7 @@
 use pest::Parser;
 
 #[derive(Parser)]
-#[grammar = "parser/ident.pest"]
+#[grammar = "parser/guarding.pest"]
 struct IdentParser;
 
 pub fn parse(code: &str) {
