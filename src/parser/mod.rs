@@ -41,6 +41,12 @@ mod tests {
     }
 
     #[test]
+    fn should_parse_package_container_scope() {
+        let code = "class(assignable \"EntityManager.class\") resideIn package(\"..persistence.\");";
+        parse(code);
+    }
+
+    #[test]
     fn should_parse_class_compare() {
         let code = "class(\"..myapp..\")::function.name should not contains(\"\");
 class(\"..myapp..\")::function.name !contains(\"\");

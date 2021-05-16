@@ -12,7 +12,7 @@ declarations = {
 }
 
 class_rule = {
-	"class" ~ ("(" ~ scope ~ ")")? ~ "::" ~ expression ~ should? ~ operation ~ assert ~ ";"?
+	"class" ~ ("(" ~ scope ~ ")")? ~ ("::" ~ expression)? ~ should? ~ operation ~ assert ~ ";"?
 }
 
 package_rule = {
@@ -54,9 +54,17 @@ expression = {
 }
 
 assert = {
-   string |
-   opening_paren~ string ~ closing_paren |
-   int
+    opening_paren ~ string ~ closing_paren |
+    container ~ opening_paren ~ string ~ closing_paren |
+    string |
+    int
+}
+
+container = {
+    "module" |
+    "package" |
+    "class" |
+    "file"
 }
 
 operation = {
