@@ -39,4 +39,15 @@ mod tests {
         let code = "class(extends \"Connection.class\")::name endsWith \"Connection\";";
         parse(code);
     }
+
+    #[test]
+    fn should_parse_class_compare() {
+        let code = "class(\"..myapp..\")::function.name should not contains(\"\");
+class(\"..myapp..\")::function.name !contains(\"\");
+
+class(\"..myapp..\")::vars.len should <= 20;
+class(\"..myapp..\")::function.vars.len should <= 20;
+";
+        parse(code);
+    }
 }

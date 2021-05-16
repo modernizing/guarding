@@ -50,16 +50,23 @@ impl_scope = {
 }
 
 expression = {
-    identifier ~ dot ~ identifier |
-    identifier
+    identifier ~ (dot ~ identifier )*
 }
 
 assert = {
    string |
-   opening_paren~ string ~ closing_paren
+   opening_paren~ string ~ closing_paren |
+   int
 }
 
 operation = {
+    "not" ~ operation |
+    "!" ~ operation |
+    "<=" |
+    "<" |
+    ">" |
+    ">=" |
+    "==" |
 	"contains" |
 	"endsWith" |
 	"startsWith" |
@@ -81,6 +88,9 @@ string = @{
     single_quoted_string |
     backquoted_quoted_string
 }
+
+number = @{ '0'..'9'+ }
+int = @{ number | "-" ~ "0"* ~ '1'..'9' ~ number? }
 
 dot                 = { "." }
 opening_paren       = { "(" }
