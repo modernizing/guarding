@@ -3,11 +3,32 @@ start = _{ SOI ~ declarations* ~ EOI}
 identifier = @{ (ASCII_ALPHA | ASCII_ALPHANUMERIC | "_") ~ (ASCII_ALPHANUMERIC | "_")* }
 
 declarations = {
-  class_rule
+  module_rule |
+  package_rule |
+  class_rule |
+  file_rule |
+  function_rule |
+  layer_rule
 }
 
 class_rule = {
-	"class" ~ scope? ~ "::" ~ expression ~ should? ~ operation ~ assert ~ ";"
+	"class" ~ scope? ~ "::" ~ expression ~ should? ~ operation ~ assert ~ ";"?
+}
+
+package_rule = {
+	"package"
+}
+module_rule = {
+	"module"
+}
+file_rule = {
+	"file"
+}
+layer_rule = {
+	"layer"
+}
+function_rule = {
+	"layer"
 }
 
 scope = {
@@ -24,7 +45,12 @@ assert = {
 }
 
 operation = {
-	"contains"
+	"contains" |
+	"endsWith" |
+	"startsWith" |
+	"resideIn" |
+	"accessed" |
+	"dependBy"
 }
 
 should = {
