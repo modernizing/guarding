@@ -22,6 +22,7 @@ fn main() {
 pub fn capture(rule: GuardRule, models: &Vec<CodeFile>) {
     let mut filtered_models: Vec<CodeFile> = vec![];
 
+    // filter by scopes
     match &rule.level {
         RuleLevel::Package => {
             match &rule.scope {

@@ -20,6 +20,20 @@ todo:
     - [ ] JavaScript / TypeScript
     - [ ] Rust
 
+## Development
+
+workflow:
+
+1. parsing guarding rules
+2. parsing source code to models
+3. capture rule with models
+
+DSL capture logic:
+
+1. filter models from `rule_level` with `rule_scope`
+2. run expression
+3. run assert
+
 ## Document
 
 ### Guarding - Class or Struct function-name
