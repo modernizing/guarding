@@ -4,10 +4,10 @@
 
 todo:
 
- - [ ] option git hooks for staged files
- - [ ] guarding DSL design
- - [ ] setup projects
- - [ ] parser
+ - [ ] git hooks for staged files
+ - [x] guarding DSL design
+ - [x] setup projects
+ - [x] parser
     - [x] tree-sitter
  - [ ] languages
     - [ ] Java normal
