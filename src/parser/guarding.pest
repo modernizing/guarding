@@ -32,7 +32,7 @@ layer_type = {
 }
 
 layer_expression = {
-    identifier ~ "(" ~ string ~ ("," ~ string)* ~ ")"
+    identifier ~ "(" ~ string ~ (comma ~ string)* ~ ")"
 }
 
 scope = {
@@ -62,8 +62,8 @@ expression = {
 }
 
 assert = {
-    opening_paren ~ string ~ closing_paren |
-    container ~ opening_paren ~ string ~ closing_paren |
+    "(" ~ string ~ ")" |
+    container ~ "(" ~ string ~ ")" |
     string |
     int
 }
@@ -102,10 +102,13 @@ number = @{ '0'..'9'+ }
 int = @{ number | "-" ~ "0"* ~ '1'..'9' ~ number? }
 
 dot                 = { "." }
+comma               = { "," }
+semicolon           = { ";" }
 opening_paren       = { "(" }
 closing_paren       = { ")" }
 
 newline    = _{ "\n" | "\r\n" }
 WHITESPACE = _{ " " | "\t" | newline }
+
 block_comment = _{ "/*" ~ (block_comment | !"*/" ~ ANY)* ~ "*/" }
 COMMENT    = _{ block_comment | ("//" ~ (!newline ~ ANY)*) }
