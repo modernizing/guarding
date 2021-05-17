@@ -4,7 +4,7 @@ start = _{ SOI ~ declaration* ~ EOI}
 identifier = @{ (ASCII_ALPHA | ASCII_ALPHANUMERIC | "_") ~ (ASCII_ALPHANUMERIC | "_")* }
 
 declaration = {
-  container_rule |
+  normal_rule |
   layer_rule
 }
 
@@ -12,11 +12,11 @@ declaration = {
 // package is a container of file and classes
 // file is a container of classes and functions
 // classes is a container of functions and field
-container_rule = {
-	container ~ ("(" ~ scope ~ ")")? ~ (prop ~ expression)? ~ should? ~ operation ~ assert ~ ";"?
+normal_rule = {
+	rule_level ~ ("(" ~ scope ~ ")")? ~ (prop ~ expression)? ~ should? ~ operation ~ assert ~ ";"?
 }
 
-container = {
+rule_level = {
     "module" |
     "package" |
     "class" |
@@ -70,7 +70,7 @@ expression = {
 
 assert = {
     "(" ~ string ~ ")" |
-    container ~ "(" ~ string ~ ")" |
+    rule_level ~ "(" ~ string ~ ")" |
     string |
     int
 }
