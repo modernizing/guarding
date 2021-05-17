@@ -1,5 +1,7 @@
 # Guarding
 
+[![Build](https://github.com/inherd/guarding/actions/workflows/build.yml/badge.svg)](https://github.com/inherd/guarding/actions/workflows/build.yml)
+
 > Guarding is a guardians for code, architecture, layered. Using git hooks and DSL for design guard rules.
 
 todo:
