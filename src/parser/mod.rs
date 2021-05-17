@@ -200,12 +200,11 @@ fn parse_scope(parent: Pair<Rule>) -> RuleScope {
             RuleScope::PathDefine(string)
         },
         Rule::assignable_scope => {
-            let string = filter_string_from_pair(pair);
-
+            let string = string_from_pair(pair);
             RuleScope::Assignable(string)
         },
         Rule::extend_scope => {
-            let string = filter_string_from_pair(pair);
+            let string = string_from_pair(pair);
             RuleScope::Extend(string)
         }
         _ => {
@@ -215,7 +214,7 @@ fn parse_scope(parent: Pair<Rule>) -> RuleScope {
     }
 }
 
-fn filter_string_from_pair(pair: Pair<Rule>) -> String {
+fn string_from_pair(pair: Pair<Rule>) -> String {
     let mut string = "".to_string();
     for p in pair.into_inner() {
         match p.as_rule() {
