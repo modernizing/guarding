@@ -10,6 +10,23 @@ pub struct GuardRule {
     pub assert: RuleAssert
 }
 
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub enum LayeredRule {
+    Normal(NormalLayered),
+    Onion(OnionArch)
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct NormalLayered {
+
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct OnionArch {
+
+}
+
+
 impl Default for GuardRule {
     fn default() -> Self {
         GuardRule {

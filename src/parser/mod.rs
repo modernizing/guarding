@@ -26,7 +26,7 @@ fn consume_rules_with_spans(pairs: Pairs<Rule>) -> Vec<GuardRule> {
                     rule = parse_normal_rule(p);
                 }
                 Rule::layer_rule => {
-                    rule = GuardRule::default();
+                    rule = parse_layer_rule(p);
                 }
                 _ => panic!("unreachable content rule: {:?}", p.as_rule())
             };
@@ -35,6 +35,11 @@ fn consume_rules_with_spans(pairs: Pairs<Rule>) -> Vec<GuardRule> {
         return rule;
     })
         .collect::<Vec<GuardRule>>()
+}
+
+fn parse_layer_rule(_pair: Pair<Rule>) -> GuardRule {
+    println!("trying in processed");
+    GuardRule::default()
 }
 
 fn parse_normal_rule(pair: Pair<Rule>) -> GuardRule {
