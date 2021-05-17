@@ -7,6 +7,7 @@ extern crate serde;
 use tree_sitter::Language;
 use crate::parser::ast::{GuardRule, RuleScope, RuleLevel, Expr, RuleAssert};
 use crate::identify::code_model::CodeFile;
+use std::collections::HashMap;
 
 extern "C" { fn tree_sitter_rust() -> Language; }
 extern "C" { fn tree_sitter_java() -> Language; }
@@ -19,7 +20,7 @@ fn main() {
 
 }
 
-pub fn capture(rule: GuardRule, models: &Vec<CodeFile>) {
+pub fn capture(rule: GuardRule, models: &Vec<CodeFile>, index: usize, errors: &mut HashMap<usize, String>) {
     let mut filtered_models: Vec<CodeFile> = vec![];
 
     // 1. filter by scopes
@@ -55,7 +56,8 @@ pub fn capture(rule: GuardRule, models: &Vec<CodeFile>) {
                         "len" => {
                             let size = get_assert_sized(&rule);
                             if filtered_models.len() > size {
-                                println!("error for rule: {:?}", &rule);
+                                let msg = format!("file.len = {}, expected len: {}", filtered_models.len(), size);
+                                errors.insert(index, msg);
                             }
                         },
                         &_ => {}
@@ -90,6 +92,7 @@ mod tests {
     use crate::{parser, capture};
     use walkdir::WalkDir;
     use crate::identify::java_ident::JavaIdent;
+    use std::collections::HashMap;
 
     fn test_dir() -> PathBuf {
         let root_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
@@ -103,7 +106,7 @@ mod tests {
     fn should_working_in_process() {
         let path = test_dir().join("size.guarding");
         let content = fs::read_to_string(path).expect("not file");
-        let vec = parser::parse(content.as_str());
+        let rules = parser::parse(content.as_str());
 
 
         let mut models = vec![];
@@ -118,8 +121,11 @@ mod tests {
             }
         }
 
-        for rule in vec {
-            capture(rule, &models);
-        }
+        let mut errors: HashMap<usize, String> = Default::default();
+        rules.into_iter().enumerate().for_each(|(i, rule)| {
+            capture(rule, &models, i, &mut errors);
+        });
+
+        assert_eq!(1, errors.len());
     }
 }
