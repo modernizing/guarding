@@ -10,9 +10,18 @@ pub struct GuardRule {
     pub assert: RuleAssert
 }
 
-// impl Default for GuardRule {
-//
-// }
+impl Default for GuardRule {
+    fn default() -> Self {
+        GuardRule {
+            ty: RuleType::Normal,
+            level: RuleLevel::Class,
+            scope: RuleScope::All,
+            expr: Expr::Identifier("".to_string()),
+            ops: Operation::Gt,
+            assert: RuleAssert::Empty
+        }
+    }
+}
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum RuleType {
@@ -31,6 +40,7 @@ pub enum RuleLevel {
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum RuleScope {
+    All,
     PathDefine(String),
     Extend(String),
     Implementation(String),
@@ -39,7 +49,8 @@ pub enum RuleScope {
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum Expr {
-    Call(FunctionCall)
+    Call(FunctionCall),
+    Identifier(String)
 }
 
 /// A function call, can be a filter or a global function
@@ -73,5 +84,6 @@ pub enum Operation {
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum RuleAssert {
+    Empty,
     Int(usize),
 }

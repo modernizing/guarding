@@ -1,5 +1,7 @@
 use pest::Parser;
 use pest::iterators::Pairs;
+use crate::parser::ast::Operation::Gt;
+use crate::parser::ast::GuardRule;
 
 pub mod ast;
 
@@ -21,9 +23,9 @@ fn consume_rules_with_spans(pairs: Pairs<Rule>) {
         let span = pairs.next().unwrap().as_span();
         let name = span.as_str().to_owned();
 
-        return "".to_string();
+        return GuardRule::default();
     })
-        .collect::<String>();
+        .collect::<Vec<GuardRule>>();
 }
 
 #[cfg(test)]
