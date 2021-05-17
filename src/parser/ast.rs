@@ -6,7 +6,7 @@ pub struct GuardRule {
     pub level: RuleLevel,
     pub scope: RuleScope,
     pub expr: Expr,
-    pub ops: Operation,
+    pub ops: Operator,
     pub assert: RuleAssert
 }
 
@@ -17,7 +17,7 @@ impl Default for GuardRule {
             level: RuleLevel::Class,
             scope: RuleScope::All,
             expr: Expr::Identifier("".to_string()),
-            ops: Operation::Gt,
+            ops: Operator::Gt,
             assert: RuleAssert::Empty
         }
     }
@@ -82,7 +82,7 @@ impl Default for FunctionCall {
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub enum Operation {
+pub enum Operator {
     /// >
     Gt,
     /// >=
@@ -99,6 +99,9 @@ pub enum Operation {
     And,
     /// or
     Or,
+    /// !
+    /// not
+    Not,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]

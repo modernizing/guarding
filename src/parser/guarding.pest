@@ -13,7 +13,7 @@ declaration = {
 // file is a container of classes and functions
 // classes is a container of functions and field
 normal_rule = {
-	rule_level ~ ("(" ~ scope ~ ")")? ~ (use_symbol ~ expression)? ~ should? ~ operation ~ assert ~ ";"?
+	rule_level ~ ("(" ~ scope ~ ")")? ~ (use_symbol ~ expression)? ~ should? ~ operator ~ assert ~ ";"?
 }
 
 rule_level = {
@@ -79,14 +79,14 @@ assert = {
     int
 }
 
-operation = {
-    "not" ~ operation |
-    "!" ~ operation |
-    "<=" |
-    "<" |
-    ">" |
-    ">=" |
-    "==" |
+operator = {
+    op_not ~ operator |
+    op_not_symbol ~ operator |
+    op_lte |
+    op_gte |
+    op_lt |
+    op_gt |
+    op_eq |
 	"contains" |
 	"endsWith" |
 	"startsWith" |
@@ -94,6 +94,15 @@ operation = {
 	"accessed" |
 	"dependBy"
 }
+
+op_not            = @{ "not" }
+op_not_symbol     = @{ "!" }
+op_lte            = { "<=" }
+op_gte            = { ">=" }
+op_lt             = { "<" }
+op_gt             = { ">" }
+op_eq             = { "==" }
+op_ineq           = { "!=" }
 
 should = {
     "should"
