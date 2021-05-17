@@ -1,1 +1,2 @@
-package(".")::file.len should < 2;
+package(".")::file.len should < 200;
+package(".")::file.len should > 50;

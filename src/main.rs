@@ -5,7 +5,7 @@ extern crate pest_derive;
 extern crate serde;
 
 use tree_sitter::Language;
-use crate::parser::ast::{GuardRule, RuleScope, RuleLevel, Expr, RuleAssert};
+use crate::parser::ast::{GuardRule, RuleScope, RuleLevel, Expr, RuleAssert, Operator};
 use crate::identify::code_model::CodeFile;
 use std::collections::HashMap;
 
@@ -55,9 +55,32 @@ pub fn capture(rule: GuardRule, models: &Vec<CodeFile>, index: usize, errors: &m
                     match props[1].as_str() {
                         "len" => {
                             let size = get_assert_sized(&rule);
-                            if filtered_models.len() > size {
-                                let msg = format!("file.len = {}, expected len: {}", filtered_models.len(), size);
-                                errors.insert(index, msg);
+                            match &rule.ops[0] {
+                                Operator::Gt => {
+                                    if size > filtered_models.len() {
+                                        let msg = format!("file.len = {}, expected len: > {}", filtered_models.len(), size);
+                                        errors.insert(index, msg);
+                                    }
+                                }
+                                Operator::Gte => {}
+                                Operator::Lt => {
+                                    if size < filtered_models.len() {
+                                        let msg = format!("file.len = {}, expected: < len {}", filtered_models.len(), size);
+                                        errors.insert(index, msg);
+                                    }
+                                }
+                                Operator::Lte => {}
+                                Operator::Eq => {}
+                                Operator::NotEq => {}
+                                Operator::And => {}
+                                Operator::Or => {}
+                                Operator::Not => {}
+                                Operator::StartsWith => {}
+                                Operator::Endswith => {}
+                                Operator::Contains => {}
+                                Operator::ResideIn => {}
+                                Operator::Accessed => {}
+                                Operator::DependBy => {}
                             }
                         },
                         &_ => {}
