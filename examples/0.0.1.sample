@@ -4,13 +4,8 @@ layer("onion")
     applicationService("")
     adapter("com.phodal.com", "zero");
 
-module::package.len should <= 20;
-
-class::name contains "Controller";
-
 # 类::名 包含 "Controller";
 # 中文分词：("..myapp..") 类名称中包含 "Controller"
-
 class("..myapp..")::function.name should contains("");
 class("..myapp..")::function.name contains("");
 
@@ -42,5 +37,5 @@ package(match("^/app")) endsWith "Connection";
 
 class::name.len should < 20;
 function::name.len should < 30;
-
-
+module::package.len should <= 20;
+function::len should < 30;

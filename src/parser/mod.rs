@@ -67,7 +67,7 @@ class(\"..myapp..\")::function.vars.len should <= 20;
     fn should_parse_simple_usage() {
         let code = "class::name.len should < 20;
 function::name.len should < 30;
-
+module::package.len should <= 20;
 ";
         parse(code);
     }
