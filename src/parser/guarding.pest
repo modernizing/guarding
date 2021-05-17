@@ -109,15 +109,3 @@ newline    = _{ "\n" | "\r\n" }
 WHITESPACE = _{ " " | "\t" | newline }
 block_comment = _{ "/*" ~ (block_comment | !"*/" ~ ANY)* ~ "*/" }
 COMMENT    = _{ block_comment | ("//" ~ (!newline ~ ANY)*) }
-
-
-// todo: simplify code
-// ~[\u0000-\u007F\uD800-\uDBFF]
-// [\uD800-\uDBFF] [\uDC00-\uDFFF]
-// Char = _{ "\u{0009}" | "\u{000A}" | "\u{000D}" |
-//           '\u{0020}'..'\u{D7FF}' | '\u{E000}'..'\u{FFFD}' |
-//           '\u{10000}'..'\u{10FFFF}' }
-//
-// S = _{ "\u{0020}" | "\u{0009}" | "\u{000D}" | "\u{000A}" }
-// utf8 = { (!S ~ Char)* }
-// identifier = { chars }
