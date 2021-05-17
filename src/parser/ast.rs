@@ -1,5 +1,7 @@
+use std::collections::HashMap;
+
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct Rule {
+pub struct GuardRule {
     pub ty: RuleType,
     pub level: RuleLevel,
     pub scope: RuleScope,
@@ -7,6 +9,10 @@ pub struct Rule {
     pub ops: Operation,
     pub assert: RuleAssert
 }
+
+// impl Default for GuardRule {
+//
+// }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum RuleType {
@@ -32,10 +38,40 @@ pub enum RuleScope {
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub enum Expr {}
+pub enum Expr {
+    Call(FunctionCall)
+}
+
+/// A function call, can be a filter or a global function
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct FunctionCall {
+    /// The name of the function
+    pub name: String,
+    /// The args of the function: key -> value
+    pub args: HashMap<String, Expr>,
+}
 
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub enum Operation {}
+pub enum Operation {
+    /// >
+    Gt,
+    /// >=
+    Gte,
+    /// <
+    Lt,
+    /// <=
+    Lte,
+    /// ==
+    Eq,
+    /// !=
+    NotEq,
+    /// and
+    And,
+    /// or
+    Or,
+}
 
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub enum RuleAssert {}
+pub enum RuleAssert {
+    Int(usize),
+}
