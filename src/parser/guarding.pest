@@ -13,7 +13,7 @@ declaration = {
 // file is a container of classes and functions
 // classes is a container of functions and field
 normal_rule = {
-	rule_level ~ ("(" ~ scope ~ ")")? ~ (prop ~ expression)? ~ should? ~ operation ~ assert ~ ";"?
+	rule_level ~ ("(" ~ scope ~ ")")? ~ (use_symbol ~ expression)? ~ should? ~ operation ~ assert ~ ";"?
 }
 
 rule_level = {
@@ -25,11 +25,11 @@ rule_level = {
 }
 
 layer_rule = {
-	"layer" ~ "(" ~ layer_type ~ ")" ~ (prop ~ layer_expression)* ~ ";"?
+	"layer" ~ "(" ~ layer_type ~ ")" ~ (use_symbol ~ layer_expression)* ~ ";"?
 }
 
 // use property
-prop = {
+use_symbol = {
     "::" |
     "->"
 }

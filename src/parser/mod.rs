@@ -1,7 +1,7 @@
 use std::char;
 use pest::Parser;
 use pest::iterators::{Pairs, Pair};
-use crate::parser::ast::{GuardRule, RuleLevel, RuleScope};
+use crate::parser::ast::{GuardRule, RuleLevel, RuleScope, Expr};
 
 pub mod ast;
 
@@ -52,11 +52,11 @@ fn parse_normal_rule(pair: Pair<Rule>) -> GuardRule {
                     &_ => { unreachable!("error rule level: {:?}", level) }
                 };
             }
-            Rule::prop => {
+            Rule::use_symbol => {
                 // may be can do something, but still nothing.
             }
             Rule::expression => {
-                parse_expr(p);
+                guard_rule.expr = parse_expr(p);
             }
             Rule::operation => {}
             Rule::assert => {}
@@ -75,18 +75,28 @@ fn parse_normal_rule(pair: Pair<Rule>) -> GuardRule {
     guard_rule
 }
 
-fn parse_expr(parent: Pair<Rule>) {
+fn parse_expr(parent: Pair<Rule>) -> Expr {
     let mut pairs = parent.into_inner();
     let pair = pairs.next().unwrap();
 
     match pair.as_rule() {
         Rule::fn_call => {
+            let mut call_chains: Vec<String> = vec![];
+
             for p in pair.into_inner() {
-                println!("fn_call expr: {:?}, text: {:?}", p.as_rule(), p.as_span())
-            }
+                match p.as_rule() {
+                    Rule::identifier => {
+                        let ident = p.as_span().as_str().to_string();
+                        call_chains.push(ident);
+                    },
+                    _ => {}
+                };
+            };
+
+            return Expr::PropsCall(call_chains);
         },
         _ => {
-            println!("implementing expr: {:?}, text: {:?}", pair.as_rule(), pair.as_span())
+            panic!("implementing expr: {:?}, text: {:?}", pair.as_rule(), pair.as_span())
         }
     };
 }
@@ -166,13 +176,13 @@ fn unescape(string: &str) -> Option<String> {
 #[cfg(test)]
 mod tests {
     use crate::parser::parse;
-    use crate::parser::ast::{RuleLevel, RuleScope};
+    use crate::parser::ast::{RuleLevel, RuleScope, Expr};
 
     #[test]
     fn should_parse_rule_level() {
         let code = "class::name contains \"Controller\";";
         let rules = parse(code);
-        println!("{:?}", rules);
+
         assert_eq!(1, rules.len());
         assert_eq!(RuleLevel::Class, rules[0].level);
         assert_eq!(RuleScope::All, rules[0].scope);
@@ -184,6 +194,8 @@ mod tests {
         let rules = parse(code);
 
         assert_eq!(RuleScope::PathDefine(("\"..myapp..\"").to_string()), rules[0].scope);
+        let chains = vec!["function".to_string(), "name".to_string()];
+        assert_eq!(Expr::PropsCall(chains), rules[0].expr);
     }
 
     #[test]

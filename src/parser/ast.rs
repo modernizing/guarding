@@ -50,6 +50,7 @@ pub enum RuleScope {
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum Expr {
     Call(FunctionCall),
+    PropsCall(Vec<String>),
     Identifier(String)
 }
 
@@ -60,6 +61,24 @@ pub struct FunctionCall {
     pub name: String,
     /// The args of the function: key -> value
     pub args: HashMap<String, Expr>,
+}
+
+impl FunctionCall {
+    pub fn new(name: String) -> FunctionCall {
+        FunctionCall {
+            name,
+            args: Default::default()
+        }
+    }
+}
+
+impl Default for FunctionCall {
+    fn default() -> Self {
+        FunctionCall {
+            name: "".to_string(),
+            args: Default::default()
+        }
+    }
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
