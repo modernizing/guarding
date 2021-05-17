@@ -6,6 +6,7 @@ fn main() {
         .include(&js_dir)
         .file(js_dir.join("parser.c"))
         .file(js_dir.join("scanner.c"))
+        .warnings(false)
         .compile("tree-sitter-javascript");
 
     let java_dir: PathBuf = ["tree-sitter-java", "src"].iter().collect();
@@ -19,5 +20,6 @@ fn main() {
         .include(&rust_dir)
         .file(rust_dir.join("parser.c"))
         .file(rust_dir.join("scanner.c"))
+        .warnings(false)
         .compile("tree-sitter-rust");
 }
