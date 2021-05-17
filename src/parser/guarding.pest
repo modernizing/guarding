@@ -110,6 +110,8 @@ operator = {
 op_contains	      = { "contains" }
 op_endsWith	      = { "endsWith" }
 op_startsWith     = { "startsWith" }
+
+// todo: thinking in define packages ops
 op_resideIn	      = { "resideIn" }
 op_accessed	      = { "accessed" }
 op_dependBy	      = { "dependBy" }

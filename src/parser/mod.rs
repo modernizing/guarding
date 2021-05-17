@@ -142,7 +142,27 @@ fn parse_expr(parent: Pair<Rule>) -> Expr {
 }
 
 fn parse_assert(parent: Pair<Rule>) -> RuleAssert {
-    RuleAssert::Empty
+    let mut pairs = parent.into_inner();
+    let pair = pairs.next().unwrap();
+
+    match pair.as_rule() {
+        Rule::leveled => {
+            RuleAssert::Leveled(RuleLevel::Class, "".to_string())
+        },
+        Rule::sized => {
+            let mut pairs = pair.into_inner();
+            let pair = pairs.next().unwrap();
+            let size: usize = pair.as_str()
+                .parse()
+                .expect("convert int error");
+
+            RuleAssert::Sized(size)
+        },
+        Rule::stringed => {
+            RuleAssert::Stringed("".to_string())
+        },
+        _ => { RuleAssert::Empty }
+    }
 }
 
 fn parse_scope(parent: Pair<Rule>) -> RuleScope {
@@ -220,7 +240,7 @@ fn unescape(string: &str) -> Option<String> {
 #[cfg(test)]
 mod tests {
     use crate::parser::parse;
-    use crate::parser::ast::{RuleLevel, RuleScope, Expr, Operator};
+    use crate::parser::ast::{RuleLevel, RuleScope, Expr, Operator, RuleAssert};
 
     #[test]
     fn should_parse_rule_level() {
@@ -257,6 +277,13 @@ mod tests {
         assert_eq!(2, vec[0].ops.len());
         assert_eq!(Operator::Not, vec[0].ops[0]);
         assert_eq!(Operator::Endswith, vec[0].ops[1]);
+    }
+
+    #[test]
+    fn should_parse_sized_assert() {
+        let code = "class(\"..myapp..\")::function.vars.len should <= 20;";
+        let vec = parse(code);
+        assert_eq!(RuleAssert::Sized(20), vec[0].assert);
     }
 
     #[test]
