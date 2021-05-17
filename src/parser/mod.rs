@@ -1,7 +1,7 @@
 use std::char;
 use pest::Parser;
 use pest::iterators::{Pairs, Pair};
-use crate::parser::ast::{GuardRule, RuleLevel, RuleScope, Expr, Operator};
+use crate::parser::ast::{GuardRule, RuleLevel, RuleScope, Expr, Operator, RuleAssert};
 
 pub mod ast;
 
@@ -61,7 +61,9 @@ fn parse_normal_rule(pair: Pair<Rule>) -> GuardRule {
             Rule::operator => {
                 guard_rule.ops = parse_operator(p);
             }
-            Rule::assert => {}
+            Rule::assert => {
+                guard_rule.assert = parse_assert(p);
+            }
             Rule::scope => {
                 guard_rule.scope = parse_scope(p);
             }
@@ -137,6 +139,10 @@ fn parse_expr(parent: Pair<Rule>) -> Expr {
             panic!("implementing expr: {:?}, text: {:?}", pair.as_rule(), pair.as_span())
         }
     };
+}
+
+fn parse_assert(parent: Pair<Rule>) -> RuleAssert {
+    RuleAssert::Empty
 }
 
 fn parse_scope(parent: Pair<Rule>) -> RuleScope {

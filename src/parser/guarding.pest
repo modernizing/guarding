@@ -73,20 +73,20 @@ fn_call = {
 }
 
 assert = {
-    level_assert |
-    string_assert |
-    size_assert
+    leveled |
+    stringed |
+    sized
 }
 
-string_assert = {
+stringed = {
     "("? ~ string ~ ")"?
 }
 
-level_assert = {
+leveled = {
     rule_level ~ "(" ~ string ~ ")"
 }
 
-size_assert = {
+sized = {
     int
 }
 

@@ -117,5 +117,7 @@ pub enum Operator {
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum RuleAssert {
     Empty,
-    Int(usize),
+    Stringed(String),
+    Leveled(RuleLevel, String),
+    Sized(usize),
 }
