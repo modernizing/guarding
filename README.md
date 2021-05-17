@@ -1,6 +1,9 @@
 # Guarding
 
 [![Build](https://github.com/inherd/guarding/actions/workflows/build.yml/badge.svg)](https://github.com/inherd/guarding/actions/workflows/build.yml)
+[![crates.io](https://meritbadge.herokuapp.com/guarding)](https://crates.io/crates/druid)
+[![docs.rs](https://docs.rs/guarding/badge.svg)](https://docs.rs/guarding/)
+[![license](https://img.shields.io/crates/l/guarding)](https://github.com/inherd/guarding/blob/master/LICENSE)
 
 > Guarding is a guardians for code, architecture, layered. Using git hooks and DSL for design guard rules.
 
