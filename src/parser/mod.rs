@@ -206,6 +206,10 @@ fn parse_scope(parent: Pair<Rule>) -> RuleScope {
         Rule::extend_scope => {
             let string = string_from_pair(pair);
             RuleScope::Extend(string)
+        },
+        Rule::match_scope => {
+            let string = string_from_pair(pair);
+            RuleScope::MatchRegex(string)
         }
         _ => {
             println!("implementing scope: {:?}, text: {:?}", pair.as_rule(), pair.as_span());
@@ -305,7 +309,8 @@ mod tests {
     #[test]
     fn should_parse_package_regex() {
         let code = "package(match(\"^/app\")) endsWith \"Connection\";";
-        parse(code);
+        let vec = parse(code);
+        assert_eq!(RuleScope::MatchRegex("^/app".to_string()), vec[0].scope);
     }
 
     #[test]
