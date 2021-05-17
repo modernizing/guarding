@@ -87,13 +87,21 @@ operator = {
     op_lt |
     op_gt |
     op_eq |
-	"contains" |
-	"endsWith" |
-	"startsWith" |
-	"resideIn" |
-	"accessed" |
-	"dependBy"
+	op_contains |
+	op_endsWith |
+	op_startsWith |
+	op_resideIn |
+	op_accessed |
+	op_dependBy
 }
+
+// todo: change to strings operations method
+op_contains	      = { "contains" }
+op_endsWith	      = { "endsWith" }
+op_startsWith     = { "startsWith" }
+op_resideIn	      = { "resideIn" }
+op_accessed	      = { "accessed" }
+op_dependBy	      = { "dependBy" }
 
 op_not            = @{ "not" }
 op_not_symbol     = @{ "!" }
