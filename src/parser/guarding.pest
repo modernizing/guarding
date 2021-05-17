@@ -3,7 +3,8 @@ start = _{ SOI ~ declarations* ~ EOI}
 identifier = @{ (ASCII_ALPHA | ASCII_ALPHANUMERIC | "_") ~ (ASCII_ALPHANUMERIC | "_")* }
 
 declarations = {
-  container_rule
+  container_rule |
+  layer_rule
 }
 
 // module is a container of package
@@ -23,7 +24,15 @@ container = {
 }
 
 layer_rule = {
-	"layer"
+	"layer" ~ "(" ~ layer_type ~ ")" ~ ("::" ~ layer_expression)* ~ ";"?
+}
+
+layer_type = {
+    string
+}
+
+layer_expression = {
+    identifier ~ "(" ~ string ~ ("," ~ string)* ~ ")"
 }
 
 scope = {

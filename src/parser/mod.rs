@@ -71,4 +71,16 @@ module::package.len should <= 20;
 ";
         parse(code);
     }
+
+    #[test]
+    fn should_parse_layer() {
+        let code = "layer(\"onion\")
+    ::domainModel(\"\")
+    ::domainService(\"\")
+    ::applicationService(\"\")
+    ::adapter(\"com.phodal.com\", \"zero\");
+
+";
+        parse(code);
+    }
 }
