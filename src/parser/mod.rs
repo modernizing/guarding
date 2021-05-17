@@ -85,7 +85,8 @@ fn parse_operator(parent: Pair<Rule>) -> Vec<Operator> {
     match pair.as_rule() {
         Rule::op_not | Rule::op_not_symbol => {
             operators.push(Operator::Not);
-            pair = pairs.next().unwrap();
+            // get next operator
+            pair = pairs.next().unwrap().into_inner().next().unwrap();
         }
         _ => {}
     }
@@ -241,6 +242,15 @@ mod tests {
         let vec = parse(code);
         assert_eq!(1, vec[0].ops.len());
         assert_eq!(Operator::Endswith, vec[0].ops[0])
+    }
+
+    #[test]
+    fn should_parse_not_symbol() {
+        let code = "class(extends \"Connection.class\")::name should not endsWith \"Connection\";";
+        let vec = parse(code);
+        assert_eq!(2, vec[0].ops.len());
+        assert_eq!(Operator::Not, vec[0].ops[0]);
+        assert_eq!(Operator::Endswith, vec[0].ops[1]);
     }
 
     #[test]
