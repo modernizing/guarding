@@ -1,9 +1,10 @@
-use std::char;
+use pest::iterators::{Pair, Pairs};
 use pest::Parser;
-use pest::iterators::{Pairs, Pair};
-use crate::parser::ast::{GuardRule, RuleLevel, RuleScope, Expr, Operator, RuleAssert};
+
+use crate::parser::ast::{Expr, GuardRule, Operator, RuleAssert, RuleLevel, RuleScope};
 
 pub mod ast;
+pub mod str_support;
 
 #[derive(Parser)]
 #[grammar = "parser/guarding.pest"]
@@ -160,7 +161,7 @@ fn parse_assert(parent: Pair<Rule>) -> RuleAssert {
                         level = parse_rule_level(p);
                     },
                     Rule::string => {
-                        str = replace_string_markers(p.as_str());
+                        str = str_support::replace_string_markers(p.as_str());
                     },
                     _ => {}
                 }
@@ -181,7 +182,7 @@ fn parse_assert(parent: Pair<Rule>) -> RuleAssert {
             let mut pairs = pair.into_inner();
             let pair = pairs.next().unwrap();
 
-            let str = replace_string_markers(pair.as_str());
+            let str = str_support::replace_string_markers(pair.as_str());
             RuleAssert::Stringed(str.to_string())
         },
         _ => { RuleAssert::Empty }
@@ -194,8 +195,8 @@ fn parse_scope(parent: Pair<Rule>) -> RuleScope {
 
     match pair.as_rule() {
         Rule::string => {
-            let without_markers = replace_string_markers(pair.as_str());
-            let string = unescape(without_markers.as_str()).expect("incorrect string literal");
+            let without_markers = str_support::replace_string_markers(pair.as_str());
+            let string = str_support::unescape(without_markers.as_str()).expect("incorrect string literal");
             RuleScope::PathDefine(string)
         },
         Rule::assignable_scope => {
@@ -219,8 +220,8 @@ fn filter_string_from_pair(pair: Pair<Rule>) -> String {
     for p in pair.into_inner() {
         match p.as_rule() {
             Rule::string => {
-                let without_markers = replace_string_markers(p.as_str());
-                string = unescape(without_markers.as_str()).expect("incorrect string literal");
+                let without_markers = str_support::replace_string_markers(p.as_str());
+                string = str_support::unescape(without_markers.as_str()).expect("incorrect string literal");
             },
             _ => {}
         }
@@ -228,77 +229,10 @@ fn filter_string_from_pair(pair: Pair<Rule>) -> String {
     string
 }
 
-/// Strings are delimited by double quotes, single quotes and backticks
-/// We need to remove those before putting them in the AST
-fn replace_string_markers(input: &str) -> String {
-    match input.chars().next().unwrap() {
-        '"' => input.replace('"', ""),
-        '\'' => input.replace('\'', ""),
-        '`' => input.replace('`', ""),
-        _ => unreachable!("How did you even get there: {:?}", input),
-    }
-}
-
-fn unescape(string: &str) -> Option<String> {
-    let mut result = String::new();
-    let mut chars = string.chars();
-
-    loop {
-        match chars.next() {
-            Some('\\') => match chars.next()? {
-                '"' => result.push('"'),
-                '\\' => result.push('\\'),
-                'r' => result.push('\r'),
-                'n' => result.push('\n'),
-                't' => result.push('\t'),
-                '0' => result.push('\0'),
-                '\'' => result.push('\''),
-                'x' => {
-                    let string: String = chars.clone().take(2).collect();
-
-                    if string.len() != 2 {
-                        return None;
-                    }
-
-                    for _ in 0..string.len() {
-                        chars.next()?;
-                    }
-
-                    let value = u8::from_str_radix(&string, 16).ok()?;
-
-                    result.push(char::from(value));
-                }
-                'u' => {
-                    if chars.next()? != '{' {
-                        return None;
-                    }
-
-                    let string: String = chars.clone().take_while(|c| *c != '}').collect();
-
-                    if string.len() < 2 || 6 < string.len() {
-                        return None;
-                    }
-
-                    for _ in 0..string.len() + 1 {
-                        chars.next()?;
-                    }
-
-                    let value = u32::from_str_radix(&string, 16).ok()?;
-
-                    result.push(char::from_u32(value)?);
-                }
-                _ => return None,
-            },
-            Some(c) => result.push(c),
-            None => return Some(result),
-        };
-    }
-}
-
 #[cfg(test)]
 mod tests {
+    use crate::parser::ast::{Expr, Operator, RuleAssert, RuleLevel, RuleScope};
     use crate::parser::parse;
-    use crate::parser::ast::{RuleLevel, RuleScope, Expr, Operator, RuleAssert};
 
     #[test]
     fn should_parse_rule_level() {
