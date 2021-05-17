@@ -22,7 +22,7 @@ fn main() {
 pub fn capture(rule: GuardRule, models: &Vec<CodeFile>) {
     let mut filtered_models: Vec<CodeFile> = vec![];
 
-    // filter by scopes
+    // 1. filter by scopes
     match &rule.level {
         RuleLevel::Package => {
             match &rule.scope {
@@ -45,6 +45,7 @@ pub fn capture(rule: GuardRule, models: &Vec<CodeFile>) {
         RuleLevel::File => {}
     };
 
+    // 2. run expression for evaluation
     match &rule.expr {
         Expr::Call(_) => {}
         Expr::PropsCall(props) => {
@@ -65,6 +66,8 @@ pub fn capture(rule: GuardRule, models: &Vec<CodeFile>) {
         }
         Expr::Identifier(_) => {}
     }
+
+    // todo: 3. run assert
 }
 
 fn get_assert_sized(rule: &GuardRule) -> usize {
