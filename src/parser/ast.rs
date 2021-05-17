@@ -43,6 +43,7 @@ pub enum RuleScope {
     All,
     PathDefine(String),
     Extend(String),
+    Assignable(String),
     Implementation(String),
     MatchRegex(String),
 }

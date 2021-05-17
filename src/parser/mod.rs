@@ -193,9 +193,24 @@ fn parse_scope(parent: Pair<Rule>) -> RuleScope {
 
     match pair.as_rule() {
         Rule::string => {
-            let string = unescape(pair.as_str()).expect("incorrect string literal");
+            let without_markers = replace_string_markers(pair.as_str());
+            let string = unescape(without_markers.as_str()).expect("incorrect string literal");
             RuleScope::PathDefine(string)
-        }
+        },
+        Rule::assignable_scope => {
+            let mut string = "".to_string();
+            for p in pair.into_inner() {
+                match p.as_rule() {
+                    Rule::string => {
+                        let without_markers = replace_string_markers(p.as_str());
+                        string = unescape(without_markers.as_str()).expect("incorrect string literal");
+                    },
+                    _ => {}
+                }
+            }
+
+            RuleScope::Assignable(string)
+        },
         _ => {
             println!("implementing scope: {:?}, text: {:?}", pair.as_rule(), pair.as_span());
             RuleScope::All
@@ -210,7 +225,7 @@ fn replace_string_markers(input: &str) -> String {
         '"' => input.replace('"', ""),
         '\'' => input.replace('\'', ""),
         '`' => input.replace('`', ""),
-        _ => unreachable!("How did you even get there"),
+        _ => unreachable!("How did you even get there: {:?}", input),
     }
 }
 
@@ -298,7 +313,7 @@ mod tests {
         let code = "class(\"..myapp..\")::function.name should contains(\"\");";
         let rules = parse(code);
 
-        assert_eq!(RuleScope::PathDefine(("\"..myapp..\"").to_string()), rules[0].scope);
+        assert_eq!(RuleScope::PathDefine(("..myapp..").to_string()), rules[0].scope);
         let chains = vec!["function".to_string(), "name".to_string()];
         assert_eq!(Expr::PropsCall(chains), rules[0].expr);
     }
