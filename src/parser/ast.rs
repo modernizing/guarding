@@ -102,6 +102,16 @@ pub enum Operator {
     /// !
     /// not
     Not,
+
+    // string assert operator
+    StartsWith,
+    Endswith,
+    Contains,
+
+    // package operators
+    ResideIn,
+    Accessed,
+    DependBy
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]

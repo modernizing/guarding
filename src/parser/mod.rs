@@ -77,8 +77,28 @@ fn parse_normal_rule(pair: Pair<Rule>) -> GuardRule {
     guard_rule
 }
 
-fn parse_operator(_parent: Pair<Rule>) -> Operator {
-    Operator::Gt
+fn parse_operator(parent: Pair<Rule>) -> Operator {
+    let mut pairs = parent.into_inner();
+    let pair = pairs.next().unwrap();
+
+    match pair.as_rule() {
+        Rule::op_lte => { Operator::Lte },
+        Rule::op_gte => { Operator::Gte },
+        Rule::op_lt => { Operator::Lt },
+        Rule::op_gt => { Operator::Gt },
+        Rule::op_eq => { Operator::Eq },
+        Rule::op_contains => { Operator::Contains },
+        Rule::op_endsWith => { Operator::Endswith },
+        Rule::op_startsWith => {},
+        Rule::op_resideIn => {},
+        Rule::op_accessed => {},
+        Rule::op_dependBy => {},
+        _ => {
+            println!("implementing ops: {:?}, text: {:?}", pair.as_rule(), pair.as_span())
+        }
+    }
+
+    Operator::And
 }
 
 fn parse_expr(parent: Pair<Rule>) -> Expr {
