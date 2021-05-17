@@ -68,6 +68,7 @@ container = {
     "module" |
     "package" |
     "class" |
+    "function" |
     "file"
 }
 
