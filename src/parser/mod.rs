@@ -72,18 +72,15 @@ fn parse_normal_rule(pair: Pair<Rule>) -> GuardRule {
 }
 
 fn parse_rule_level(pair: Pair<Rule>) -> RuleLevel {
-    let mut level = RuleLevel::Class;
     let level_str = pair.as_span().as_str();
-    level = match level_str {
+    match level_str {
         "module" => { RuleLevel::Module }
         "package" => { RuleLevel::Package }
         "function" => { RuleLevel::Function }
         "file" => { RuleLevel::File }
         "class" => { RuleLevel::Class }
         &_ => { unreachable!("error rule level: {:?}", level_str) }
-    };
-
-    level
+    }
 }
 
 fn parse_operator(parent: Pair<Rule>) -> Vec<Operator> {
@@ -154,10 +151,21 @@ fn parse_assert(parent: Pair<Rule>) -> RuleAssert {
 
     match pair.as_rule() {
         Rule::leveled => {
-            let mut pairs = pair.into_inner();
-            let level = pairs.next().unwrap();
+            let mut level = RuleLevel::Class;
+            let mut str = "".to_string();
+            for p in pair.into_inner() {
+                match p.as_rule() {
+                    Rule::rule_level => {
+                        level = parse_rule_level(p);
+                    },
+                    Rule::string => {
+                        str = replace_string_markers(p.as_str());
+                    },
+                    _ => {}
+                }
+            }
 
-            RuleAssert::Leveled(RuleLevel::Class, "".to_string())
+            RuleAssert::Leveled(level, str)
         },
         Rule::sized => {
             let mut pairs = pair.into_inner();
@@ -322,7 +330,8 @@ mod tests {
     #[test]
     fn should_parse_package_container_scope() {
         let code = "class(assignable \"EntityManager.class\") resideIn package(\"..persistence.\");";
-        parse(code);
+        let vec = parse(code);
+        assert_eq!(RuleAssert::Leveled(RuleLevel::Package, "..persistence.".to_string()), vec[0].assert);
     }
 
     #[test]
