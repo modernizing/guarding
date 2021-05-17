@@ -35,6 +35,7 @@ pub enum RuleLevel {
     Module,
     Function,
     Class,
+    Struct,
     File,
 }
 

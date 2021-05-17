@@ -17,7 +17,9 @@ todo:
 
 ## Document
 
-Limit Class or Struct function-name
+### Guarding - Class or Struct function-name
+
+for Java, JavaScript
 
 ```
 # 类::名 包含 "Controller";
@@ -27,6 +29,13 @@ class("..myapp..")::function.name should contains("Model");
 class("..myapp..")::function.name contains("");
 ```
 
+for Rust and Golang
+
+```
+struct("..myapp..")::function.name should contains("Model");
+# or
+struct("..myapp..")::function.name contains("");
+```
 
 License
 ---

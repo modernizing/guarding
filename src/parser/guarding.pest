@@ -20,6 +20,7 @@ rule_level = {
     "module" |
     "package" |
     "class" |
+    "struct" |
     "function" |
     "file"
 }

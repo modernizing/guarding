@@ -79,6 +79,7 @@ fn parse_rule_level(pair: Pair<Rule>) -> RuleLevel {
         "function" => { RuleLevel::Function }
         "file" => { RuleLevel::File }
         "class" => { RuleLevel::Class }
+        "struct" => { RuleLevel::Struct }
         &_ => { unreachable!("error rule level: {:?}", level_str) }
     }
 }
@@ -314,6 +315,15 @@ mod tests {
         let code = "class::name contains \"Controller\";";
         let rules = parse(code);
 
+        assert_eq!(RuleAssert::Stringed("Controller".to_string()), rules[0].assert);
+    }
+
+    #[test]
+    fn should_parse_struct() {
+        let code = "struct::name contains \"Controller\";";
+        let rules = parse(code);
+
+        assert_eq!(RuleLevel::Struct, rules[0].level);
         assert_eq!(RuleAssert::Stringed("Controller".to_string()), rules[0].assert);
     }
 
