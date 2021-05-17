@@ -97,12 +97,10 @@ should = {
 
 double_quoted_string  = @{ "\"" ~ (!("\"") ~ ANY)* ~ "\""}
 single_quoted_string  = @{ "\'" ~ (!("\'") ~ ANY)* ~ "\'"}
-backquoted_quoted_string  = @{ "`" ~ (!("`") ~ ANY)* ~ "`"}
 
 string = @{
     double_quoted_string |
-    single_quoted_string |
-    backquoted_quoted_string
+    single_quoted_string
 }
 
 number = @{ '0'..'9'+ }

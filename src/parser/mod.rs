@@ -1,3 +1,4 @@
+use std::char;
 use pest::Parser;
 use pest::iterators::{Pairs, Pair};
 use crate::parser::ast::{GuardRule, RuleLevel, RuleScope};
@@ -19,10 +20,13 @@ fn consume_rules_with_spans(pairs: Pairs<Rule>) -> Vec<GuardRule> {
     }).map(|pair| {
         let mut rule: GuardRule = Default::default();
         for p in pair.into_inner() {
-             match p.as_rule() {
+            match p.as_rule() {
                 Rule::normal_rule => {
-                    rule = return parse_normal_rule(p);
+                    rule = parse_normal_rule(p);
                 }
+                Rule::layer_rule => {
+                    rule = GuardRule::default();
+                },
                 _ => panic!("unreachable content rule: {:?}", p.as_rule())
             };
         }
@@ -45,7 +49,7 @@ fn parse_normal_rule(pair: Pair<Rule>) -> GuardRule {
                     "function" => { guard_rule.level = RuleLevel::Function }
                     "file" => { guard_rule.level = RuleLevel::File }
                     "class" => { guard_rule.level = RuleLevel::Class }
-                    &_ => {unreachable!("error rule level: {:?}", level)}
+                    &_ => { unreachable!("error rule level: {:?}", level) }
                 };
             }
             Rule::prop => {}
@@ -54,16 +58,7 @@ fn parse_normal_rule(pair: Pair<Rule>) -> GuardRule {
             Rule::assert => {}
             Rule::scope => {
                 for sc in p.into_inner() {
-                    match sc.as_rule() {
-                        Rule::string => {
-                            let path = sc.as_span().as_str().to_string();
-                            println!("path: {:?}", path);
-                            guard_rule.scope = RuleScope::PathDefine(path);
-                        },
-                        _ => {
-                            println!("implementing scope: {:?}, text: {:?}", sc.as_rule(), sc.as_span());
-                        }
-                    }
+                    guard_rule.scope = parse_scope(sc);
                 }
             }
             Rule::should => {
@@ -78,23 +73,96 @@ fn parse_normal_rule(pair: Pair<Rule>) -> GuardRule {
     guard_rule
 }
 
+fn parse_scope(sc: Pair<Rule>) -> RuleScope {
+    match sc.as_rule() {
+        Rule::string => {
+            let string = unescape(sc.as_str()).expect("incorrect string literal");
+            RuleScope::PathDefine(string)
+        }
+        _ => {
+            println!("implementing scope: {:?}, text: {:?}", sc.as_rule(), sc.as_span());
+            RuleScope::All
+        }
+    }
+}
+
+fn unescape(string: &str) -> Option<String> {
+    let mut result = String::new();
+    let mut chars = string.chars();
+
+    loop {
+        match chars.next() {
+            Some('\\') => match chars.next()? {
+                '"' => result.push('"'),
+                '\\' => result.push('\\'),
+                'r' => result.push('\r'),
+                'n' => result.push('\n'),
+                't' => result.push('\t'),
+                '0' => result.push('\0'),
+                '\'' => result.push('\''),
+                'x' => {
+                    let string: String = chars.clone().take(2).collect();
+
+                    if string.len() != 2 {
+                        return None;
+                    }
+
+                    for _ in 0..string.len() {
+                        chars.next()?;
+                    }
+
+                    let value = u8::from_str_radix(&string, 16).ok()?;
+
+                    result.push(char::from(value));
+                }
+                'u' => {
+                    if chars.next()? != '{' {
+                        return None;
+                    }
+
+                    let string: String = chars.clone().take_while(|c| *c != '}').collect();
+
+                    if string.len() < 2 || 6 < string.len() {
+                        return None;
+                    }
+
+                    for _ in 0..string.len() + 1 {
+                        chars.next()?;
+                    }
+
+                    let value = u32::from_str_radix(&string, 16).ok()?;
+
+                    result.push(char::from_u32(value)?);
+                }
+                _ => return None,
+            },
+            Some(c) => result.push(c),
+            None => return Some(result),
+        };
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use crate::parser::parse;
-    use crate::parser::ast::RuleLevel;
+    use crate::parser::ast::{RuleLevel, RuleScope};
 
     #[test]
     fn should_parse_rule_level() {
         let code = "class::name contains \"Controller\";";
         let rules = parse(code);
+        println!("{:?}", rules);
         assert_eq!(1, rules.len());
         assert_eq!(RuleLevel::Class, rules[0].level);
+        assert_eq!(RuleScope::All, rules[0].scope);
     }
 
     #[test]
     fn should_parse_package_asset() {
         let code = "class(\"..myapp..\")::function.name should contains(\"\");";
-        parse(code);
+        let rules = parse(code);
+
+        assert_eq!(RuleScope::PathDefine(("\"..myapp..\"").to_string()), rules[0].scope);
     }
 
     #[test]
