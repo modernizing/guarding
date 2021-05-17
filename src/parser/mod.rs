@@ -26,7 +26,7 @@ fn consume_rules_with_spans(pairs: Pairs<Rule>) -> Vec<GuardRule> {
                 }
                 Rule::layer_rule => {
                     rule = GuardRule::default();
-                },
+                }
                 _ => panic!("unreachable content rule: {:?}", p.as_rule())
             };
         }
@@ -52,17 +52,17 @@ fn parse_normal_rule(pair: Pair<Rule>) -> GuardRule {
                     &_ => { unreachable!("error rule level: {:?}", level) }
                 };
             }
-            Rule::prop => {}
+            Rule::prop => {
+                // may be can do something, but still nothing.
+            }
             Rule::expression => {}
             Rule::operation => {}
             Rule::assert => {}
             Rule::scope => {
-                for sc in p.into_inner() {
-                    guard_rule.scope = parse_scope(sc);
-                }
+                guard_rule.scope = parse_scope(p);
             }
             Rule::should => {
-                // nothing to do
+                // should do nothing
             }
             _ => {
                 println!("implementing rule: {:?}, level: {:?}", p.as_rule(), p.as_span());
@@ -73,14 +73,17 @@ fn parse_normal_rule(pair: Pair<Rule>) -> GuardRule {
     guard_rule
 }
 
-fn parse_scope(sc: Pair<Rule>) -> RuleScope {
-    match sc.as_rule() {
+fn parse_scope(parent: Pair<Rule>) -> RuleScope {
+    let mut pairs = parent.into_inner();
+    let pair = pairs.next().unwrap();
+
+    match pair.as_rule() {
         Rule::string => {
-            let string = unescape(sc.as_str()).expect("incorrect string literal");
+            let string = unescape(pair.as_str()).expect("incorrect string literal");
             RuleScope::PathDefine(string)
         }
         _ => {
-            println!("implementing scope: {:?}, text: {:?}", sc.as_rule(), sc.as_span());
+            println!("implementing scope: {:?}, text: {:?}", pair.as_rule(), pair.as_span());
             RuleScope::All
         }
     }

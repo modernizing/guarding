@@ -65,6 +65,10 @@ impl_scope = {
 }
 
 expression = {
+    fn_call
+}
+
+fn_call = {
     identifier ~ (dot ~ identifier )*
 }
 
