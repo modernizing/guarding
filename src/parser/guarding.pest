@@ -12,7 +12,7 @@ declarations = {
 // file is a container of classes and functions
 // classes is a container of functions and field
 container_rule = {
-	container ~ ("(" ~ scope ~ ")")? ~ ("::" ~ expression)? ~ should? ~ operation ~ assert ~ ";"?
+	container ~ ("(" ~ scope ~ ")")? ~ (prop ~ expression)? ~ should? ~ operation ~ assert ~ ";"?
 }
 
 container = {
@@ -24,7 +24,13 @@ container = {
 }
 
 layer_rule = {
-	"layer" ~ "(" ~ layer_type ~ ")" ~ ("::" ~ layer_expression)* ~ ";"?
+	"layer" ~ "(" ~ layer_type ~ ")" ~ (prop ~ layer_expression)* ~ ";"?
+}
+
+// use property
+prop = {
+    "::" |
+    "->"
 }
 
 layer_type = {
