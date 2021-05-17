@@ -59,7 +59,7 @@ fn parse_normal_rule(pair: Pair<Rule>) -> GuardRule {
                 guard_rule.expr = parse_expr(p);
             }
             Rule::operator => {
-                parse_operator(p);
+                guard_rule.ops = parse_operator(p);
             }
             Rule::assert => {}
             Rule::scope => {
@@ -77,28 +77,39 @@ fn parse_normal_rule(pair: Pair<Rule>) -> GuardRule {
     guard_rule
 }
 
-fn parse_operator(parent: Pair<Rule>) -> Operator {
+fn parse_operator(parent: Pair<Rule>) -> Vec<Operator> {
     let mut pairs = parent.into_inner();
-    let pair = pairs.next().unwrap();
+    let mut pair = pairs.next().unwrap();
+    let mut operators: Vec<Operator> = vec![];
 
     match pair.as_rule() {
-        Rule::op_lte => { Operator::Lte },
-        Rule::op_gte => { Operator::Gte },
-        Rule::op_lt => { Operator::Lt },
-        Rule::op_gt => { Operator::Gt },
-        Rule::op_eq => { Operator::Eq },
-        Rule::op_contains => { Operator::Contains },
-        Rule::op_endsWith => { Operator::Endswith },
-        Rule::op_startsWith => {},
-        Rule::op_resideIn => {},
-        Rule::op_accessed => {},
-        Rule::op_dependBy => {},
-        _ => {
-            println!("implementing ops: {:?}, text: {:?}", pair.as_rule(), pair.as_span())
+        Rule::op_not | Rule::op_not_symbol => {
+            operators.push(Operator::Not);
+            pair = pairs.next().unwrap();
         }
+        _ => {}
     }
 
-    Operator::And
+    let ops = match pair.as_rule() {
+        Rule::op_lte => { Operator::Lte }
+        Rule::op_gte => { Operator::Gte }
+        Rule::op_lt => { Operator::Lt }
+        Rule::op_gt => { Operator::Gt }
+        Rule::op_eq => { Operator::Eq }
+        Rule::op_contains => { Operator::Contains }
+        Rule::op_endsWith => { Operator::Endswith }
+        Rule::op_startsWith => { Operator::StartsWith }
+        Rule::op_resideIn => { Operator::ResideIn }
+        Rule::op_accessed => { Operator::Accessed }
+        Rule::op_dependBy => { Operator::DependBy }
+        _ => {
+            panic!("implementing ops: {:?}, text: {:?}", pair.as_rule(), pair.as_span())
+        }
+    };
+
+    operators.push(ops);
+
+    operators
 }
 
 fn parse_expr(parent: Pair<Rule>) -> Expr {
@@ -114,13 +125,13 @@ fn parse_expr(parent: Pair<Rule>) -> Expr {
                     Rule::identifier => {
                         let ident = p.as_span().as_str().to_string();
                         call_chains.push(ident);
-                    },
+                    }
                     _ => {}
                 };
             };
 
             return Expr::PropsCall(call_chains);
-        },
+        }
         _ => {
             panic!("implementing expr: {:?}, text: {:?}", pair.as_rule(), pair.as_span())
         }
@@ -202,7 +213,7 @@ fn unescape(string: &str) -> Option<String> {
 #[cfg(test)]
 mod tests {
     use crate::parser::parse;
-    use crate::parser::ast::{RuleLevel, RuleScope, Expr};
+    use crate::parser::ast::{RuleLevel, RuleScope, Expr, Operator};
 
     #[test]
     fn should_parse_rule_level() {
@@ -227,7 +238,9 @@ mod tests {
     #[test]
     fn should_parse_package_extends() {
         let code = "class(extends \"Connection.class\")::name endsWith \"Connection\";";
-        parse(code);
+        let vec = parse(code);
+        assert_eq!(1, vec[0].ops.len());
+        assert_eq!(Operator::Endswith, vec[0].ops[0])
     }
 
     #[test]

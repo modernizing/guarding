@@ -6,7 +6,7 @@ pub struct GuardRule {
     pub level: RuleLevel,
     pub scope: RuleScope,
     pub expr: Expr,
-    pub ops: Operator,
+    pub ops: Vec<Operator>,
     pub assert: RuleAssert
 }
 
@@ -17,7 +17,7 @@ impl Default for GuardRule {
             level: RuleLevel::Class,
             scope: RuleScope::All,
             expr: Expr::Identifier("".to_string()),
-            ops: Operator::Gt,
+            ops: vec![],
             assert: RuleAssert::Empty
         }
     }
