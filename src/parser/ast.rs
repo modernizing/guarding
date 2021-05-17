@@ -2,6 +2,7 @@ use std::collections::HashMap;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct GuardRule {
+    pub origin: String,
     pub ty: RuleType,
     pub level: RuleLevel,
     pub scope: RuleScope,
@@ -30,6 +31,7 @@ pub struct OnionArch {
 impl Default for GuardRule {
     fn default() -> Self {
         GuardRule {
+            origin: "".to_string(),
             ty: RuleType::Normal,
             level: RuleLevel::Class,
             scope: RuleScope::All,

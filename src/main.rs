@@ -20,44 +20,15 @@ fn main() {
 }
 
 pub fn capture(rule: GuardRule, models: &Vec<CodeFile>) {
+    let mut filtered_models: Vec<CodeFile> = vec![];
+
     match &rule.level {
         RuleLevel::Package => {
             match &rule.scope {
                 RuleScope::All => {}
                 RuleScope::PathDefine(str) => {
-                    let mut filtered_models: Vec<CodeFile> = vec![];
                     if str.as_str() == "." {
                         filtered_models = models.clone();
-                    }
-
-                    match &rule.expr {
-                        Expr::Call(_) => {}
-                        Expr::PropsCall(props) => {
-                            match props[0].as_str() {
-                                "file" => {
-                                    match props[1].as_str() {
-                                        "len" => {
-                                            let mut size = 0;
-                                            match &rule.assert {
-                                                RuleAssert::Empty => {}
-                                                RuleAssert::Stringed(_) => {}
-                                                RuleAssert::Leveled(_, _) => {}
-                                                RuleAssert::Sized(sized) => {
-                                                    size = *sized;
-                                                }
-                                            }
-
-                                            if filtered_models.len() > size {
-                                                println!("error for rule: {:?}", &rule);
-                                            }
-                                        },
-                                        &_ => {}
-                                    };
-                                }
-                                &_ => {}
-                            }
-                        }
-                        Expr::Identifier(_) => {}
                     };
                 }
                 RuleScope::Extend(_) => {}
@@ -72,6 +43,40 @@ pub fn capture(rule: GuardRule, models: &Vec<CodeFile>) {
         RuleLevel::Struct => {}
         RuleLevel::File => {}
     };
+
+    match &rule.expr {
+        Expr::Call(_) => {}
+        Expr::PropsCall(props) => {
+            match props[0].as_str() {
+                "file" => {
+                    match props[1].as_str() {
+                        "len" => {
+                            let size = get_assert_sized(&rule);
+                            if filtered_models.len() > size {
+                                println!("error for rule: {:?}", &rule);
+                            }
+                        },
+                        &_ => {}
+                    };
+                }
+                &_ => {}
+            }
+        }
+        Expr::Identifier(_) => {}
+    }
+}
+
+fn get_assert_sized(rule: &GuardRule) -> usize {
+    let mut size = 0;
+    match &rule.assert {
+        RuleAssert::Empty => {}
+        RuleAssert::Stringed(_) => {}
+        RuleAssert::Leveled(_, _) => {}
+        RuleAssert::Sized(sized) => {
+            size = *sized;
+        }
+    }
+    size
 }
 
 #[cfg(test)]
