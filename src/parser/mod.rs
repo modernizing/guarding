@@ -1,21 +1,29 @@
 use pest::Parser;
+use pest::iterators::Pairs;
+
+pub mod ast;
 
 #[derive(Parser)]
 #[grammar = "parser/guarding.pest"]
 struct IdentParser;
 
 pub fn parse(code: &str) {
-    // online parser: [https://pest.rs/](https://pest.rs/)
     let pairs = IdentParser::parse(Rule::start, code).unwrap_or_else(|e| panic!("{}", e));
-    for pair in pairs {
-        println!("Rule:    {:?}", pair.as_rule());
-        println!("Span:    {:?}", pair.as_span());
-        println!("Text:    {}", pair.as_str());
+    consume_rules_with_spans(pairs);
+}
 
-        for inner_pair in pair.into_inner() {
-            println!("{:?}", inner_pair)
-        }
-    }
+fn consume_rules_with_spans(pairs: Pairs<Rule>) {
+    pairs.filter(|pair| {
+        return pair.as_rule() == Rule::declaration;
+    }).map(|pair| {
+        let mut pairs = pair.into_inner().peekable();
+
+        let span = pairs.next().unwrap().as_span();
+        let name = span.as_str().to_owned();
+
+        return "".to_string();
+    })
+        .collect::<String>();
 }
 
 #[cfg(test)]

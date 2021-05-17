@@ -1,8 +1,9 @@
-start = _{ SOI ~ declarations* ~ EOI}
+// online parser: [https://pest.rs/](https://pest.rs/)
+start = _{ SOI ~ declaration* ~ EOI}
 
 identifier = @{ (ASCII_ALPHA | ASCII_ALPHANUMERIC | "_") ~ (ASCII_ALPHANUMERIC | "_")* }
 
-declarations = {
+declaration = {
   container_rule |
   layer_rule
 }
