@@ -1,7 +1,7 @@
 use pest::Parser;
-use pest::iterators::Pairs;
+use pest::iterators::{Pairs, Pair};
 use crate::parser::ast::Operation::Gt;
-use crate::parser::ast::GuardRule;
+use crate::parser::ast::{GuardRule, RuleLevel};
 
 pub mod ast;
 
@@ -18,14 +18,46 @@ fn consume_rules_with_spans(pairs: Pairs<Rule>) {
     pairs.filter(|pair| {
         return pair.as_rule() == Rule::declaration;
     }).map(|pair| {
-        let mut pairs = pair.into_inner().peekable();
-
-        let span = pairs.next().unwrap().as_span();
-        let name = span.as_str().to_owned();
+        for p in pair.into_inner() {
+            match p.as_rule() {
+                Rule::normal_rule => {
+                    parse_normal_rule(p);
+                },
+                _ => println!("unreachable content rule: {:?}", p.as_rule())
+            };
+        }
 
         return GuardRule::default();
     })
         .collect::<Vec<GuardRule>>();
+}
+
+fn parse_normal_rule(pair: Pair<Rule>) -> GuardRule {
+    let mut rule_level = RuleLevel::Class;
+    for p in pair.into_inner() {
+        println!("rule: {:?}, level: {:?}", p.as_rule(), p.as_span());
+        match p.as_rule() {
+            Rule::rule_level => {
+
+            },
+            Rule::prop => {
+
+            },
+            Rule::expression => {
+
+            },
+            Rule::operation => {
+
+            },
+            Rule::assert => {
+
+            },
+            _ => {},
+
+        }
+    }
+
+    GuardRule::default()
 }
 
 #[cfg(test)]
