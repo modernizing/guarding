@@ -55,7 +55,9 @@ fn parse_normal_rule(pair: Pair<Rule>) -> GuardRule {
             Rule::prop => {
                 // may be can do something, but still nothing.
             }
-            Rule::expression => {}
+            Rule::expression => {
+                parse_expr(p);
+            }
             Rule::operation => {}
             Rule::assert => {}
             Rule::scope => {
@@ -71,6 +73,22 @@ fn parse_normal_rule(pair: Pair<Rule>) -> GuardRule {
     }
 
     guard_rule
+}
+
+fn parse_expr(parent: Pair<Rule>) {
+    let mut pairs = parent.into_inner();
+    let pair = pairs.next().unwrap();
+
+    match pair.as_rule() {
+        Rule::fn_call => {
+            for p in pair.into_inner() {
+                println!("fn_call expr: {:?}, text: {:?}", p.as_rule(), p.as_span())
+            }
+        },
+        _ => {
+            println!("implementing expr: {:?}, text: {:?}", pair.as_rule(), pair.as_span())
+        }
+    };
 }
 
 fn parse_scope(parent: Pair<Rule>) -> RuleScope {
