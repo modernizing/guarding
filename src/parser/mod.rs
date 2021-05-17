@@ -159,7 +159,11 @@ fn parse_assert(parent: Pair<Rule>) -> RuleAssert {
             RuleAssert::Sized(size)
         },
         Rule::stringed => {
-            RuleAssert::Stringed("".to_string())
+            let mut pairs = pair.into_inner();
+            let pair = pairs.next().unwrap();
+
+            let str = replace_string_markers(pair.as_str());
+            RuleAssert::Stringed(str.to_string())
         },
         _ => { RuleAssert::Empty }
     }
@@ -178,6 +182,17 @@ fn parse_scope(parent: Pair<Rule>) -> RuleScope {
             println!("implementing scope: {:?}, text: {:?}", pair.as_rule(), pair.as_span());
             RuleScope::All
         }
+    }
+}
+
+/// Strings are delimited by double quotes, single quotes and backticks
+/// We need to remove those before putting them in the AST
+fn replace_string_markers(input: &str) -> String {
+    match input.chars().next().unwrap() {
+        '"' => input.replace('"', ""),
+        '\'' => input.replace('\'', ""),
+        '`' => input.replace('`', ""),
+        _ => unreachable!("How did you even get there"),
     }
 }
 
@@ -250,6 +265,14 @@ mod tests {
         assert_eq!(1, rules.len());
         assert_eq!(RuleLevel::Class, rules[0].level);
         assert_eq!(RuleScope::All, rules[0].scope);
+    }
+
+    #[test]
+    fn should_parse_string_assert() {
+        let code = "class::name contains \"Controller\";";
+        let rules = parse(code);
+
+        assert_eq!(RuleAssert::Stringed("Controller".to_string()), rules[0].assert);
     }
 
     #[test]
