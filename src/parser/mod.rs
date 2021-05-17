@@ -42,15 +42,7 @@ fn parse_normal_rule(pair: Pair<Rule>) -> GuardRule {
     for p in pair.into_inner() {
         match p.as_rule() {
             Rule::rule_level => {
-                let level = p.as_span().as_str();
-                match level {
-                    "module" => { guard_rule.level = RuleLevel::Module }
-                    "package" => { guard_rule.level = RuleLevel::Package }
-                    "function" => { guard_rule.level = RuleLevel::Function }
-                    "file" => { guard_rule.level = RuleLevel::File }
-                    "class" => { guard_rule.level = RuleLevel::Class }
-                    &_ => { unreachable!("error rule level: {:?}", level) }
-                };
+                guard_rule.level = parse_rule_level(p);
             }
             Rule::use_symbol => {
                 // may be can do something, but still nothing.
@@ -77,6 +69,21 @@ fn parse_normal_rule(pair: Pair<Rule>) -> GuardRule {
     }
 
     guard_rule
+}
+
+fn parse_rule_level(pair: Pair<Rule>) -> RuleLevel {
+    let mut level = RuleLevel::Class;
+    let level_str = pair.as_span().as_str();
+    level = match level_str {
+        "module" => { RuleLevel::Module }
+        "package" => { RuleLevel::Package }
+        "function" => { RuleLevel::Function }
+        "file" => { RuleLevel::File }
+        "class" => { RuleLevel::Class }
+        &_ => { unreachable!("error rule level: {:?}", level_str) }
+    };
+
+    level
 }
 
 fn parse_operator(parent: Pair<Rule>) -> Vec<Operator> {
@@ -147,6 +154,9 @@ fn parse_assert(parent: Pair<Rule>) -> RuleAssert {
 
     match pair.as_rule() {
         Rule::leveled => {
+            let mut pairs = pair.into_inner();
+            let level = pairs.next().unwrap();
+
             RuleAssert::Leveled(RuleLevel::Class, "".to_string())
         },
         Rule::sized => {
