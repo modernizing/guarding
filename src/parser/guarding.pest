@@ -3,31 +3,26 @@ start = _{ SOI ~ declarations* ~ EOI}
 identifier = @{ (ASCII_ALPHA | ASCII_ALPHANUMERIC | "_") ~ (ASCII_ALPHANUMERIC | "_")* }
 
 declarations = {
-//   module_rule |
-//   package_rule |
-  class_rule
-//   file_rule |
-//   function_rule |
-//   layer_rule
+  container_rule
 }
 
-class_rule = {
+// module is a container of package
+// package is a container of file and classes
+// file is a container of classes and functions
+// classes is a container of functions and field
+container_rule = {
 	container ~ ("(" ~ scope ~ ")")? ~ ("::" ~ expression)? ~ should? ~ operation ~ assert ~ ";"?
 }
 
-package_rule = {
-	"package"
+container = {
+    "module" |
+    "package" |
+    "class" |
+    "function" |
+    "file"
 }
-module_rule = {
-	"module"
-}
-file_rule = {
-	"file"
-}
+
 layer_rule = {
-	"layer"
-}
-function_rule = {
 	"layer"
 }
 
@@ -62,14 +57,6 @@ assert = {
     container ~ opening_paren ~ string ~ closing_paren |
     string |
     int
-}
-
-container = {
-    "module" |
-    "package" |
-    "class" |
-    "function" |
-    "file"
 }
 
 operation = {
