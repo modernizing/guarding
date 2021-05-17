@@ -1,7 +1,6 @@
 use pest::Parser;
 use pest::iterators::{Pairs, Pair};
-use crate::parser::ast::Operation::Gt;
-use crate::parser::ast::{GuardRule, RuleLevel};
+use crate::parser::ast::{GuardRule, RuleLevel, RuleScope};
 
 pub mod ast;
 
@@ -9,34 +8,34 @@ pub mod ast;
 #[grammar = "parser/guarding.pest"]
 struct IdentParser;
 
-pub fn parse(code: &str) {
+pub fn parse(code: &str) -> Vec<GuardRule> {
     let pairs = IdentParser::parse(Rule::start, code).unwrap_or_else(|e| panic!("{}", e));
-    consume_rules_with_spans(pairs);
+    consume_rules_with_spans(pairs)
 }
 
-fn consume_rules_with_spans(pairs: Pairs<Rule>) {
+fn consume_rules_with_spans(pairs: Pairs<Rule>) -> Vec<GuardRule> {
     pairs.filter(|pair| {
         return pair.as_rule() == Rule::declaration;
     }).map(|pair| {
+        let mut rule: GuardRule = Default::default();
         for p in pair.into_inner() {
-            match p.as_rule() {
+             match p.as_rule() {
                 Rule::normal_rule => {
-                    parse_normal_rule(p);
+                    rule = return parse_normal_rule(p);
                 }
-                _ => println!("unreachable content rule: {:?}", p.as_rule())
+                _ => panic!("unreachable content rule: {:?}", p.as_rule())
             };
         }
 
-        return GuardRule::default();
+        return rule;
     })
-        .collect::<Vec<GuardRule>>();
+        .collect::<Vec<GuardRule>>()
 }
 
 fn parse_normal_rule(pair: Pair<Rule>) -> GuardRule {
     let mut guard_rule = GuardRule::default();
 
     for p in pair.into_inner() {
-        println!("rule: {:?}, level: {:?}", p.as_rule(), p.as_span());
         match p.as_rule() {
             Rule::rule_level => {
                 let level = p.as_span().as_str();
@@ -53,7 +52,26 @@ fn parse_normal_rule(pair: Pair<Rule>) -> GuardRule {
             Rule::expression => {}
             Rule::operation => {}
             Rule::assert => {}
-            _ => {}
+            Rule::scope => {
+                for sc in p.into_inner() {
+                    match sc.as_rule() {
+                        Rule::string => {
+                            let path = sc.as_span().as_str().to_string();
+                            println!("path: {:?}", path);
+                            guard_rule.scope = RuleScope::PathDefine(path);
+                        },
+                        _ => {
+                            println!("implementing scope: {:?}, text: {:?}", sc.as_rule(), sc.as_span());
+                        }
+                    }
+                }
+            }
+            Rule::should => {
+                // nothing to do
+            }
+            _ => {
+                println!("implementing rule: {:?}, level: {:?}", p.as_rule(), p.as_span());
+            }
         }
     }
 
@@ -63,11 +81,14 @@ fn parse_normal_rule(pair: Pair<Rule>) -> GuardRule {
 #[cfg(test)]
 mod tests {
     use crate::parser::parse;
+    use crate::parser::ast::RuleLevel;
 
     #[test]
-    fn should_parse_ident() {
+    fn should_parse_rule_level() {
         let code = "class::name contains \"Controller\";";
-        parse(code);
+        let rules = parse(code);
+        assert_eq!(1, rules.len());
+        assert_eq!(RuleLevel::Class, rules[0].level);
     }
 
     #[test]
