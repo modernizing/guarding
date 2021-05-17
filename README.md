@@ -15,6 +15,19 @@ todo:
     - [ ] JavaScript / TypeScript
     - [ ] Rust
 
+## Document
+
+Limit Class or Struct function-name
+
+```
+# 类::名 包含 "Controller";
+# 中文分词：("..myapp..") 类名称中包含 "Controller"
+class("..myapp..")::function.name should contains("Model");
+# or
+class("..myapp..")::function.name contains("");
+```
+
+
 License
 ---
 
