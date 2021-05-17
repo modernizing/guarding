@@ -22,7 +22,7 @@ fn consume_rules_with_spans(pairs: Pairs<Rule>) {
             match p.as_rule() {
                 Rule::normal_rule => {
                     parse_normal_rule(p);
-                },
+                }
                 _ => println!("unreachable content rule: {:?}", p.as_rule())
             };
         }
@@ -33,31 +33,31 @@ fn consume_rules_with_spans(pairs: Pairs<Rule>) {
 }
 
 fn parse_normal_rule(pair: Pair<Rule>) -> GuardRule {
-    let mut rule_level = RuleLevel::Class;
+    let mut guard_rule = GuardRule::default();
+
     for p in pair.into_inner() {
         println!("rule: {:?}, level: {:?}", p.as_rule(), p.as_span());
         match p.as_rule() {
             Rule::rule_level => {
-
-            },
-            Rule::prop => {
-
-            },
-            Rule::expression => {
-
-            },
-            Rule::operation => {
-
-            },
-            Rule::assert => {
-
-            },
-            _ => {},
-
+                let level = p.as_span().as_str();
+                match level {
+                    "module" => { guard_rule.level = RuleLevel::Module }
+                    "package" => { guard_rule.level = RuleLevel::Package }
+                    "function" => { guard_rule.level = RuleLevel::Function }
+                    "file" => { guard_rule.level = RuleLevel::File }
+                    "class" => { guard_rule.level = RuleLevel::Class }
+                    &_ => {unreachable!("error rule level: {:?}", level)}
+                };
+            }
+            Rule::prop => {}
+            Rule::expression => {}
+            Rule::operation => {}
+            Rule::assert => {}
+            _ => {}
         }
     }
 
-    GuardRule::default()
+    guard_rule
 }
 
 #[cfg(test)]

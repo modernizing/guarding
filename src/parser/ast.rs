@@ -31,10 +31,10 @@ pub enum RuleType {
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum RuleLevel {
-    Class,
     Package,
     Module,
     Function,
+    Class,
     File,
 }
 
