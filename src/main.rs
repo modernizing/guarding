@@ -5,6 +5,8 @@ extern crate pest_derive;
 extern crate serde;
 
 use tree_sitter::Language;
+use crate::parser::ast::{GuardRule, RuleScope, RuleLevel, Expr, RuleAssert};
+use crate::identify::code_model::CodeFile;
 
 extern "C" { fn tree_sitter_rust() -> Language; }
 extern "C" { fn tree_sitter_java() -> Language; }
@@ -16,11 +18,67 @@ pub mod parser;
 fn main() {
 
 }
+
+pub fn capture(rule: GuardRule, models: &Vec<CodeFile>) {
+    match &rule.level {
+        RuleLevel::Package => {
+            match &rule.scope {
+                RuleScope::All => {}
+                RuleScope::PathDefine(str) => {
+                    let mut filtered_models: Vec<CodeFile> = vec![];
+                    if str.as_str() == "." {
+                        filtered_models = models.clone();
+                    }
+
+                    match &rule.expr {
+                        Expr::Call(_) => {}
+                        Expr::PropsCall(props) => {
+                            match props[0].as_str() {
+                                "file" => {
+                                    match props[1].as_str() {
+                                        "len" => {
+                                            let mut size = 0;
+                                            match &rule.assert {
+                                                RuleAssert::Empty => {}
+                                                RuleAssert::Stringed(_) => {}
+                                                RuleAssert::Leveled(_, _) => {}
+                                                RuleAssert::Sized(sized) => {
+                                                    size = *sized;
+                                                }
+                                            }
+
+                                            if filtered_models.len() > size {
+                                                println!("error for rule: {:?}", &rule);
+                                            }
+                                        },
+                                        &_ => {}
+                                    };
+                                }
+                                &_ => {}
+                            }
+                        }
+                        Expr::Identifier(_) => {}
+                    };
+                }
+                RuleScope::Extend(_) => {}
+                RuleScope::Assignable(_) => {}
+                RuleScope::Implementation(_) => {}
+                RuleScope::MatchRegex(_) => {}
+            }
+        }
+        RuleLevel::Module => {}
+        RuleLevel::Function => {}
+        RuleLevel::Class => {}
+        RuleLevel::Struct => {}
+        RuleLevel::File => {}
+    };
+}
+
 #[cfg(test)]
 mod tests {
     use std::path::PathBuf;
     use std::fs;
-    use crate::parser;
+    use crate::{parser, capture};
     use walkdir::WalkDir;
     use crate::identify::java_ident::JavaIdent;
 
@@ -51,9 +109,8 @@ mod tests {
             }
         }
 
-        println!("{:?}", models);
-        for _rule in vec {
-            // rule.capture(rule);
+        for rule in vec {
+            capture(rule, &models);
         }
     }
 }

@@ -44,11 +44,15 @@ layer_expression = {
 }
 
 scope = {
-    string |
+    path_scope |
     impl_scope |
     extend_scope |
     assignable_scope |
     match_scope
+}
+
+path_scope = {
+    string
 }
 
 match_scope = {

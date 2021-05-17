@@ -199,7 +199,7 @@ fn parse_scope(parent: Pair<Rule>) -> RuleScope {
     let pair = pairs.next().unwrap();
 
     match pair.as_rule() {
-        Rule::string => {
+        Rule::path_scope => {
             let without_markers = str_support::replace_string_markers(pair.as_str());
             let string = str_support::unescape(without_markers.as_str()).expect("incorrect string literal");
             RuleScope::PathDefine(string)
