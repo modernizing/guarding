@@ -198,24 +198,33 @@ fn parse_scope(parent: Pair<Rule>) -> RuleScope {
             RuleScope::PathDefine(string)
         },
         Rule::assignable_scope => {
-            let mut string = "".to_string();
-            for p in pair.into_inner() {
-                match p.as_rule() {
-                    Rule::string => {
-                        let without_markers = replace_string_markers(p.as_str());
-                        string = unescape(without_markers.as_str()).expect("incorrect string literal");
-                    },
-                    _ => {}
-                }
-            }
+            let string = filter_string_from_pair(pair);
 
             RuleScope::Assignable(string)
         },
+        Rule::extend_scope => {
+            let string = filter_string_from_pair(pair);
+            RuleScope::Extend(string)
+        }
         _ => {
             println!("implementing scope: {:?}, text: {:?}", pair.as_rule(), pair.as_span());
             RuleScope::All
         }
     }
+}
+
+fn filter_string_from_pair(pair: Pair<Rule>) -> String {
+    let mut string = "".to_string();
+    for p in pair.into_inner() {
+        match p.as_rule() {
+            Rule::string => {
+                let without_markers = replace_string_markers(p.as_str());
+                string = unescape(without_markers.as_str()).expect("incorrect string literal");
+            },
+            _ => {}
+        }
+    }
+    string
 }
 
 /// Strings are delimited by double quotes, single quotes and backticks
@@ -333,6 +342,7 @@ mod tests {
         assert_eq!(2, vec[0].ops.len());
         assert_eq!(Operator::Not, vec[0].ops[0]);
         assert_eq!(Operator::Endswith, vec[0].ops[1]);
+        assert_eq!(RuleScope::Extend("Connection.class".to_string()), vec[0].scope);
     }
 
     #[test]
