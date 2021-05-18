@@ -87,6 +87,33 @@ impl RuleExecutor {
     }
 
     pub fn capture(&mut self, rule: GuardRule, index: usize) {
+        let mut filtered_models = self.filter_model_by_rule(&rule);
+
+        // 2. run expression for evaluation
+        match &rule.expr {
+            Expr::Call(_) => {}
+            Expr::PropsCall(props) => {
+                match props[0].as_str() {
+                    "file" => {
+                        match props[1].as_str() {
+                            "len" => {
+                                let size = RuleExecutor::get_assert_sized(&rule);
+                                let ops = &rule.ops[0];
+                                self.processing_file_len(index, &mut filtered_models, size, ops)
+                            }
+                            &_ => {}
+                        };
+                    }
+                    &_ => {}
+                }
+            }
+            Expr::Identifier(_) => {}
+        }
+
+        // todo: 3. run assert
+    }
+
+    fn filter_model_by_rule(&mut self, rule: &GuardRule) -> Vec<CodeFile> {
         let mut filtered_models: Vec<CodeFile> = vec![];
 
         // 1. filter by scopes
@@ -111,67 +138,50 @@ impl RuleExecutor {
             RuleLevel::Struct => {}
             RuleLevel::File => {}
         };
+        filtered_models
+    }
 
-        // 2. run expression for evaluation
-        match &rule.expr {
-            Expr::Call(_) => {}
-            Expr::PropsCall(props) => {
-                match props[0].as_str() {
-                    "file" => {
-                        match props[1].as_str() {
-                            "len" => {
-                                let size = RuleExecutor::get_assert_sized(&rule);
-                                let mut error = RuleError {
-                                    expected: format!("{}", size),
-                                    actual: format!("{}", filtered_models.len()),
-                                    error_type: "file.len size".to_string(),
-                                    msg: "".to_string(),
-                                    rule: index
-                                };
+    fn processing_file_len(&mut self, index: usize, filtered_models: &mut Vec<CodeFile>, excepted_size: usize, ops: &Operator) {
+        let mut error = RuleError {
+            expected: format!("{}", excepted_size),
+            actual: format!("{}", filtered_models.len()),
+            error_type: "file.len size".to_string(),
+            msg: "".to_string(),
+            rule: index,
+        };
 
-                                match &rule.ops[0] {
-                                    Operator::Gt => {
-                                        if size > filtered_models.len() {
-                                            error.msg = format!("file.len = {}, expected: len > {}", filtered_models.len(), size);
-                                        }
-                                    }
-                                    Operator::Gte => {
-                                        if size >= filtered_models.len() {
-                                            error.msg = format!("file.len = {}, expected: len >= {}", filtered_models.len(), size);
-                                        }
-                                    }
-                                    Operator::Lt => {
-                                        if size < filtered_models.len() {
-                                            error.msg = format!("file.len = {}, expected: len < {}", filtered_models.len(), size);
-                                        }
-                                    }
-                                    Operator::Lte => {
-                                        if size <= filtered_models.len() {
-                                            error.msg = format!("file.len = {}, expected: len <=  {}", filtered_models.len(), size);
-                                        }
-                                    }
-                                    Operator::Eq => {
-                                        if size != filtered_models.len() {
-                                            error.msg = format!("file.len = {}, expected: len = {}", filtered_models.len(), size);
-                                        }
-                                    }
-                                    _ => {}
-                                }
-
-                                if !error.msg.is_empty() {
-                                    self.errors.push(error);
-                                }
-                            }
-                            &_ => {}
-                        };
-                    }
-                    &_ => {}
+        match ops {
+            Operator::Gt => {
+                if excepted_size > filtered_models.len() {
+                    error.msg = format!("file.len = {}, expected: len > {}", filtered_models.len(), excepted_size);
                 }
             }
-            Expr::Identifier(_) => {}
+            Operator::Gte => {
+                if excepted_size >= filtered_models.len() {
+                    error.msg = format!("file.len = {}, expected: len >= {}", filtered_models.len(), excepted_size);
+                }
+            }
+            Operator::Lt => {
+                if excepted_size < filtered_models.len() {
+                    error.msg = format!("file.len = {}, expected: len < {}", filtered_models.len(), excepted_size);
+                }
+            }
+            Operator::Lte => {
+                if excepted_size <= filtered_models.len() {
+                    error.msg = format!("file.len = {}, expected: len <=  {}", filtered_models.len(), excepted_size);
+                }
+            }
+            Operator::Eq => {
+                if excepted_size != filtered_models.len() {
+                    error.msg = format!("file.len = {}, expected: len = {}", filtered_models.len(), excepted_size);
+                }
+            }
+            _ => {}
         }
 
-        // todo: 3. run assert
+        if !error.msg.is_empty() {
+            self.errors.push(error);
+        }
     }
 
     fn get_assert_sized(rule: &GuardRule) -> usize {
