@@ -8,6 +8,10 @@ use tree_sitter::Language;
 use crate::parser::ast::{GuardRule, RuleScope, RuleLevel, Expr, RuleAssert, Operator};
 use crate::identify::code_model::CodeFile;
 use std::collections::HashMap;
+use std::path::PathBuf;
+use walkdir::WalkDir;
+use std::fs;
+use crate::identify::java_ident::JavaIdent;
 
 extern "C" { fn tree_sitter_rust() -> Language; }
 extern "C" { fn tree_sitter_java() -> Language; }
@@ -18,6 +22,36 @@ pub mod parser;
 
 fn main() {
 
+}
+
+fn execute(content: String, code_dir: PathBuf) -> HashMap<usize, String> {
+    let rules = parser::parse(content.as_str());
+    let mut models = vec![];
+    for entry in WalkDir::new(code_dir) {
+        let entry = entry.unwrap();
+        if !entry.file_type().is_file() {
+            continue;
+        }
+
+        if let None = entry.path().extension() {
+            continue;
+        }
+
+        let ext = entry.path().extension().unwrap().to_str().unwrap();
+        match ext {
+            ".java" => {
+                let content = fs::read_to_string(entry.path()).expect("not such file");
+                models.push(JavaIdent::parse(content.as_str()));
+            }
+            &_ => {}
+        }
+    }
+
+    let mut errors: HashMap<usize, String> = Default::default();
+    rules.into_iter().enumerate().for_each(|(i, rule)| {
+        capture(rule, &models, i, &mut errors);
+    });
+    errors
 }
 
 pub fn capture(rule: GuardRule, models: &Vec<CodeFile>, index: usize, errors: &mut HashMap<usize, String>) {
@@ -112,10 +146,7 @@ fn get_assert_sized(rule: &GuardRule) -> usize {
 mod tests {
     use std::path::PathBuf;
     use std::fs;
-    use crate::{parser, capture};
-    use walkdir::WalkDir;
-    use crate::identify::java_ident::JavaIdent;
-    use std::collections::HashMap;
+    use crate::{execute};
 
     fn test_dir() -> PathBuf {
         let root_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
@@ -129,34 +160,9 @@ mod tests {
     fn should_working_in_process() {
         let path = test_dir().join("size.guarding");
         let content = fs::read_to_string(path).expect("not file");
-        let rules = parser::parse(content.as_str());
+        let code_dir = test_dir();
 
-
-        let mut models = vec![];
-        for entry in WalkDir::new(test_dir()) {
-            let entry = entry.unwrap();
-            if !entry.file_type().is_file() {
-                continue;
-            }
-
-            if let None = entry.path().extension() {
-                continue;
-            }
-
-            let ext = entry.path().extension().unwrap().to_str().unwrap();
-            match ext {
-                ".java" => {
-                    let content = fs::read_to_string(entry.path()).expect("not such file");
-                    models.push(JavaIdent::parse(content.as_str()));
-                }
-                &_ => {}
-            }
-        }
-
-        let mut errors: HashMap<usize, String> = Default::default();
-        rules.into_iter().enumerate().for_each(|(i, rule)| {
-            capture(rule, &models, i, &mut errors);
-        });
+        let errors = execute(content, code_dir);
 
         assert_eq!(1, errors.len());
     }
