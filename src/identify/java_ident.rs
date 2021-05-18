@@ -37,6 +37,7 @@ impl JavaIdent {
         let mut code_file = CodeFile::default();
         let mut last_class_end_line = 0;
         let mut class = CodeClass::default();
+        let mut is_last_node = false;
 
         for (mat, capture_index) in captures {
             let capture = mat.captures[capture_index];
@@ -50,8 +51,12 @@ impl JavaIdent {
                 "class-name" => {
                     class.name = text.to_string();
                     let class_node = capture.node.parent().unwrap();
+                    println!("{:?}", class_node);
                     last_class_end_line = class_node.end_position().row;
                     JavaIdent::insert_location(&mut class, class_node);
+                    if !is_last_node {
+                        is_last_node = true;
+                    }
                 },
                 "parameter" => {},
                 &_ => {
@@ -71,6 +76,10 @@ impl JavaIdent {
                     class = CodeClass::default();
                 }
             }
+        }
+
+        if is_last_node {
+            code_file.classes.push(class.clone());
         }
 
         code_file
@@ -105,5 +114,17 @@ import payroll.Employee;
 ";
         let file = JavaIdent::parse(source_code);
         assert_eq!(3, file.imports.len());
+    }
+
+    #[test]
+    fn should_parse_java_class() {
+        let source_code = "class DateTimeImpl implements DateTime {
+    @Override
+    public Date getDate() {
+        return new Date();
+    }
+}";
+        let file = JavaIdent::parse(source_code);
+        assert_eq!(1, file.classes.len());
     }
 }
