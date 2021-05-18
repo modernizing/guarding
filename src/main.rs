@@ -7,6 +7,7 @@ use std::collections::HashMap;
 use std::fs;
 use std::path::PathBuf;
 
+use serde::{Deserialize, Serialize};
 use tree_sitter::Language;
 use walkdir::WalkDir;
 
@@ -17,11 +18,22 @@ use crate::identify::rust_ident::RustIdent;
 use crate::parser::ast::{Expr, GuardRule, Operator, RuleAssert, RuleLevel, RuleScope};
 
 extern "C" { fn tree_sitter_rust() -> Language; }
+
 extern "C" { fn tree_sitter_java() -> Language; }
+
 extern "C" { fn tree_sitter_javascript() -> Language; }
 
 pub mod identify;
 pub mod parser;
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct RuleError {
+    pub expected: String,
+    pub actual: String,
+    pub error_type: String,
+    pub msg: String,
+    pub rule: usize,
+}
 
 fn main() {
     // test program
@@ -106,37 +118,37 @@ pub fn capture(rule: GuardRule, models: &Vec<CodeFile>, index: usize, errors: &m
                             match &rule.ops[0] {
                                 Operator::Gt => {
                                     if size > filtered_models.len() {
-                                        let msg = format!("file.len = {}, expected len: > {}", filtered_models.len(), size);
+                                        let msg = format!("file.len = {}, expected: len > {}", filtered_models.len(), size);
                                         errors.insert(index, msg);
                                     }
                                 }
                                 Operator::Gte => {
                                     if size >= filtered_models.len() {
-                                        let msg = format!("file.len = {}, expected len: >= {}", filtered_models.len(), size);
+                                        let msg = format!("file.len = {}, expected: len >= {}", filtered_models.len(), size);
                                         errors.insert(index, msg);
                                     }
                                 }
                                 Operator::Lt => {
                                     if size < filtered_models.len() {
-                                        let msg = format!("file.len = {}, expected: < len {}", filtered_models.len(), size);
+                                        let msg = format!("file.len = {}, expected: len < {}", filtered_models.len(), size);
                                         errors.insert(index, msg);
                                     }
                                 }
                                 Operator::Lte => {
                                     if size <= filtered_models.len() {
-                                        let msg = format!("file.len = {}, expected: <= len {}", filtered_models.len(), size);
+                                        let msg = format!("file.len = {}, expected: len <=  {}", filtered_models.len(), size);
                                         errors.insert(index, msg);
                                     }
                                 }
                                 Operator::Eq => {
                                     if size != filtered_models.len() {
-                                        let msg = format!("file.len = {}, expected: = len {}", filtered_models.len(), size);
+                                        let msg = format!("file.len = {}, expected: len = {}", filtered_models.len(), size);
                                         errors.insert(index, msg);
                                     }
                                 }
                                 _ => {}
                             }
-                        },
+                        }
                         &_ => {}
                     };
                 }
