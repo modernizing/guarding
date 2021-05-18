@@ -3,7 +3,7 @@ use std::path::PathBuf;
 use serde::{Deserialize, Serialize};
 use walkdir::WalkDir;
 
-use crate::identify::code_model::CodeFile;
+use crate::identify::code_model::{CodeFile, CodeClass};
 use crate::identify::java_ident::JavaIdent;
 use crate::identify::js_ident::JsIdent;
 use crate::identify::rust_ident::RustIdent;
@@ -99,13 +99,32 @@ impl RuleExecutor {
                 println!("todo");
             }
             RuleLevel::Class => {
+                let mut filtered_models: Vec<CodeClass> = vec![];
+
                 match &rule.scope {
                     RuleScope::PathDefine(str) => {
                         if str.as_str() == "." {
-                            // filtered_models = self.models.clone();
+                            for file in &self.models {
+                                filtered_models.extend(file.classes.clone());
+                            }
                         };
                     }
                     _ => {}
+                }
+
+                match &rule.expr {
+                    Expr::Call(call) => {
+                        match call.name.as_str() {
+                            "len" => {
+                                let size = RuleExecutor::get_assert_sized(&rule);
+                                let ops = &rule.ops[0];
+                                self.processing_file_len(index, size, ops, filtered_models.len())
+                            }
+                            _ => {}
+                        }
+                    }
+                    Expr::PropsCall(_) => {}
+                    Expr::Identifier(_) => {}
                 }
             }
             RuleLevel::Struct => {
