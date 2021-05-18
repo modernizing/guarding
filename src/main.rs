@@ -49,8 +49,11 @@ mod tests {
 
         let errors =  RuleExecutor::execute(content, code_dir);
 
-        println!("{:?}", errors);
         assert_eq!(1, errors.len());
+        assert_eq!("50".to_string(), errors[0].expected);
+        assert_eq!("26".to_string(), errors[0].actual);
+        assert_eq!("file.len size".to_string(), errors[0].error_type);
+        assert_eq!("file.len = 26, expected: len > 50".to_string(), errors[0].msg);
     }
 
     #[test]
@@ -68,7 +71,6 @@ mod tests {
         let content = "class(\".\")::len should < 27;";
         let errors = RuleExecutor::execute(content.to_string(), code_dir);
 
-        println!("{:?}", errors);
         // assert_eq!(1, errors.len());
     }
 }
