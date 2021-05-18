@@ -18,6 +18,7 @@ pub struct CodePackage {
 pub struct CodeFile {
     pub name: String,
     pub path: String,
+    pub package: String,
     pub imports: Vec<String>,
     pub classes: Vec<CodeClass>,
     pub functions: Vec<CodeFunction>,
@@ -28,6 +29,7 @@ impl Default for CodeFile {
         CodeFile {
             name: "".to_string(),
             path: "".to_string(),
+            package: "".to_string(),
             imports: vec![],
             classes: vec![],
             functions: vec![],

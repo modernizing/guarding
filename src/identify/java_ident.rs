@@ -11,6 +11,9 @@ pub struct JavaIdent {
 impl JavaIdent {
     pub fn parse(code: &str) -> CodeFile {
         let query_source = "
+(package_declaration
+	(scoped_identifier) @package-name)
+
 (import_declaration
 	(scoped_identifier) @import-name)
 
@@ -45,6 +48,9 @@ impl JavaIdent {
 
             let text = capture.node.utf8_text((&code).as_ref()).unwrap_or("");
             match capture_name.as_str() {
+                "package-name" => {
+                    code_file.package = text.to_string();
+                },
                 "import-name" => {
                     code_file.imports.push(text.to_string());
                 },
@@ -143,5 +149,12 @@ import payroll.Employee;
         let file = JavaIdent::parse(source_code);
         assert_eq!(1, file.classes.len());
         assert_eq!("DateTimeImpl", file.classes[0].name);
+    }
+    #[test]
+    fn should_support_package_name() {
+        let source_code = "package com.phodal.pepper.powermock;
+";
+        let file = JavaIdent::parse(source_code);
+        assert_eq!("com.phodal.pepper.powermock", file.package);
     }
 }
