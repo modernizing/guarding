@@ -24,10 +24,22 @@ pub struct RuleError {
 #[derive(Debug, Clone)]
 pub struct RuleExecutor {
     pub errors: HashMap<usize, RuleError>,
+    pub rules: Vec<GuardRule>,
+    pub models: Vec<CodeFile>,
+}
+
+impl Default for RuleExecutor {
+    fn default() -> Self {
+        RuleExecutor {
+            errors: Default::default(),
+            rules: vec![],
+            models: vec![],
+        }
+    }
 }
 
 impl RuleExecutor {
-    pub fn execute(rule_content: String, code_dir: PathBuf) -> HashMap<usize, String> {
+    pub fn execute(rule_content: String, code_dir: PathBuf) -> HashMap<usize, RuleError> {
         let rules = parser::parse(rule_content.as_str());
         let mut models = vec![];
         for entry in WalkDir::new(code_dir) {
@@ -57,14 +69,26 @@ impl RuleExecutor {
             }
         }
 
-        let mut errors: HashMap<usize, String> = Default::default();
-        rules.into_iter().enumerate().for_each(|(i, rule)| {
-            RuleExecutor::capture(rule, &models, i, &mut errors);
-        });
-        errors
+        let mut executor = RuleExecutor::default();
+        executor.models = models;
+        executor.rules = rules;
+
+        executor.run();
+        executor.errors
     }
 
-    pub fn capture(rule: GuardRule, models: &Vec<CodeFile>, index: usize, errors: &mut HashMap<usize, String>) {
+    pub fn run(&mut self) {
+        let mut errors: HashMap<usize, String> = Default::default();
+        self.rules
+            .clone()
+            .into_iter()
+            .enumerate()
+            .for_each(|(i, rule)| {
+                self.capture(rule, i, &mut errors);
+            });
+    }
+
+    pub fn capture(&mut self, rule: GuardRule, index: usize, errors: &mut HashMap<usize, String>) {
         let mut filtered_models: Vec<CodeFile> = vec![];
 
         // 1. filter by scopes
@@ -74,7 +98,7 @@ impl RuleExecutor {
                     RuleScope::All => {}
                     RuleScope::PathDefine(str) => {
                         if str.as_str() == "." {
-                            filtered_models = models.clone();
+                            filtered_models = self.models.clone();
                         };
                     }
                     RuleScope::Extend(_) => {}
