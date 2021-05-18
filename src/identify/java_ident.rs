@@ -1,12 +1,10 @@
-use tree_sitter::{Node, Parser, Query, QueryCursor, QueryCapture};
+use tree_sitter::{Node, Parser, Query, QueryCapture, QueryCursor};
 
+use crate::tree_sitter_java;
 use crate::identify::code_model::{CodeClass, CodeFile, CodeFunction};
 use crate::identify::code_model::Location;
-use crate::{tree_sitter_java};
 
-pub struct JavaIdent {
-
-}
+pub struct JavaIdent {}
 
 impl JavaIdent {
     pub fn parse(code: &str) -> CodeFile {
@@ -50,10 +48,10 @@ impl JavaIdent {
             match capture_name.as_str() {
                 "package-name" => {
                     code_file.package = text.to_string();
-                },
+                }
                 "import-name" => {
                     code_file.imports.push(text.to_string());
-                },
+                }
                 "class-name" => {
                     class.name = text.to_string();
                     let class_node = capture.node.parent().unwrap();
@@ -62,11 +60,11 @@ impl JavaIdent {
                     if !is_last_node {
                         is_last_node = true;
                     }
-                },
+                }
                 "impl-name" => {
                     class.implements.push(text.to_string());
                 }
-                "parameter" => {},
+                "parameter" => {}
                 &_ => {
                     println!(
                         "    pattern: {}, capture: {}, row: {}, text: {:?}",
@@ -150,6 +148,7 @@ import payroll.Employee;
         assert_eq!(1, file.classes.len());
         assert_eq!("DateTimeImpl", file.classes[0].name);
     }
+
     #[test]
     fn should_support_package_name() {
         let source_code = "package com.phodal.pepper.powermock;
