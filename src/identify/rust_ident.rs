@@ -139,6 +139,15 @@ mod tests {
     }
 
     #[test]
+    fn should_parse_basic_struct() {
+        let source_code = "pub struct RustIdent {
+}
+";
+        let file = RustIdent::parse(source_code);
+        assert_eq!(1, file.classes.len());
+    }
+
+    #[test]
     fn should_parse_struct() {
         let source_code = "pub struct RustIdent {}
 
