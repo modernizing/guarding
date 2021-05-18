@@ -129,16 +129,13 @@ impl RuleExecutor {
         match &rule.level {
             RuleLevel::Package => {
                 match &rule.scope {
-                    RuleScope::All => {}
                     RuleScope::PathDefine(str) => {
                         if str.as_str() == "." {
                             filtered_models = self.models.clone();
                         };
                     }
-                    RuleScope::Extend(_) => {}
-                    RuleScope::Assignable(_) => {}
-                    RuleScope::Implementation(_) => {}
                     RuleScope::MatchRegex(_) => {}
+                    _ => {}
                 }
             }
             RuleLevel::Module => {
@@ -148,7 +145,14 @@ impl RuleExecutor {
                 println!("todo");
             }
             RuleLevel::Class => {
-                println!("todo");
+                match &rule.scope {
+                    RuleScope::PathDefine(str) => {
+                        if str.as_str() == "." {
+                            filtered_models = self.models.clone();
+                        };
+                    }
+                    _ => {}
+                }
             }
             RuleLevel::Struct => {
                 println!("todo");
