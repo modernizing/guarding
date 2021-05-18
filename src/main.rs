@@ -59,7 +59,15 @@ mod tests {
         let content = "package(\".\")::file.len should = 27;";
         let errors = RuleExecutor::execute(content.to_string(), code_dir);
 
-        println!("{:?}", errors);
+        assert_eq!(1, errors.len());
+    }
+
+    #[test]
+    fn should_support_for_class_filter() {
+        let code_dir = test_dir();
+        let content = "class(\".\")::len should < 27;";
+        let errors = RuleExecutor::execute(content.to_string(), code_dir);
+
         assert_eq!(1, errors.len());
     }
 }

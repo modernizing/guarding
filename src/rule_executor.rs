@@ -87,7 +87,7 @@ impl RuleExecutor {
     }
 
     pub fn capture(&mut self, rule: GuardRule, index: usize) {
-        let mut filtered_models = self.filter_model_by_rule(&rule);
+        let filtered_models = self.filter_model_by_rule(&rule);
 
         // 2. run expression for evaluation
         match &rule.expr {
@@ -141,11 +141,21 @@ impl RuleExecutor {
                     RuleScope::MatchRegex(_) => {}
                 }
             }
-            RuleLevel::Module => {}
-            RuleLevel::Function => {}
-            RuleLevel::Class => {}
-            RuleLevel::Struct => {}
-            RuleLevel::File => {}
+            RuleLevel::Module => {
+                println!("todo");
+            }
+            RuleLevel::Function => {
+                println!("todo");
+            }
+            RuleLevel::Class => {
+                println!("todo");
+            }
+            RuleLevel::Struct => {
+                println!("todo");
+            }
+            RuleLevel::File => {
+                println!("todo");
+            }
         };
         filtered_models
     }
