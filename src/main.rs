@@ -135,12 +135,21 @@ mod tests {
         let mut models = vec![];
         for entry in WalkDir::new(test_dir()) {
             let entry = entry.unwrap();
-            if entry.file_type().is_file() {
-                let file_name = entry.file_name().to_str().expect("error file name");
-                if file_name.ends_with(".java") {
+            if !entry.file_type().is_file() {
+                continue;
+            }
+
+            if let None = entry.path().extension() {
+                continue;
+            }
+
+            let ext = entry.path().extension().unwrap().to_str().unwrap();
+            match ext {
+                ".java" => {
                     let content = fs::read_to_string(entry.path()).expect("not such file");
                     models.push(JavaIdent::parse(content.as_str()));
                 }
+                &_ => {}
             }
         }
 
