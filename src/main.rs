@@ -31,8 +31,8 @@ fn main() {
     execute(content, buf);
 }
 
-fn execute(content: String, code_dir: PathBuf) -> HashMap<usize, String> {
-    let rules = parser::parse(content.as_str());
+fn execute(rule_content: String, code_dir: PathBuf) -> HashMap<usize, String> {
+    let rules = parser::parse(rule_content.as_str());
     let mut models = vec![];
     for entry in WalkDir::new(code_dir) {
         let entry = entry.unwrap();
@@ -48,13 +48,13 @@ fn execute(content: String, code_dir: PathBuf) -> HashMap<usize, String> {
         let content = fs::read_to_string(entry.path()).expect("not such file");
 
         match ext {
-            ".java" => {
+            "java" => {
                 models.push(JavaIdent::parse(content.as_str()));
             }
-            ".js" => {
+            "js" => {
                 models.push(JsIdent::parse(content.as_str()));
             }
-            ".rs" => {
+            "rs" => {
                 models.push(RustIdent::parse(content.as_str()));
             }
             &_ => {}
@@ -110,25 +110,31 @@ pub fn capture(rule: GuardRule, models: &Vec<CodeFile>, index: usize, errors: &m
                                         errors.insert(index, msg);
                                     }
                                 }
-                                Operator::Gte => {}
+                                Operator::Gte => {
+                                    if size >= filtered_models.len() {
+                                        let msg = format!("file.len = {}, expected len: >= {}", filtered_models.len(), size);
+                                        errors.insert(index, msg);
+                                    }
+                                }
                                 Operator::Lt => {
                                     if size < filtered_models.len() {
                                         let msg = format!("file.len = {}, expected: < len {}", filtered_models.len(), size);
                                         errors.insert(index, msg);
                                     }
                                 }
-                                Operator::Lte => {}
-                                Operator::Eq => {}
-                                Operator::NotEq => {}
-                                Operator::And => {}
-                                Operator::Or => {}
-                                Operator::Not => {}
-                                Operator::StartsWith => {}
-                                Operator::Endswith => {}
-                                Operator::Contains => {}
-                                Operator::ResideIn => {}
-                                Operator::Accessed => {}
-                                Operator::DependBy => {}
+                                Operator::Lte => {
+                                    if size <= filtered_models.len() {
+                                        let msg = format!("file.len = {}, expected: <= len {}", filtered_models.len(), size);
+                                        errors.insert(index, msg);
+                                    }
+                                }
+                                Operator::Eq => {
+                                    if size != filtered_models.len() {
+                                        let msg = format!("file.len = {}, expected: = len {}", filtered_models.len(), size);
+                                        errors.insert(index, msg);
+                                    }
+                                }
+                                _ => {}
                             }
                         },
                         &_ => {}
@@ -179,6 +185,16 @@ mod tests {
 
         let errors = execute(content, code_dir);
 
+        assert_eq!(1, errors.len());
+    }
+
+    #[test]
+    fn should_get_errors_when_lt() {
+        let code_dir = test_dir();
+        let content = "package(\".\")::file.len should = 27;";
+        let errors = execute(content.to_string(), code_dir);
+
+        println!("{:?}", errors);
         assert_eq!(1, errors.len());
     }
 }

@@ -127,7 +127,7 @@ op_lte            = { "<=" }
 op_gte            = { ">=" }
 op_lt             = { "<" }
 op_gt             = { ">" }
-op_eq             = { "==" }
+op_eq             = { "=" }
 op_ineq           = { "!=" }
 
 should = {
