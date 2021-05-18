@@ -10,6 +10,7 @@ use crate::identify::rust_ident::RustIdent;
 use crate::parser::ast::{Expr, GuardRule, Operator, RuleAssert, RuleLevel, RuleScope};
 use crate::parser;
 use std::fs;
+use crate::identify::code_ident::CodeIdent;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct RuleError {

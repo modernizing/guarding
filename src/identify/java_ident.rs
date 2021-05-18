@@ -1,13 +1,13 @@
-use tree_sitter::{Node, Parser, Query, QueryCapture, QueryCursor};
+use tree_sitter::{Node, Parser, Query, QueryCursor};
 
 use crate::tree_sitter_java;
-use crate::identify::code_model::{CodeClass, CodeFile, CodeFunction};
-use crate::identify::code_model::Location;
+use crate::identify::code_model::{CodeClass, CodeFile};
+use crate::identify::code_ident::CodeIdent;
 
 pub struct JavaIdent {}
 
-impl JavaIdent {
-    pub fn parse(code: &str) -> CodeFile {
+impl CodeIdent for JavaIdent {
+    fn parse(code: &str) -> CodeFile {
         let query_source = "
 (package_declaration
 	(scoped_identifier) @package-name)
@@ -90,27 +90,12 @@ impl JavaIdent {
 
         code_file
     }
-
-    #[allow(dead_code)]
-    fn create_function(capture: QueryCapture, text: &str) -> CodeFunction {
-        let mut function = CodeFunction::default();
-        function.name = text.to_string();
-
-        let node = capture.node.parent().unwrap();
-        JavaIdent::insert_location(&mut function, node);
-        function
-    }
-
-    #[allow(dead_code)]
-    fn insert_location<T: Location>(model: &mut T, node: Node) {
-        model.set_start(node.start_position().row, node.start_position().column);
-        model.set_end(node.end_position().row, node.end_position().column);
-    }
 }
 
 #[cfg(test)]
 mod tests {
     use crate::identify::java_ident::JavaIdent;
+    use crate::identify::code_ident::CodeIdent;
 
     #[test]
     fn should_parse_import() {

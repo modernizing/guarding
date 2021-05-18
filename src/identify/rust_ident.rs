@@ -1,16 +1,16 @@
-use tree_sitter::{Node, Parser, Query, QueryCapture, QueryCursor};
+use tree_sitter::{Node, Parser, Query, QueryCursor, Point};
 
 use crate::tree_sitter_rust;
 use crate::identify::code_model::{CodeClass, CodeFile, CodeFunction};
-use crate::identify::code_model::Location;
 use std::collections::HashMap;
+use crate::identify::code_ident::CodeIdent;
 
 pub struct RustIdent {
 
 }
 
-impl RustIdent {
-    pub fn parse(code: &str) -> CodeFile {
+impl CodeIdent for RustIdent {
+    fn parse(code: &str) -> CodeFile {
         let query_source = "
 (use_declaration
 	(scoped_identifier) @import-name)
@@ -54,6 +54,7 @@ impl RustIdent {
 
         let mut last_impl_struct_name = "".to_string();
         let mut last_trait_name = "".to_string();
+        let mut last_trait_pos: Point = Default::default();
         let mut impl_functions: HashMap<String, Vec<CodeFunction>> = Default::default();
 
         for (mat, capture_index) in captures {
@@ -73,7 +74,6 @@ impl RustIdent {
                 },
                 "impl-struct-name" => {
                     last_impl_struct_name = text.to_string();
-                    last_trait_name = "".to_string();
                 }
                 "impl-function-name" => {
                     let function = RustIdent::create_function(capture, text);
@@ -83,8 +83,8 @@ impl RustIdent {
                         .push(function);
                 }
                 "trait-name" => {
-                    last_impl_struct_name = "".to_string();
                     last_trait_name = text.to_string();
+                    last_trait_pos = capture.node.end_position();
                 }
                 "parameter" => {},
                 &_ => {
@@ -117,25 +117,12 @@ impl RustIdent {
 
         code_file
     }
-
-    fn create_function(capture: QueryCapture, text: &str) -> CodeFunction {
-        let mut function = CodeFunction::default();
-        function.name = text.to_string();
-
-        let node = capture.node.parent().unwrap();
-        RustIdent::insert_location(&mut function, node);
-        function
-    }
-
-    fn insert_location<T: Location>(model: &mut T, node: Node) {
-        model.set_start(node.start_position().row, node.start_position().column);
-        model.set_end(node.end_position().row, node.end_position().column);
-    }
 }
 
 #[cfg(test)]
 mod tests {
     use crate::identify::rust_ident::RustIdent;
+    use crate::identify::code_ident::CodeIdent;
 
     #[test]
     fn should_parse_import() {
