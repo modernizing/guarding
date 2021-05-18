@@ -14,6 +14,7 @@ todo:
  - [x] setup projects
  - [x] parser
     - [x] tree-sitter
+ - [x] interface / trait supports
  - [ ] languages
     - [ ] Java normal
     - [ ] Java ArchUnit generator
