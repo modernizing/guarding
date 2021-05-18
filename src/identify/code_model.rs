@@ -106,6 +106,7 @@ pub struct ClassConstant {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct CodeFunction {
     pub name: String,
+    // todo: thinking in access
     pub vars: Vec<String>,
     pub start: CodePoint,
     pub end: CodePoint
