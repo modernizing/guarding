@@ -49,6 +49,7 @@ mod tests {
 
         let errors =  RuleExecutor::execute(content, code_dir);
 
+        println!("{:?}", errors);
         assert_eq!(1, errors.len());
     }
 

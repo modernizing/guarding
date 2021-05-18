@@ -1,4 +1,3 @@
-use std::collections::HashMap;
 use std::path::PathBuf;
 
 use serde::{Deserialize, Serialize};
@@ -23,7 +22,7 @@ pub struct RuleError {
 
 #[derive(Debug, Clone)]
 pub struct RuleExecutor {
-    pub errors: HashMap<usize, RuleError>,
+    pub errors: Vec<RuleError>,
     pub rules: Vec<GuardRule>,
     pub models: Vec<CodeFile>,
 }
@@ -39,7 +38,7 @@ impl Default for RuleExecutor {
 }
 
 impl RuleExecutor {
-    pub fn execute(rule_content: String, code_dir: PathBuf) -> HashMap<usize, RuleError> {
+    pub fn execute(rule_content: String, code_dir: PathBuf) -> Vec<RuleError> {
         let rules = parser::parse(rule_content.as_str());
         let mut models = vec![];
         for entry in WalkDir::new(code_dir) {
@@ -78,17 +77,16 @@ impl RuleExecutor {
     }
 
     pub fn run(&mut self) {
-        let mut errors: HashMap<usize, String> = Default::default();
         self.rules
             .clone()
             .into_iter()
             .enumerate()
             .for_each(|(i, rule)| {
-                self.capture(rule, i, &mut errors);
+                self.capture(rule, i);
             });
     }
 
-    pub fn capture(&mut self, rule: GuardRule, index: usize, errors: &mut HashMap<usize, String>) {
+    pub fn capture(&mut self, rule: GuardRule, index: usize) {
         let mut filtered_models: Vec<CodeFile> = vec![];
 
         // 1. filter by scopes
@@ -123,38 +121,45 @@ impl RuleExecutor {
                         match props[1].as_str() {
                             "len" => {
                                 let size = RuleExecutor::get_assert_sized(&rule);
+                                let mut error = RuleError {
+                                    expected: format!("{}", size),
+                                    actual: format!("{}", filtered_models.len()),
+                                    error_type: "file.len size".to_string(),
+                                    msg: "".to_string(),
+                                    rule: index
+                                };
+
                                 match &rule.ops[0] {
                                     Operator::Gt => {
                                         if size > filtered_models.len() {
-                                            let msg = format!("file.len = {}, expected: len > {}", filtered_models.len(), size);
-                                            errors.insert(index, msg);
+                                            error.msg = format!("file.len = {}, expected: len > {}", filtered_models.len(), size);
                                         }
                                     }
                                     Operator::Gte => {
                                         if size >= filtered_models.len() {
-                                            let msg = format!("file.len = {}, expected: len >= {}", filtered_models.len(), size);
-                                            errors.insert(index, msg);
+                                            error.msg = format!("file.len = {}, expected: len >= {}", filtered_models.len(), size);
                                         }
                                     }
                                     Operator::Lt => {
                                         if size < filtered_models.len() {
-                                            let msg = format!("file.len = {}, expected: len < {}", filtered_models.len(), size);
-                                            errors.insert(index, msg);
+                                            error.msg = format!("file.len = {}, expected: len < {}", filtered_models.len(), size);
                                         }
                                     }
                                     Operator::Lte => {
                                         if size <= filtered_models.len() {
-                                            let msg = format!("file.len = {}, expected: len <=  {}", filtered_models.len(), size);
-                                            errors.insert(index, msg);
+                                            error.msg = format!("file.len = {}, expected: len <=  {}", filtered_models.len(), size);
                                         }
                                     }
                                     Operator::Eq => {
                                         if size != filtered_models.len() {
-                                            let msg = format!("file.len = {}, expected: len = {}", filtered_models.len(), size);
-                                            errors.insert(index, msg);
+                                            error.msg = format!("file.len = {}, expected: len = {}", filtered_models.len(), size);
                                         }
                                     }
                                     _ => {}
+                                }
+
+                                if !error.msg.is_empty() {
+                                    self.errors.push(error);
                                 }
                             }
                             &_ => {}
