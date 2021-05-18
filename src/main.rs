@@ -1,19 +1,20 @@
 extern crate pest;
 #[macro_use]
 extern crate pest_derive;
-
 extern crate serde;
 
-use tree_sitter::Language;
-use crate::parser::ast::{GuardRule, RuleScope, RuleLevel, Expr, RuleAssert, Operator};
-use crate::identify::code_model::CodeFile;
 use std::collections::HashMap;
-use std::path::PathBuf;
-use walkdir::WalkDir;
 use std::fs;
+use std::path::PathBuf;
+
+use tree_sitter::Language;
+use walkdir::WalkDir;
+
+use crate::identify::code_model::CodeFile;
 use crate::identify::java_ident::JavaIdent;
 use crate::identify::js_ident::JsIdent;
 use crate::identify::rust_ident::RustIdent;
+use crate::parser::ast::{Expr, GuardRule, Operator, RuleAssert, RuleLevel, RuleScope};
 
 extern "C" { fn tree_sitter_rust() -> Language; }
 extern "C" { fn tree_sitter_java() -> Language; }
@@ -157,9 +158,10 @@ fn get_assert_sized(rule: &GuardRule) -> usize {
 
 #[cfg(test)]
 mod tests {
-    use std::path::PathBuf;
     use std::fs;
-    use crate::{execute};
+    use std::path::PathBuf;
+
+    use crate::execute;
 
     fn test_dir() -> PathBuf {
         let root_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
