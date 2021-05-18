@@ -16,7 +16,7 @@ impl JavaIdent {
 
 (class_declaration
 	name: (identifier) @class-name
-    interfaces: (super_interfaces (interface_type_list (type_identifier)  @impl-name))
+    interfaces: (super_interfaces (interface_type_list (type_identifier)  @impl-name))?
 )
 
 ";
@@ -51,7 +51,6 @@ impl JavaIdent {
                 "class-name" => {
                     class.name = text.to_string();
                     let class_node = capture.node.parent().unwrap();
-                    println!("{:?}", class_node);
                     last_class_end_line = class_node.end_position().row;
                     JavaIdent::insert_location(&mut class, class_node);
                     if !is_last_node {
@@ -117,7 +116,7 @@ import payroll.Employee;
     }
 
     #[test]
-    fn should_parse_java_class() {
+    fn should_parse_impl_java_class() {
         let source_code = "class DateTimeImpl implements DateTime {
     @Override
     public Date getDate() {
@@ -126,5 +125,18 @@ import payroll.Employee;
 }";
         let file = JavaIdent::parse(source_code);
         assert_eq!(1, file.classes.len());
+        assert_eq!("DateTimeImpl", file.classes[0].name);
+    }
+
+    #[test]
+    fn should_parse_normal_java_class() {
+        let source_code = "class DateTimeImpl {
+    public Date getDate() {
+        return new Date();
+    }
+}";
+        let file = JavaIdent::parse(source_code);
+        assert_eq!(1, file.classes.len());
+        assert_eq!("DateTimeImpl", file.classes[0].name);
     }
 }
