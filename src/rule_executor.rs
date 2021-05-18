@@ -87,45 +87,8 @@ impl RuleExecutor {
     }
 
     pub fn capture(&mut self, rule: GuardRule, index: usize) {
-        let filtered_models = self.filter_model_by_rule(&rule);
-
-        // 2. run expression for evaluation
-        match &rule.expr {
-            Expr::Call(call) => {
-                match call.name.as_str() {
-                    "len" => {
-                        let size = RuleExecutor::get_assert_sized(&rule);
-                        let ops = &rule.ops[0];
-                        self.processing_file_len(index, size, ops, filtered_models.len())
-                    }
-                    _ => {}
-                }
-            }
-            Expr::PropsCall(props) => {
-                match props[0].as_str() {
-                    "file" => {
-                        match props[1].as_str() {
-                            "len" => {
-                                let size = RuleExecutor::get_assert_sized(&rule);
-                                let ops = &rule.ops[0];
-                                self.processing_file_len(index, size, ops, filtered_models.len())
-                            }
-                            &_ => {}
-                        };
-                    }
-                    &_ => {}
-                }
-            }
-            Expr::Identifier(_) => {}
-        }
-
-        // todo: 3. run assert
-    }
-
-    fn filter_model_by_rule(&mut self, rule: &GuardRule) -> Vec<CodeFile> {
         let mut filtered_models: Vec<CodeFile> = vec![];
 
-        // 1. filter by scopes
         match &rule.level {
             RuleLevel::Package => {
                 match &rule.scope {
@@ -136,6 +99,36 @@ impl RuleExecutor {
                     }
                     RuleScope::MatchRegex(_) => {}
                     _ => {}
+                }
+
+                // 2. run expression for evaluation
+                match &rule.expr {
+                    Expr::Call(call) => {
+                        match call.name.as_str() {
+                            "len" => {
+                                let size = RuleExecutor::get_assert_sized(&rule);
+                                let ops = &rule.ops[0];
+                                self.processing_file_len(index, size, ops, filtered_models.len())
+                            }
+                            _ => {}
+                        }
+                    }
+                    Expr::PropsCall(props) => {
+                        match props[0].as_str() {
+                            "file" => {
+                                match props[1].as_str() {
+                                    "len" => {
+                                        let size = RuleExecutor::get_assert_sized(&rule);
+                                        let ops = &rule.ops[0];
+                                        self.processing_file_len(index, size, ops, filtered_models.len())
+                                    }
+                                    &_ => {}
+                                };
+                            }
+                            &_ => {}
+                        }
+                    }
+                    Expr::Identifier(_) => {}
                 }
             }
             RuleLevel::Module => {
@@ -161,7 +154,8 @@ impl RuleExecutor {
                 println!("todo");
             }
         };
-        filtered_models
+
+        // todo: 3. run assert
     }
 
     fn processing_file_len(&mut self, index: usize, excepted_size: usize, ops: &Operator, actual_len: usize) {
