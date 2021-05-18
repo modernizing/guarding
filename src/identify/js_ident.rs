@@ -65,14 +65,10 @@ impl JsIdent {
                     JsIdent::insert_location(&mut class, class_node);
                 }
                 "class-method-name" => {
-                    let function = JsIdent::create_function(capture, text);
-
-                    class.functions.push(function);
+                    class.functions.push(JsIdent::create_function(capture, text));
                 }
                 "function-name" => {
-                    let function = JsIdent::create_function(capture, text);
-
-                    code_file.functions.push(function);
+                    code_file.functions.push(JsIdent::create_function(capture, text));
                 }
                 "import-name" => {},
                 "parameter" => {},

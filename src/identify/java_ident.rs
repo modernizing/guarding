@@ -14,6 +14,11 @@ impl JavaIdent {
 (import_declaration
 	(scoped_identifier) @import-name)
 
+(class_declaration
+	name: (identifier) @class-name
+    interfaces: (super_interfaces (interface_type_list (type_identifier)  @impl-name))
+)
+
 ";
         let mut parser = Parser::new();
 
@@ -30,7 +35,7 @@ impl JavaIdent {
         let captures = query_cursor.captures(&query, tree.root_node(), text_callback);
 
         let mut code_file = CodeFile::default();
-        let last_class_end_line = 0;
+        let mut last_class_end_line = 0;
         let mut class = CodeClass::default();
 
         for (mat, capture_index) in captures {
@@ -41,6 +46,12 @@ impl JavaIdent {
             match capture_name.as_str() {
                 "import-name" => {
                     code_file.imports.push(text.to_string());
+                },
+                "class-name" => {
+                    class.name = text.to_string();
+                    let class_node = capture.node.parent().unwrap();
+                    last_class_end_line = class_node.end_position().row;
+                    JavaIdent::insert_location(&mut class, class_node);
                 },
                 "parameter" => {},
                 &_ => {
