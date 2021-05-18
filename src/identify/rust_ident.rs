@@ -25,6 +25,7 @@ impl RustIdent {
 )
 
 (impl_item
+	trait: (type_identifier) @trait-name?
 	type: (type_identifier) @impl-struct-name
     body: (declaration_list (
 	    (function_item
@@ -164,5 +165,21 @@ impl RustIdent {
         let functions = &file.classes[0].functions;
         assert_eq!(1, functions.len());
         assert_eq!("parse", functions[0].name);
+    }
+
+    #[test]
+    fn should_parse_for_trait_impl() {
+        let source_code = "pub struct RustIdent {}
+
+impl Default for RustIdent {
+    fn default() -> Self {
+        RustIdent {}
+    }
+}
+";
+        let file = RustIdent::parse(source_code);
+
+        println!("{:?}", file);
+        // assert_eq!("parse", functions[0].name);
     }
 }
