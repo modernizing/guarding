@@ -12,6 +12,8 @@ use std::path::PathBuf;
 use walkdir::WalkDir;
 use std::fs;
 use crate::identify::java_ident::JavaIdent;
+use crate::identify::js_ident::JsIdent;
+use crate::identify::rust_ident::RustIdent;
 
 extern "C" { fn tree_sitter_rust() -> Language; }
 extern "C" { fn tree_sitter_java() -> Language; }
@@ -38,10 +40,17 @@ fn execute(content: String, code_dir: PathBuf) -> HashMap<usize, String> {
         }
 
         let ext = entry.path().extension().unwrap().to_str().unwrap();
+        let content = fs::read_to_string(entry.path()).expect("not such file");
+
         match ext {
             ".java" => {
-                let content = fs::read_to_string(entry.path()).expect("not such file");
                 models.push(JavaIdent::parse(content.as_str()));
+            }
+            ".js" => {
+                models.push(JsIdent::parse(content.as_str()));
+            }
+            ".rs" => {
+                models.push(RustIdent::parse(content.as_str()));
             }
             &_ => {}
         }
