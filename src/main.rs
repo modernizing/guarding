@@ -23,7 +23,11 @@ pub mod identify;
 pub mod parser;
 
 fn main() {
-
+    // test program
+    let buf = PathBuf::from(".");
+    let guarding = buf.clone().join("guarding.guarding");
+    let content = fs::read_to_string(guarding).unwrap();
+    execute(content, buf);
 }
 
 fn execute(content: String, code_dir: PathBuf) -> HashMap<usize, String> {
