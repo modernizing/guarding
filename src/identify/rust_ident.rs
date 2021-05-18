@@ -20,7 +20,8 @@ impl RustIdent {
     	(field_declaration
 			name: (field_identifier) @field-name
             type: (type_identifier) @type-name
-)))
+    ))?
+)
 
 (impl_item
 	type: (type_identifier) @impl-struct-name
@@ -46,7 +47,7 @@ impl RustIdent {
         let captures = query_cursor.captures(&query, tree.root_node(), text_callback);
 
         let mut code_file = CodeFile::default();
-        let last_class_end_line = 0;
+        let mut last_class_end_line = 0;
         let mut class = CodeClass::default();
 
         for (mat, capture_index) in captures {
@@ -58,6 +59,12 @@ impl RustIdent {
                 "import-name" => {
                     code_file.imports.push(text.to_string());
                 },
+                "struct-name" => {
+                    class.name = text.to_string();
+                    let struct_node = capture.node;
+                    last_class_end_line = struct_node.end_position().row;
+                    RustIdent::insert_location(&mut class, struct_node);
+                }
                 "parameter" => {},
                 &_ => {
                     println!(
@@ -91,7 +98,6 @@ impl RustIdent {
         function
     }
 
-    #[allow(dead_code)]
     fn insert_location<T: Location>(model: &mut T, node: Node) {
         model.set_start(node.start_position().row, node.start_position().column);
         model.set_end(node.end_position().row, node.end_position().column);
@@ -108,5 +114,20 @@ mod tests {
 ";
         let file = RustIdent::parse(source_code);
         assert_eq!(1, file.imports.len());
+    }
+
+    #[test]
+    fn should_parse_struct() {
+        let source_code = "pub struct RustIdent {}
+
+impl RustIdent {
+    pub fn parse(code: &str) -> CodeFile {
+        CodeFile::default()
+    }
+}
+";
+        let file = RustIdent::parse(source_code);
+        println!("{:?}", file);
+        assert_eq!(1, file.classes.len());
     }
 }
