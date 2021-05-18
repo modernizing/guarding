@@ -45,6 +45,8 @@ pub struct CodeImport {
 pub struct CodeClass {
     pub name: String,
     pub path: String,
+    pub extends: Vec<String>,
+    pub implements: Vec<String>,
     pub constant: Vec<ClassConstant>,
     pub functions: Vec<CodeFunction>,
     pub start: CodePoint,
@@ -83,6 +85,8 @@ impl Default for CodeClass {
         CodeClass {
             name: "".to_string(),
             path: "".to_string(),
+            extends: vec![],
+            implements: vec![],
             constant: vec![],
             functions: vec![],
             start: Default::default(),
