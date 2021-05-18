@@ -91,7 +91,16 @@ impl RuleExecutor {
 
         // 2. run expression for evaluation
         match &rule.expr {
-            Expr::Call(_) => {}
+            Expr::Call(call) => {
+                match call.name.as_str() {
+                    "len" => {
+                        let size = RuleExecutor::get_assert_sized(&rule);
+                        let ops = &rule.ops[0];
+                        self.processing_file_len(index, size, ops, filtered_models.len())
+                    }
+                    _ => {}
+                }
+            }
             Expr::PropsCall(props) => {
                 match props[0].as_str() {
                     "file" => {
@@ -99,7 +108,7 @@ impl RuleExecutor {
                             "len" => {
                                 let size = RuleExecutor::get_assert_sized(&rule);
                                 let ops = &rule.ops[0];
-                                self.processing_file_len(index, &mut filtered_models, size, ops)
+                                self.processing_file_len(index, size, ops, filtered_models.len())
                             }
                             &_ => {}
                         };
@@ -141,10 +150,10 @@ impl RuleExecutor {
         filtered_models
     }
 
-    fn processing_file_len(&mut self, index: usize, filtered_models: &mut Vec<CodeFile>, excepted_size: usize, ops: &Operator) {
+    fn processing_file_len(&mut self, index: usize, excepted_size: usize, ops: &Operator, actual_len: usize) {
         let mut error = RuleError {
             expected: format!("{}", excepted_size),
-            actual: format!("{}", filtered_models.len()),
+            actual: format!("{}", actual_len),
             error_type: "file.len size".to_string(),
             msg: "".to_string(),
             rule: index,
@@ -152,28 +161,28 @@ impl RuleExecutor {
 
         match ops {
             Operator::Gt => {
-                if excepted_size > filtered_models.len() {
-                    error.msg = format!("file.len = {}, expected: len > {}", filtered_models.len(), excepted_size);
+                if excepted_size > actual_len {
+                    error.msg = format!("file.len = {}, expected: len > {}", actual_len, excepted_size);
                 }
             }
             Operator::Gte => {
-                if excepted_size >= filtered_models.len() {
-                    error.msg = format!("file.len = {}, expected: len >= {}", filtered_models.len(), excepted_size);
+                if excepted_size >= actual_len {
+                    error.msg = format!("file.len = {}, expected: len >= {}", actual_len, excepted_size);
                 }
             }
             Operator::Lt => {
-                if excepted_size < filtered_models.len() {
-                    error.msg = format!("file.len = {}, expected: len < {}", filtered_models.len(), excepted_size);
+                if excepted_size < actual_len {
+                    error.msg = format!("file.len = {}, expected: len < {}", actual_len, excepted_size);
                 }
             }
             Operator::Lte => {
-                if excepted_size <= filtered_models.len() {
-                    error.msg = format!("file.len = {}, expected: len <=  {}", filtered_models.len(), excepted_size);
+                if excepted_size <= actual_len {
+                    error.msg = format!("file.len = {}, expected: len <=  {}", actual_len, excepted_size);
                 }
             }
             Operator::Eq => {
-                if excepted_size != filtered_models.len() {
-                    error.msg = format!("file.len = {}, expected: len = {}", filtered_models.len(), excepted_size);
+                if excepted_size != actual_len {
+                    error.msg = format!("file.len = {}, expected: len = {}", actual_len, excepted_size);
                 }
             }
             _ => {}
