@@ -57,6 +57,9 @@ impl JavaIdent {
                         is_last_node = true;
                     }
                 },
+                "impl-name" => {
+                    class.implements.push(text.to_string());
+                }
                 "parameter" => {},
                 &_ => {
                     println!(
@@ -126,6 +129,8 @@ import payroll.Employee;
         let file = JavaIdent::parse(source_code);
         assert_eq!(1, file.classes.len());
         assert_eq!("DateTimeImpl", file.classes[0].name);
+        assert_eq!(1, file.classes[0].implements.len());
+        assert_eq!("DateTime", file.classes[0].implements[0]);
     }
 
     #[test]
