@@ -53,6 +53,7 @@ impl RustIdent {
         let mut class = CodeClass::default();
 
         let mut last_impl_struct_name = "".to_string();
+        let mut last_trait_name = "".to_string();
         let mut impl_functions: HashMap<String, Vec<CodeFunction>> = Default::default();
 
         for (mat, capture_index) in captures {
@@ -72,12 +73,18 @@ impl RustIdent {
                 },
                 "impl-struct-name" => {
                     last_impl_struct_name = text.to_string();
+                    last_trait_name = "".to_string();
                 }
                 "impl-function-name" => {
                     let function = RustIdent::create_function(capture, text);
-                    impl_functions.entry(last_impl_struct_name.clone())
+                    impl_functions
+                        .entry(last_impl_struct_name.clone())
                         .or_insert_with(Vec::new)
                         .push(function);
+                }
+                "trait-name" => {
+                    last_impl_struct_name = "".to_string();
+                    last_trait_name = text.to_string();
                 }
                 "parameter" => {},
                 &_ => {
@@ -111,7 +118,6 @@ impl RustIdent {
         code_file
     }
 
-    #[allow(dead_code)]
     fn create_function(capture: QueryCapture, text: &str) -> CodeFunction {
         let mut function = CodeFunction::default();
         function.name = text.to_string();
