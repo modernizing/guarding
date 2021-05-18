@@ -25,7 +25,7 @@ impl RustIdent {
 )
 
 (impl_item
-	trait: (type_identifier) @trait-name?
+    trait: (type_identifier)? @trait-name
 	type: (type_identifier) @impl-struct-name
     body: (declaration_list (
 	    (function_item
@@ -159,6 +159,7 @@ impl RustIdent {
 }
 ";
         let file = RustIdent::parse(source_code);
+        println!("{:?}", file);
 
         assert_eq!(1, file.classes.len());
         assert_eq!("RustIdent", file.classes[0].name);
