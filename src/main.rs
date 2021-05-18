@@ -25,15 +25,7 @@ extern "C" { fn tree_sitter_javascript() -> Language; }
 
 pub mod identify;
 pub mod parser;
-
-#[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct RuleError {
-    pub expected: String,
-    pub actual: String,
-    pub error_type: String,
-    pub msg: String,
-    pub rule: usize,
-}
+pub mod rule_executor;
 
 fn main() {
     // test program
