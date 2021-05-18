@@ -71,6 +71,7 @@ mod tests {
         let content = "class(\".\")::len should < 27;";
         let errors = RuleExecutor::execute(content.to_string(), code_dir);
 
+        println!("{:?}", errors);
         // assert_eq!(1, errors.len());
     }
 }
