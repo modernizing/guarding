@@ -3,6 +3,7 @@ use tree_sitter::{Node, Parser, Query, QueryCapture, QueryCursor};
 use crate::tree_sitter_rust;
 use crate::identify::code_model::{CodeClass, CodeFile, CodeFunction};
 use crate::identify::code_model::Location;
+use std::collections::HashMap;
 
 pub struct RustIdent {
 
@@ -50,6 +51,9 @@ impl RustIdent {
         let mut last_class_end_line = 0;
         let mut class = CodeClass::default();
 
+        let mut last_impl_struct_name = "".to_string();
+        let mut impl_functions: HashMap<String, Vec<CodeFunction>> = Default::default();
+
         for (mat, capture_index) in captures {
             let capture = mat.captures[capture_index];
             let capture_name = &query.capture_names()[capture.index as usize];
@@ -64,6 +68,15 @@ impl RustIdent {
                     let struct_node = capture.node;
                     last_class_end_line = struct_node.end_position().row;
                     RustIdent::insert_location(&mut class, struct_node);
+                },
+                "impl-struct-name" => {
+                    last_impl_struct_name = text.to_string();
+                }
+                "impl-function-name" => {
+                    let function = RustIdent::create_function(capture, text);
+                    impl_functions.entry(last_impl_struct_name.clone())
+                        .or_insert_with(Vec::new)
+                        .push(function);
                 }
                 "parameter" => {},
                 &_ => {
@@ -81,6 +94,15 @@ impl RustIdent {
                 if !class.name.is_empty() {
                     code_file.classes.push(class.clone());
                     class = CodeClass::default();
+                }
+            }
+        }
+
+        for clz in code_file.classes.iter_mut() {
+            match impl_functions.get(clz.name.as_str()) {
+                None => {}
+                Some(function) => {
+                    clz.functions = function.clone();
                 }
             }
         }
@@ -127,7 +149,11 @@ impl RustIdent {
 }
 ";
         let file = RustIdent::parse(source_code);
-        println!("{:?}", file);
+
         assert_eq!(1, file.classes.len());
+        assert_eq!("RustIdent", file.classes[0].name);
+        let functions = &file.classes[0].functions;
+        assert_eq!(1, functions.len());
+        assert_eq!("parse", functions[0].name);
     }
 }
