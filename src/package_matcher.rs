@@ -15,7 +15,7 @@
  */
 use regex::{Regex};
 
-pub fn matches(package_identifier: String, text: &str) -> bool {
+pub fn is_package_match(package_identifier: String, text: &str) -> bool {
     let package = convert_to_regex(package_identifier);
     let regex = Regex::new(package.as_str())
         .expect("regex error");
@@ -36,7 +36,7 @@ pub fn convert_to_regex(package_identifier: String) -> String {
 
 #[cfg(test)]
 mod tests {
-    use crate::package_matcher::matches;
+    use crate::package_matcher::is_package_match;
 
     #[ignore]
     #[test]
@@ -78,7 +78,7 @@ mod tests {
                 .parse()
                 .expect("convert bool error");
 
-            assert_eq!(assert, matches(vec[0].to_string(), vec[1]));
+            assert_eq!(assert, is_package_match(vec[0].to_string(), vec[1]));
         }
     }
 }
