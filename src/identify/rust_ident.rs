@@ -1,4 +1,4 @@
-use tree_sitter::{Node, Parser, Query, QueryCursor, Point};
+use tree_sitter::{Node, Parser, Query, QueryCursor};
 
 use crate::tree_sitter_rust;
 use crate::identify::code_model::{CodeClass, CodeFile, CodeFunction};
@@ -54,8 +54,8 @@ impl CodeIdent for RustIdent {
 
         let mut last_impl_struct_name = "".to_string();
         let mut last_trait_name = "".to_string();
-        let mut last_trait_pos: Point = Default::default();
         let mut impl_functions: HashMap<String, Vec<CodeFunction>> = Default::default();
+        let mut trait_struct_map: HashMap<String, String> = Default::default();
 
         for (mat, capture_index) in captures {
             let capture = mat.captures[capture_index];
@@ -74,6 +74,10 @@ impl CodeIdent for RustIdent {
                 },
                 "impl-struct-name" => {
                     last_impl_struct_name = text.to_string();
+                    if last_trait_name != "" {
+                        trait_struct_map.insert(text.to_string(), last_trait_name);
+                    }
+                    last_trait_name = "".to_string();
                 }
                 "impl-function-name" => {
                     let function = RustIdent::create_function(capture, text);
@@ -84,7 +88,6 @@ impl CodeIdent for RustIdent {
                 }
                 "trait-name" => {
                     last_trait_name = text.to_string();
-                    last_trait_pos = capture.node.end_position();
                 }
                 "parameter" => {},
                 &_ => {
@@ -107,11 +110,12 @@ impl CodeIdent for RustIdent {
         }
 
         for clz in code_file.classes.iter_mut() {
-            match impl_functions.get(clz.name.as_str()) {
-                None => {}
-                Some(function) => {
-                    clz.functions = function.clone();
-                }
+            if let Some(function) = impl_functions.get(clz.name.as_str()) {
+                clz.functions = function.clone();
+            }
+
+            if let Some(trait_name) = trait_struct_map.get(clz.name.as_str()) {
+                clz.implements.push(trait_name.to_string());
             }
         }
 
@@ -173,7 +177,6 @@ impl Default for RustIdent {
 ";
         let file = RustIdent::parse(source_code);
 
-        println!("{:?}", file);
-        // assert_eq!("parse", functions[0].name);
+        assert_eq!("Default", file.classes[0].implements[0]);
     }
 }
