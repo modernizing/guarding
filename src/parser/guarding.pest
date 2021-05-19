@@ -8,7 +8,6 @@ declaration = {
   layer_rule
 }
 
-// module is a container of package
 // package is a container of file and classes
 // file is a container of classes and functions
 // classes is a container of functions and field
@@ -17,7 +16,6 @@ normal_rule = {
 }
 
 rule_level = {
-    "module" |
     "package" |
     "class" |
     "struct" |

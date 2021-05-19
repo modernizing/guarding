@@ -50,12 +50,10 @@ pub enum RuleType {
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum RuleLevel {
-    Module,
     Package,
     Function,
     Class,
     Struct,
-    File,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]

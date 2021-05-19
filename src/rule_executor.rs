@@ -90,9 +90,6 @@ impl RuleExecutor {
 
     pub fn capture(&mut self, rule: GuardRule, index: usize) {
         match &rule.level {
-            RuleLevel::Module => {
-                println!("todo");
-            }
             RuleLevel::Package => {
                 self.capture_package(&rule, index)
             }
@@ -103,9 +100,6 @@ impl RuleExecutor {
                 self.capture_class(&rule, index)
             }
             RuleLevel::Struct => {
-                println!("todo");
-            }
-            RuleLevel::File => {
                 println!("todo");
             }
         };

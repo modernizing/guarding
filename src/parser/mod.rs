@@ -80,10 +80,8 @@ fn parse_normal_rule(pair: Pair<Rule>) -> GuardRule {
 fn parse_rule_level(pair: Pair<Rule>) -> RuleLevel {
     let level_str = pair.as_span().as_str();
     match level_str {
-        "module" => { RuleLevel::Module }
         "package" => { RuleLevel::Package }
         "function" => { RuleLevel::Function }
-        "file" => { RuleLevel::File }
         "class" => { RuleLevel::Class }
         "struct" => { RuleLevel::Struct }
         &_ => { unreachable!("error rule level: {:?}", level_str) }
@@ -333,7 +331,6 @@ class(\"..myapp..\")::function.vars.len should <= 20;
     fn should_parse_simple_usage() {
         let code = "class::name.len should < 20;
 function::name.len should < 30;
-module::package.len should <= 20;
 ";
         parse(code);
     }
@@ -342,7 +339,6 @@ module::package.len should <= 20;
     fn should_parse_arrow_usage() {
         let code = "class -> name.len should < 20;
 function -> name.len should < 30;
-module -> package.len should <= 20;
 ";
         parse(code);
     }
