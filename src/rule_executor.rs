@@ -116,7 +116,14 @@ impl RuleExecutor {
                     for file in &self.models {
                         filtered_models.extend(file.classes.clone());
                     }
-                };
+                } else {
+                    for file in &self.filter_by_package_identifier(str) {
+                        filtered_models.extend(file.classes.clone());
+                    }
+                }
+            }
+            RuleScope::Implementation(str) => {
+
             }
             _ => {}
         }
@@ -145,10 +152,7 @@ impl RuleExecutor {
                 if path == "." {
                     filtered_models = self.models.clone();
                 } else {
-                    filtered_models = self.models.iter()
-                        .filter(|s| { is_package_match(str.to_string(), s.package.as_str()) })
-                        .map(|s| { s.clone() })
-                        .collect();
+                    filtered_models = self.filter_by_package_identifier(str);
                 };
             }
             RuleScope::MatchRegex(_) => {}
@@ -179,6 +183,13 @@ impl RuleExecutor {
             }
             Expr::Identifier(_) => {}
         }
+    }
+
+    fn filter_by_package_identifier(&mut self, str: &String) -> Vec<CodeFile> {
+        self.models.iter()
+            .filter(|s| { is_package_match(str.to_string(), s.package.as_str()) })
+            .map(|s| { s.clone() })
+            .collect()
     }
 
     fn processing_file_len(&mut self, index: usize, excepted_size: usize, ops: &Operator, actual_len: usize) {
