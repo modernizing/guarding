@@ -18,9 +18,9 @@ class("com.myapp.(*)..") should freeOfCycles;
 # 模型之间的关系
 class("..myapp.model..")::relation.len should <= 5;
 
-file("..myapp.(**)") not dependBy "";
-file("..service..") only accessed(["..controller..", "..service.."]);
-file("..service..")::name contains "Usecase"
+class("..myapp.(**)") not dependBy "";
+class("..service..") only accessed(["..controller..", "..service.."]);
+class("..service..")::name contains "Usecase"
 
 package("..home..")::file.len should < 20;
 # :: is Rust style, -> is C++ Style, so combine them
@@ -32,7 +32,6 @@ package(match("^/app")) endsWith "Connection";
 # 简化的比较
 class::name.len should < 20;
 function::name.len should < 30;
-module::package.len should <= 20;
 function::len should < 30;
 
 # 定制的分层架构
