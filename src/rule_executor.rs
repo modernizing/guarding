@@ -1,17 +1,17 @@
+use std::fs;
 use std::path::PathBuf;
 
 use serde::{Deserialize, Serialize};
 use walkdir::WalkDir;
 
-use crate::identify::code_model::{CodeFile, CodeClass};
+use crate::identify::code_ident::CodeIdent;
+use crate::identify::code_model::{CodeClass, CodeFile};
 use crate::identify::java_ident::JavaIdent;
 use crate::identify::js_ident::JsIdent;
 use crate::identify::rust_ident::RustIdent;
-use crate::parser::ast::{Expr, GuardRule, Operator, RuleAssert, RuleLevel, RuleScope};
-use crate::parser;
-use std::fs;
-use crate::identify::code_ident::CodeIdent;
 use crate::package_matcher::is_package_match;
+use crate::parser;
+use crate::parser::ast::{Expr, GuardRule, Operator, RuleAssert, RuleLevel, RuleScope};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct RuleError {
