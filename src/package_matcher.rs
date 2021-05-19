@@ -81,16 +81,4 @@ mod tests {
             assert_eq!(assert, matches(vec[0].to_string(), vec[1]));
         }
     }
-
-    #[test]
-    fn should_working_in_process() {
-        assert_eq!(true, matches("..".to_string(), "com.phodal.zero"));
-        assert_eq!(true, matches("com.(*)..service.(**)".to_string(), "com.mycompany.some.service.special.name"));
-        assert_eq!(true, matches("some..middle..pkg".to_string(), "some.arbitrary.middle.more.pkg"));
-    }
-
-    #[test]
-    fn should_handle_replace() {
-        assert_eq!(false, matches("*..pkg".to_string(), "some.arbitrary.pkg.toomuch"));
-    }
 }
