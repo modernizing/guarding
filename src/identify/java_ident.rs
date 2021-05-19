@@ -15,6 +15,15 @@ impl CodeIdent for JavaIdent {
 (import_declaration
 	(scoped_identifier) @import-name)
 
+(method_declaration
+	(modifiers
+    	(annotation
+    		name: (identifier) @annotation.name
+            arguments: (annotation_argument_list)? @annotation.key_values
+    	)
+    )
+)
+
 (program
     (class_declaration
 	    name: (identifier) @class-name
@@ -167,5 +176,19 @@ class DateTimeImpl2 {
 
         let file = JavaIdent::parse(source_code);
         assert_eq!(1, file.classes.len());
+    }
+
+    #[test]
+    fn should_support_annotation() {
+        let source_code = "public class HelloController {
+  @RequestMapping(value = \"/ex/foos\", method = RequestMethod.GET)
+  @ResponseBody
+  public String getFoosBySimplePath() {
+      return \"Get some Foos\";
+  }
+}";
+
+        let file = JavaIdent::parse(source_code);
+        println!("{:?}", file);
     }
 }

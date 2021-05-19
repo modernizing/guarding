@@ -20,7 +20,7 @@ todo:
     - [ ] Java ArchUnit generator
     - [ ] JavaScript / TypeScript
     - [ ] Rust
-
+   
 ## Development
 
 workflow:
@@ -34,6 +34,8 @@ DSL capture logic:
 1. filter models from `rule_level` with `rule_scope`
 2. run expression
 3. run assert
+
+Queries Samples: [https://github.com/nvim-treesitter/nvim-treesitter/tree/master/queries](https://github.com/nvim-treesitter/nvim-treesitter/tree/master/queries)
 
 ## Document
 
