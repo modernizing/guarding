@@ -15,9 +15,11 @@ impl CodeIdent for JavaIdent {
 (import_declaration
 	(scoped_identifier) @import-name)
 
-(class_declaration
-	name: (identifier) @class-name
-    interfaces: (super_interfaces (interface_type_list (type_identifier)  @impl-name))?
+(program
+    (class_declaration
+	    name: (identifier) @class-name
+        interfaces: (super_interfaces (interface_type_list (type_identifier)  @impl-name))?
+    )
 )
 
 ";
@@ -57,6 +59,7 @@ impl CodeIdent for JavaIdent {
                         class = CodeClass::default();
                     }
 
+                    // todo: add check for inner class
                     class.name = text.to_string();
                     let class_node = capture.node.parent().unwrap();
                     JavaIdent::insert_location(&mut class, class_node);
@@ -150,5 +153,19 @@ class DateTimeImpl2 {
 ";
         let file = JavaIdent::parse(source_code);
         assert_eq!("com.phodal.pepper.powermock", file.package);
+    }
+
+    #[test]
+    fn should_support_inner_class() {
+        let source_code = "class OuterClass {
+  int x = 10;
+
+  class InnerClass {
+    int y = 5;
+  }
+}";
+
+        let file = JavaIdent::parse(source_code);
+        assert_eq!(1, file.classes.len());
     }
 }
