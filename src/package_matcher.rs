@@ -24,12 +24,14 @@ pub fn matches(package_identifier: String, text: &str) -> bool {
 }
 
 pub fn convert_to_regex(package_identifier: String) -> String {
-    package_identifier
+    let replaced = package_identifier
         .replace("(**)", "#%#%#")
         .replace("*", "\\w+")
         .replace(".", "\\.")
         .replace("#%#%#", "(\\w+(?:\\.\\w+)*)")
-        .replace("\\.\\.", "(?:(?:^\\w*)?\\.(?:\\w+\\.)*(?:\\w*$)?)?")
+        .replace("\\.\\.", "(?:(?:^\\w*)?\\.(?:\\w+\\.)*(?:\\w*$)?)?");
+
+    format!("^{}$", replaced)
 }
 
 #[cfg(test)]
@@ -72,7 +74,6 @@ mod tests {
             let split = value.split(" | ");
             let vec = split.collect::<Vec<&str>>();
 
-            println!("{:?}", vec);
             let assert: bool = vec[2]
                 .parse()
                 .expect("convert bool error");
@@ -86,5 +87,10 @@ mod tests {
         assert_eq!(true, matches("..".to_string(), "com.phodal.zero"));
         assert_eq!(true, matches("com.(*)..service.(**)".to_string(), "com.mycompany.some.service.special.name"));
         assert_eq!(true, matches("some..middle..pkg".to_string(), "some.arbitrary.middle.more.pkg"));
+    }
+
+    #[test]
+    fn should_handle_replace() {
+        assert_eq!(false, matches("*..pkg".to_string(), "some.arbitrary.pkg.toomuch"));
     }
 }
