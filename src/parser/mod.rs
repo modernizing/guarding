@@ -213,6 +213,10 @@ fn parse_scope(parent: Pair<Rule>) -> RuleScope {
         Rule::match_scope => {
             let string = string_from_pair(pair);
             RuleScope::MatchRegex(string)
+        },
+        Rule::impl_scope => {
+            let string = string_from_pair(pair);
+            RuleScope::Implementation(string)
         }
         _ => {
             println!("implementing scope: {:?}, text: {:?}", pair.as_rule(), pair.as_span());

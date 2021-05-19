@@ -86,15 +86,15 @@ class(\".\")::len should > 20;
         assert_eq!(0, errors.len());
     }
 
-    #[ignore]
     #[test]
     fn should_support_for_extends_count() {
         let code_dir = test_dir();
         let content = "
-class(implementation \"BaseParser\")::len = 1
+class(implementation \"BaseParser\")::len = 2
 ";
         let errors = RuleExecutor::execute(content.to_string(), code_dir);
 
+        println!("{:?}", errors);
         assert_eq!(0, errors.len());
     }
 }

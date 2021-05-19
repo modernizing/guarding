@@ -123,7 +123,13 @@ impl RuleExecutor {
                 }
             }
             RuleScope::Implementation(str) => {
-
+                &self.models.iter().for_each(|file| {
+                    let classes: Vec<CodeClass> = file.classes.iter().filter(|class| {
+                        class.implements.contains(str)
+                    }).map(|s| s.clone())
+                        .collect();
+                    filtered_models.extend(classes);
+                });
             }
             _ => {}
         }
