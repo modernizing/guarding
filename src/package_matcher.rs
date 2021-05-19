@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-use regex::{Regex};
+use regex::Regex;
 
 pub fn is_package_match(package_identifier: String, text: &str) -> bool {
     let package = convert_to_regex(package_identifier);
@@ -21,6 +21,29 @@ pub fn is_package_match(package_identifier: String, text: &str) -> bool {
         .expect("regex error");
 
     regex.is_match(text)
+}
+
+pub fn is_assert_match(package_identifier: String, text: &str, assert_package: String) -> bool {
+    let package = convert_to_regex(package_identifier);
+    let regex = Regex::new(package.as_str())
+        .expect("regex error");
+
+    match regex.captures(text) {
+        None => {
+            println!("None");
+        }
+        Some(caps) => {
+            for ma in caps.iter() {
+                if let Some(match_) = ma {
+                    if match_.as_str() == assert_package {
+                        return true
+                    }
+                }
+            }
+        }
+    }
+
+    return false;
 }
 
 pub fn convert_to_regex(package_identifier: String) -> String {
@@ -36,9 +59,8 @@ pub fn convert_to_regex(package_identifier: String) -> String {
 
 #[cfg(test)]
 mod tests {
-    use crate::package_matcher::is_package_match;
+    use crate::package_matcher::{is_assert_match, is_package_match};
 
-    #[ignore]
     #[test]
     fn should_match() {
         let values = vec![
@@ -80,5 +102,15 @@ mod tests {
 
             assert_eq!(assert, is_package_match(vec[0].to_string(), vec[1]));
         }
+    }
+
+    #[test]
+    fn should_match_group() {
+        let assert_match = is_assert_match("some.(*).pkg".to_string(),
+                                           "some.arbitrary.pkg",
+                                           "arbitrary".to_string()
+        );
+
+        assert_eq!(true, assert_match);
     }
 }
