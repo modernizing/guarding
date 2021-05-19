@@ -70,7 +70,6 @@ pub enum RuleScope {
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum Expr {
-    Call(FunctionCall),
     PropsCall(Vec<String>),
     Identifier(String)
 }

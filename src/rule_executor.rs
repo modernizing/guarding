@@ -88,7 +88,6 @@ impl RuleExecutor {
     }
 
     pub fn capture(&mut self, rule: GuardRule, index: usize) {
-
         match &rule.level {
             RuleLevel::Package => {
                 self.capture_package(&rule, index)
@@ -114,8 +113,8 @@ impl RuleExecutor {
                 }
 
                 match &rule.expr {
-                    Expr::Call(call) => {
-                        match call.name.as_str() {
+                    Expr::PropsCall(props) => {
+                        match props[0].as_str() {
                             "len" => {
                                 let size = RuleExecutor::get_assert_sized(&rule);
                                 let ops = &rule.ops[0];
@@ -124,7 +123,6 @@ impl RuleExecutor {
                             _ => {}
                         }
                     }
-                    Expr::PropsCall(_) => {}
                     Expr::Identifier(_) => {}
                 }
             }
@@ -154,18 +152,13 @@ impl RuleExecutor {
 
         // 2. run expression for evaluation
         match &rule.expr {
-            Expr::Call(call) => {
-                match call.name.as_str() {
+            Expr::PropsCall(props) => {
+                match props[0].as_str() {
                     "len" => {
                         let size = RuleExecutor::get_assert_sized(&rule);
                         let ops = &rule.ops[0];
                         self.processing_file_len(index, size, ops, filtered_models.len())
                     }
-                    _ => {}
-                }
-            }
-            Expr::PropsCall(props) => {
-                match props[0].as_str() {
                     "file" => {
                         match props[1].as_str() {
                             "len" => {

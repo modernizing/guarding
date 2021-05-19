@@ -68,7 +68,7 @@ mod tests {
     #[test]
     fn should_support_for_class_filter() {
         let code_dir = test_dir();
-        let content = "class(\".\")::len should < 27;";
+        let content = "class(\".\")::len should < 26;";
         let errors = RuleExecutor::execute(content.to_string(), code_dir);
 
         println!("{:?}", errors);

@@ -116,17 +116,15 @@ function abc() {
 }
 ";
         let file = JsIdent::parse(source_code);
-
         let funcs = &file.functions[0];
-
         let class = &file.classes[0];
+
         assert_eq!("Rectangle", class.name);
         assert_eq!(0, class.start.column);
         assert_eq!(2, class.start.row);
         assert_eq!(7, class.end.row);
         assert_eq!(1, class.end.column);
         assert_eq!("constructor", class.functions[0].name);
-
         assert_eq!("abc", funcs.name);
     }
 
