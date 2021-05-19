@@ -156,7 +156,6 @@ impl RustIdent {
 }
 ";
         let file = RustIdent::parse(source_code);
-        println!("{:?}", file);
 
         assert_eq!(1, file.classes.len());
         assert_eq!("RustIdent", file.classes[0].name);

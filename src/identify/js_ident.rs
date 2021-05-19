@@ -116,7 +116,6 @@ function abc() {
 }
 ";
         let file = JsIdent::parse(source_code);
-        println!("{:?}", file);
 
         let funcs = &file.functions[0];
 
@@ -138,7 +137,6 @@ function abc() {
 }
 ";
         let file = JsIdent::parse(source_code);
-        println!("{:?}", file);
 
         let funcs = &file.functions[0];
         assert_eq!("abc", funcs.name);
