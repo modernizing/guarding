@@ -142,10 +142,19 @@ impl RuleExecutor {
                         let ops = &rule.ops[0];
                         self.processing_file_len(index, size, ops, filtered_models.len())
                     }
-                    _ => {}
+                    "name" => {
+                        let string = RuleExecutor::get_assert_string(&rule);
+                        let ops = &rule.ops[0];
+                        self.processing_file_name(index, ops, filtered_models, string)
+                    }
+                    _ => {
+                        println!("todo: expr {:?}", props[0].as_str());
+                    }
                 }
             }
-            Expr::Identifier(_) => {}
+            Expr::Identifier(ident) => {
+                println!("{:?}", ident);
+            }
         }
     }
 
@@ -196,6 +205,35 @@ impl RuleExecutor {
             .filter(|s| { is_package_match(str.to_string(), s.package.as_str()) })
             .map(|s| { s.clone() })
             .collect()
+    }
+
+    fn processing_file_name(&mut self, index: usize, ops: &Operator, models: Vec<CodeClass>, excepted: String) {
+        let mut error = RuleError {
+            expected: format!("{}", excepted),
+            actual: format!("{}", ""),
+            error_type: "file name".to_string(),
+            msg: "".to_string(),
+            rule: index,
+        };
+
+        match ops {
+            Operator::StartsWith => {}
+            Operator::Endswith => {
+                let mut assert_success = true;
+                models.iter().for_each(|clz| {
+                    if !clz.name.ends_with(&excepted) {
+                        assert_success = false;
+                    }
+                });
+
+                if !assert_success {
+                    error.msg = format!("endsWith: {:?}", excepted);
+                    self.errors.insert(index, error);
+                }
+            }
+            Operator::Contains => {}
+            _ => {}
+        }
     }
 
     fn processing_file_len(&mut self, index: usize, excepted_size: usize, ops: &Operator, actual_len: usize) {
@@ -252,5 +290,16 @@ impl RuleExecutor {
             }
         }
         size
+    }
+
+    fn get_assert_string(rule: &GuardRule) -> String {
+        let mut string = "".to_string();
+        match &rule.assert {
+            RuleAssert::Stringed(str) => {
+                string = str.clone();
+            }
+            _ => {}
+        }
+        string
     }
 }

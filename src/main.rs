@@ -94,7 +94,18 @@ class(implementation \"BaseParser\")::len = 2
 ";
         let errors = RuleExecutor::execute(content.to_string(), code_dir);
 
-        println!("{:?}", errors);
+        assert_eq!(0, errors.len());
+    }
+
+    #[ignore]
+    #[test]
+    fn should_support_for_extends_ends_with() {
+        let code_dir = test_dir();
+        let content = "
+class(implementation \"BaseParser\")::name should endsWith \"Parser\";
+";
+        let errors = RuleExecutor::execute(content.to_string(), code_dir);
+
         assert_eq!(0, errors.len());
     }
 }
