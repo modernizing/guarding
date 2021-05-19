@@ -36,7 +36,6 @@ impl CodeIdent for JavaIdent {
         let captures = query_cursor.captures(&query, tree.root_node(), text_callback);
 
         let mut code_file = CodeFile::default();
-        let mut last_class_end_line = 0;
         let mut class = CodeClass::default();
         let mut is_last_node = false;
 
@@ -53,9 +52,13 @@ impl CodeIdent for JavaIdent {
                     code_file.imports.push(text.to_string());
                 }
                 "class-name" => {
+                    if !class.name.is_empty() {
+                        code_file.classes.push(class.clone());
+                        class = CodeClass::default();
+                    }
+
                     class.name = text.to_string();
                     let class_node = capture.node.parent().unwrap();
-                    last_class_end_line = class_node.end_position().row;
                     JavaIdent::insert_location(&mut class, class_node);
                     if !is_last_node {
                         is_last_node = true;
@@ -73,13 +76,6 @@ impl CodeIdent for JavaIdent {
                         capture.node.start_position().row,
                         capture.node.utf8_text((&code).as_ref()).unwrap_or("")
                     );
-                }
-            }
-
-            if capture.node.start_position().row >= last_class_end_line {
-                if !class.name.is_empty() {
-                    code_file.classes.push(class.clone());
-                    class = CodeClass::default();
                 }
             }
         }
@@ -132,6 +128,20 @@ import payroll.Employee;
         let file = JavaIdent::parse(source_code);
         assert_eq!(1, file.classes.len());
         assert_eq!("DateTimeImpl", file.classes[0].name);
+    }
+
+    #[test]
+    fn should_parse_multiple_java_class() {
+        let source_code = "class DateTimeImpl {
+}
+
+class DateTimeImpl2 {
+}
+";
+        let file = JavaIdent::parse(source_code);
+        assert_eq!(2, file.classes.len());
+        assert_eq!("DateTimeImpl", file.classes[0].name);
+        assert_eq!("DateTimeImpl2", file.classes[1].name);
     }
 
     #[test]
