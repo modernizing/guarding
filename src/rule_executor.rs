@@ -99,32 +99,7 @@ impl RuleExecutor {
                 println!("todo");
             }
             RuleLevel::Class => {
-                let mut filtered_models: Vec<CodeClass> = vec![];
-
-                match &rule.scope {
-                    RuleScope::PathDefine(str) => {
-                        if str.as_str() == "." {
-                            for file in &self.models {
-                                filtered_models.extend(file.classes.clone());
-                            }
-                        };
-                    }
-                    _ => {}
-                }
-
-                match &rule.expr {
-                    Expr::PropsCall(props) => {
-                        match props[0].as_str() {
-                            "len" => {
-                                let size = RuleExecutor::get_assert_sized(&rule);
-                                let ops = &rule.ops[0];
-                                self.processing_file_len(index, size, ops, filtered_models.len())
-                            }
-                            _ => {}
-                        }
-                    }
-                    Expr::Identifier(_) => {}
-                }
+                self.capture_class(&rule, index)
             }
             RuleLevel::Struct => {
                 println!("todo");
@@ -135,6 +110,35 @@ impl RuleExecutor {
         };
 
         // todo: 3. run assert
+    }
+
+    fn capture_class(&mut self, rule: &GuardRule, index: usize) {
+        let mut filtered_models: Vec<CodeClass> = vec![];
+
+        match &rule.scope {
+            RuleScope::PathDefine(str) => {
+                if str.as_str() == "." {
+                    for file in &self.models {
+                        filtered_models.extend(file.classes.clone());
+                    }
+                };
+            }
+            _ => {}
+        }
+
+        match &rule.expr {
+            Expr::PropsCall(props) => {
+                match props[0].as_str() {
+                    "len" => {
+                        let size = RuleExecutor::get_assert_sized(&rule);
+                        let ops = &rule.ops[0];
+                        self.processing_file_len(index, size, ops, filtered_models.len())
+                    }
+                    _ => {}
+                }
+            }
+            Expr::Identifier(_) => {}
+        }
     }
 
     fn capture_package(&mut self, rule: &GuardRule, index: usize) {
