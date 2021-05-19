@@ -59,53 +59,52 @@ mod tests {
 
     #[test]
     fn should_get_errors_when_lt() {
-        let code_dir = test_dir();
         let content = "package(\".\")::file.len should = 27;";
-        let errors = RuleExecutor::execute(content.to_string(), code_dir);
+        let errors = RuleExecutor::execute(content.to_string(), test_dir());
 
         assert_eq!(1, errors.len());
     }
 
     #[test]
     fn should_support_filter() {
-        let code_dir = test_dir();
         let content = "package(\"com.phodal.pepper.refactor.parser\")::file.len should = 3;";
-        let errors = RuleExecutor::execute(content.to_string(), code_dir);
+        let errors = RuleExecutor::execute(content.to_string(), test_dir());
 
         assert_eq!(0, errors.len());
     }
 
     #[test]
     fn should_support_for_class_filter() {
-        let code_dir = test_dir();
         let content = "class(\".\")::len should < 25;
 class(\".\")::len should > 20;
 ";
-        let errors = RuleExecutor::execute(content.to_string(), code_dir);
+        let errors = RuleExecutor::execute(content.to_string(), test_dir());
 
         assert_eq!(0, errors.len());
     }
 
     #[test]
     fn should_support_for_extends_count() {
-        let code_dir = test_dir();
         let content = "
 class(implementation \"BaseParser\")::len = 2
 ";
-        let errors = RuleExecutor::execute(content.to_string(), code_dir);
+        let errors = RuleExecutor::execute(content.to_string(), test_dir());
 
         assert_eq!(0, errors.len());
     }
 
-    #[ignore]
     #[test]
     fn should_support_for_extends_ends_with() {
-        let code_dir = test_dir();
         let content = "
+class(implementation \"BaseParser\")::name should endsWith \"Parser2\";
+";
+        let errors = RuleExecutor::execute(content.to_string(), test_dir());
+        assert_eq!(1, errors.len());
+
+        let correct_content = "
 class(implementation \"BaseParser\")::name should endsWith \"Parser\";
 ";
-        let errors = RuleExecutor::execute(content.to_string(), code_dir);
-
+        let errors = RuleExecutor::execute(correct_content.to_string(), test_dir());
         assert_eq!(0, errors.len());
     }
 }
