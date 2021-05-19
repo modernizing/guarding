@@ -67,6 +67,15 @@ mod tests {
     }
 
     #[test]
+    fn should_support_filter() {
+        let code_dir = test_dir();
+        let content = "package(\"com.phodal.pepper.refactor.parser\")::file.len should = 3;";
+        let errors = RuleExecutor::execute(content.to_string(), code_dir);
+
+        assert_eq!(0, errors.len());
+    }
+
+    #[test]
     fn should_support_for_class_filter() {
         let code_dir = test_dir();
         let content = "class(\".\")::len should < 25;

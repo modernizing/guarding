@@ -11,6 +11,7 @@ use crate::parser::ast::{Expr, GuardRule, Operator, RuleAssert, RuleLevel, RuleS
 use crate::parser;
 use std::fs;
 use crate::identify::code_ident::CodeIdent;
+use crate::package_matcher::is_package_match;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct RuleError {
@@ -146,8 +147,14 @@ impl RuleExecutor {
 
         match &rule.scope {
             RuleScope::PathDefine(str) => {
-                if str.as_str() == "." {
+                let path = str.as_str();
+                if path == "." {
                     filtered_models = self.models.clone();
+                } else {
+                    filtered_models = self.models.iter()
+                        .filter(|s| { is_package_match(str.to_string(), s.package.as_str()) })
+                        .map(|s| { s.clone() })
+                        .collect();
                 };
             }
             RuleScope::MatchRegex(_) => {}
