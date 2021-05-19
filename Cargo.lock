@@ -79,6 +79,7 @@ dependencies = [
  "cc",
  "pest",
  "pest_derive",
+ "regex",
  "serde",
  "serde_json",
  "tree-sitter",
