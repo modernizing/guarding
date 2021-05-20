@@ -59,7 +59,7 @@ pub fn convert_to_regex(package_identifier: String) -> String {
 
 #[cfg(test)]
 mod tests {
-    use crate::package_matcher::{is_assert_match, is_package_match};
+    use crate::rule_executor::package_matcher::{is_assert_match, is_package_match};
 
     #[test]
     fn should_match() {

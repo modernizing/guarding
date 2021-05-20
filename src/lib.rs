@@ -14,7 +14,6 @@ extern "C" { fn tree_sitter_javascript() -> Language; }
 pub mod identify;
 pub mod parser;
 pub mod rule_executor;
-pub mod package_matcher;
 
 #[cfg(test)]
 mod tests {

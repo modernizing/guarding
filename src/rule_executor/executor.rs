@@ -9,7 +9,7 @@ use crate::identify::code_model::{CodeClass, CodeFile};
 use crate::identify::java_ident::JavaIdent;
 use crate::identify::js_ident::JsIdent;
 use crate::identify::rust_ident::RustIdent;
-use crate::package_matcher::is_package_match;
+use crate::rule_executor::package_matcher::is_package_match;
 use crate::parser;
 use crate::parser::ast::{Expr, GuardRule, Operator, RuleAssert, RuleLevel, RuleScope};
 
