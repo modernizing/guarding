@@ -24,11 +24,9 @@ mod tests {
     use crate::rule_executor::RuleExecutor;
 
     fn test_dir() -> PathBuf {
-        let root_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
-        let test_dir = root_dir.join("_fixtures")
-            .join("java");
-
-        test_dir
+        PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .join("_fixtures")
+            .join("java")
     }
 
     #[test]
