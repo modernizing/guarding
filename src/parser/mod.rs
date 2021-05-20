@@ -105,12 +105,15 @@ fn parse_operator(parent: Pair<Rule>) -> Vec<Operator> {
     let ops = match pair.as_rule() {
         Rule::op_lte => { Operator::Lte }
         Rule::op_gte => { Operator::Gte }
-        Rule::op_lt => { Operator::Lt }
-        Rule::op_gt => { Operator::Gt }
-        Rule::op_eq => { Operator::Eq }
-        Rule::op_contains => { Operator::Contains }
-        Rule::op_endsWith => { Operator::Endswith }
+        Rule::op_lt  => { Operator::Lt }
+        Rule::op_gt  => { Operator::Gt }
+        Rule::op_eq  => { Operator::Eq }
+
+        Rule::op_contains   => { Operator::Contains }
+        Rule::op_endsWith   => { Operator::Endswith }
         Rule::op_startsWith => { Operator::StartsWith }
+
+        Rule::op_inside   => { Operator::Inside }
         Rule::op_resideIn => { Operator::ResideIn }
         Rule::op_accessed => { Operator::Accessed }
         Rule::op_dependBy => { Operator::DependBy }

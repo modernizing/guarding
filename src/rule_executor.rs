@@ -240,6 +240,7 @@ impl RuleExecutor {
 
         let mut assert_success = true;
         match ops {
+            Operator::Inside |
             Operator::ResideIn => {
                 error.msg = format!("resideIn: {:?}", identifier);
                 models.iter().for_each(|clz| {

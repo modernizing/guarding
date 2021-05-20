@@ -127,6 +127,7 @@ pub enum Operator {
     Contains,
 
     // package operators
+    Inside,
     ResideIn,
     Accessed,
     DependBy
