@@ -121,4 +121,14 @@ class(\".\")::len should > 20;";
         let errors = RuleExecutor::execute(content.to_string(), test_dir());
         assert_eq!(0, errors.len());
     }
+
+    #[ignore]
+    #[test]
+    fn should_support_for_accessed() {
+        let content = "class(\"..service..\") only accessed([\"..controller..\", \"..service..\"]);";
+        let errors = RuleExecutor::execute(content.to_string(), test_dir());
+
+        assert_eq!(1, errors.len());
+        assert_eq!(2, errors[0].items.len());
+    }
 }

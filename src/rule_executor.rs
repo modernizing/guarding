@@ -142,6 +142,18 @@ impl RuleExecutor {
             _ => {}
         }
 
+        // query first for assert packages?
+        match &rule.ops[0] {
+            Operator::ResideIn => {}
+            Operator::Accessed => {
+                return;
+            }
+            Operator::DependBy => {
+                return;
+            }
+            _ => {}
+        }
+
         match &rule.expr {
             Expr::PropsCall(props) => {
                 match props[0].as_str() {
@@ -251,7 +263,9 @@ impl RuleExecutor {
                     }
                 });
             }
-            Operator::Accessed => {}
+            Operator::Accessed => {
+
+            }
             Operator::DependBy => {}
             _ => {}
         }
