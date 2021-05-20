@@ -118,6 +118,10 @@ impl RuleExecutor {
     fn capture_class(&mut self, rule: &GuardRule, index: usize) {
         let mut filtered_models: Vec<CodeClass> = vec![];
 
+        if self.capture_package_to_package(&rule, index) {
+            return;
+        }
+
         match &rule.scope {
             RuleScope::PathDefine(str) => {
                 if str.as_str() == "." {
@@ -138,65 +142,6 @@ impl RuleExecutor {
                         .collect();
                     filtered_models.extend(classes);
                 });
-            }
-            _ => {}
-        }
-
-        match &rule.ops[0] {
-            Operator::Accessed => {
-                let mut assert_models: Vec<CodeFile> = vec![];
-                match &rule.assert {
-                    RuleAssert::Stringed(pkg_identifier) => {
-                        assert_models = self.filter_by_package_identifier(pkg_identifier);
-                    }
-                    RuleAssert::ArrayStringed(identifiers) => {
-                        for ident in identifiers {
-                            assert_models.extend(self.filter_by_package_identifier(ident));
-                        }
-                    }
-                    _ => {}
-                }
-
-                let mut pkg_identifier = "".to_string();
-                match &rule.scope {
-                    RuleScope::PathDefine(str) => {
-                        pkg_identifier = str.clone();
-                    }
-                    _ => {}
-                }
-
-                let mut error = RuleError {
-                    expected: format!("{}", ""),
-                    actual: format!("{}", ""),
-                    error_type: "accessed".to_string(),
-                    msg: "".to_string(),
-                    items: vec![],
-                    rule: index,
-                };
-
-                let mut assert_success = true;
-                match &rule.ops[0] {
-                    Operator::Accessed => {
-                        let paths = self.search_by_access(&mut assert_models, pkg_identifier);
-                        if paths.len() > 0 {
-                            assert_success = false;
-                            paths.iter().for_each(|p| {
-                               error.items.push(p.clone());
-                            });
-                        }
-                    }
-                    _ => {}
-                }
-
-                if !assert_success {
-                    self.errors.push(error);
-                }
-
-                return;
-            }
-            Operator::DependBy => {
-                println!("DependBy");
-                return;
             }
             _ => {}
         }
@@ -236,6 +181,69 @@ impl RuleExecutor {
                 }
             }
         }
+    }
+
+    fn capture_package_to_package(&mut self, rule: &&GuardRule, index: usize) -> bool {
+        let mut has_capture_assert = false;
+        match &rule.ops[0] {
+            Operator::Accessed => {
+                let mut assert_models: Vec<CodeFile> = vec![];
+                match &rule.assert {
+                    RuleAssert::Stringed(pkg_identifier) => {
+                        assert_models = self.filter_by_package_identifier(pkg_identifier);
+                    }
+                    RuleAssert::ArrayStringed(identifiers) => {
+                        for ident in identifiers {
+                            assert_models.extend(self.filter_by_package_identifier(ident));
+                        }
+                    }
+                    _ => {}
+                }
+
+                let mut pkg_identifier = "".to_string();
+                match &rule.scope {
+                    RuleScope::PathDefine(str) => {
+                        pkg_identifier = str.clone();
+                    }
+                    _ => {}
+                }
+
+                let mut error = RuleError {
+                    expected: format!("{}", ""),
+                    actual: format!("{}", ""),
+                    error_type: "accessed".to_string(),
+                    msg: "".to_string(),
+                    items: vec![],
+                    rule: index,
+                };
+
+                let mut assert_success = true;
+                match &rule.ops[0] {
+                    Operator::Accessed => {
+                        let paths = self.search_by_access(&mut assert_models, pkg_identifier);
+                        if paths.len() > 0 {
+                            assert_success = false;
+                            paths.iter().for_each(|p| {
+                                error.items.push(p.clone());
+                            });
+                        }
+                    }
+                    _ => {}
+                }
+
+                if !assert_success {
+                    self.errors.push(error);
+                }
+
+                has_capture_assert = true;
+            }
+            Operator::DependBy => {
+                has_capture_assert = true;
+            }
+            _ => {}
+        }
+
+        has_capture_assert
     }
 
     fn search_by_access(&mut self, assert_models: &mut Vec<CodeFile>, pkg_identifier: String) -> Vec<String> {
