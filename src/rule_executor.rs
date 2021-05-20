@@ -227,7 +227,17 @@ impl RuleExecutor {
 
         let mut assert_success = true;
         match ops {
-            Operator::StartsWith => {}
+            Operator::StartsWith => {
+                error.msg = format!("startsWith: {:?}", excepted);
+
+                models.iter().for_each(|clz| {
+                    if !clz.name.starts_with(&excepted) {
+                        assert_success = false;
+                        let item = format!("path: {}, name: {}", clz.package.clone(), clz.name.clone());
+                        error.items.push(item)
+                    }
+                });
+            }
             Operator::Endswith => {
                 error.msg = format!("endsWith: {:?}", excepted);
 

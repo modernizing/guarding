@@ -84,17 +84,21 @@ class(implementation \"BaseParser\")::len = 2
 
     #[test]
     fn should_support_for_extends_ends_with() {
-        let content = "
-class(implementation \"BaseParser\")::name should endsWith \"Parser2\";
-";
+        let content = "class(implementation \"BaseParser\")::name should endsWith \"Parser2\";";
         let errors = RuleExecutor::execute(content.to_string(), test_dir());
-        println!("{:?}", errors);
         assert_eq!(1, errors.len());
+        assert_eq!(2, errors[0].items.len());
 
-        let correct_content = "
-class(implementation \"BaseParser\")::name should endsWith \"Parser\";
-";
+        let correct_content = "class(implementation \"BaseParser\")::name should endsWith \"Parser\";";
         let errors = RuleExecutor::execute(correct_content.to_string(), test_dir());
         assert_eq!(0, errors.len());
+    }
+
+    #[test]
+    fn should_support_for_starts_with() {
+        let content = "class(implementation \"BaseParser\")::name should startsWith \"Json\";";
+        let errors = RuleExecutor::execute(content.to_string(), test_dir());
+        assert_eq!(1, errors.len());
+        assert_eq!(1, errors[0].items.len());
     }
 }
