@@ -20,7 +20,6 @@ pub mod rule_executor;
 pub mod package_matcher;
 
 fn main() {
-    // test program
     let buf = PathBuf::from(".");
     let guarding = buf.clone().join("guarding.guarding");
     let content = fs::read_to_string(guarding).unwrap();

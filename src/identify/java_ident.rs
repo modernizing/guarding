@@ -4,8 +4,6 @@ use crate::tree_sitter_java;
 use crate::identify::code_model::{CodeClass, CodeFile};
 use crate::identify::code_ident::CodeIdent;
 
-pub struct JavaIdent {}
-
 const JAVA_QUERY: &'static str = "
 (package_declaration
 	(scoped_identifier) @package-name)
@@ -31,20 +29,37 @@ const JAVA_QUERY: &'static str = "
 
 ";
 
-impl CodeIdent for JavaIdent {
-    fn parse(code: &str) -> CodeFile {
+pub struct JavaIdent {
+    parser: Parser,
+    query: Query
+}
+
+impl JavaIdent {
+    pub fn new() -> JavaIdent {
         let mut parser = Parser::new();
         let language = unsafe { tree_sitter_java() };
         parser.set_language(language).unwrap();
-        let text_callback = |n: Node| &code[n.byte_range()];
-
-        let tree = parser.parse(code, None).unwrap();
 
         let query = Query::new(language, &JAVA_QUERY)
             .map_err(|e| println!("{}", format!("Query compilation failed: {:?}", e))).unwrap();
 
+        JavaIdent {
+            parser,
+            query
+        }
+    }
+}
+
+
+impl CodeIdent for JavaIdent {
+    fn parse(code: &str) -> CodeFile {
+        let mut ident = JavaIdent::new();
+        let text_callback = |n: Node| &code[n.byte_range()];
+
+        let tree = ident.parser.parse(code, None).unwrap();
+
         let mut query_cursor = QueryCursor::new();
-        let captures = query_cursor.captures(&query, tree.root_node(), text_callback);
+        let captures = query_cursor.captures(&ident.query, tree.root_node(), text_callback);
 
         let mut code_file = CodeFile::default();
         let mut class = CodeClass::default();
@@ -52,7 +67,7 @@ impl CodeIdent for JavaIdent {
 
         for (mat, capture_index) in captures {
             let capture = mat.captures[capture_index];
-            let capture_name = &query.capture_names()[capture.index as usize];
+            let capture_name = &ident.query.capture_names()[capture.index as usize];
 
             let text = capture.node.utf8_text((&code).as_ref()).unwrap_or("");
             match capture_name.as_str() {
