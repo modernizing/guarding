@@ -97,10 +97,14 @@ class(\".\")::len should > 20;";
         assert_eq!(1, errors[0].items.len());
     }
 
-    #[ignore]
     #[test]
     fn should_support_for_reside_in() {
-        let content = "class(implementation \"EntityManager.class\") resideIn package(\"..persistence.\");";
+        let content = "class(implementation \"BaseParser\") resideIn package(\"....parser2\");";
+        let errors = RuleExecutor::execute(content.to_string(), test_dir());
+
+        assert_eq!(1, errors.len());
+
+        let content = "class(implementation \"BaseParser\") resideIn package(\"....parser\");";
         let errors = RuleExecutor::execute(content.to_string(), test_dir());
 
         assert_eq!(0, errors.len());

@@ -163,7 +163,13 @@ impl RuleExecutor {
             Expr::Identifier(ident) => {
                 match ident.as_str() {
                     "" => {
-                        println!("Empty Identifier: {:?}", ident);
+                        let (has_capture, _level, ident) = RuleExecutor::get_package_level(&rule);
+                        if has_capture {
+                            let ops = &rule.ops[0];
+                            self.process_captures(index, ops, filtered_models, ident)
+                        } else {
+                            println!("Empty Identifier: {:?}", ident);
+                        }
                     }
                     &_ => {
                         println!("Expr::Identifier: {:?}", ident);
@@ -220,6 +226,38 @@ impl RuleExecutor {
             .filter(|s| { is_package_match(str.to_string(), s.package.as_str()) })
             .map(|s| { s.clone() })
             .collect()
+    }
+
+    fn process_captures(&mut self, index: usize, ops: &Operator, models: Vec<CodeClass>, identifier: String) {
+        let mut error = RuleError {
+            expected: format!("{}", ""),
+            actual: format!("{}", ""),
+            error_type: "file name".to_string(),
+            msg: "".to_string(),
+            items: vec![],
+            rule: index,
+        };
+
+        let mut assert_success = true;
+        match ops {
+            Operator::ResideIn => {
+                error.msg = format!("resideIn: {:?}", identifier);
+                models.iter().for_each(|clz| {
+                    if !is_package_match(identifier.clone(), clz.package.as_str()) {
+                        let item = format!("path: {}, name: {}", clz.package.clone(), clz.name.clone());
+                        error.items.push(item);
+                        assert_success = false;
+                    }
+                });
+            }
+            Operator::Accessed => {}
+            Operator::DependBy => {}
+            _ => {}
+        }
+
+        if !assert_success {
+            self.errors.insert(index, error);
+        }
     }
 
     fn processing_name(&mut self, index: usize, ops: &Operator, models: Vec<CodeClass>, excepted: String) {
@@ -341,5 +379,21 @@ impl RuleExecutor {
             _ => {}
         }
         string
+    }
+
+    fn get_package_level(rule: &GuardRule) -> (bool, RuleLevel, String) {
+        let mut string = "".to_string();
+        let mut level = RuleLevel::Package;
+        let mut has_capture = false;
+        match &rule.assert {
+            RuleAssert::Leveled(lv, package_ident) => {
+                has_capture = true;
+                level = lv.clone();
+                string = package_ident.clone();
+            }
+            _ => {}
+        }
+
+        return (has_capture, level, string);
     }
 }
