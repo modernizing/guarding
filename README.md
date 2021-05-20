@@ -9,18 +9,19 @@
 
 todo:
 
- - [ ] git hooks for staged files
  - [x] guarding DSL design
  - [x] setup projects
  - [x] parser
     - [x] tree-sitter
+ - [ ] parser
  - [x] interface / trait supports
  - [ ] languages
     - [ ] Java normal
     - [ ] Java ArchUnit generator
     - [ ] JavaScript / TypeScript
     - [ ] Rust
-   
+ - [ ] git hooks for staged files (low-priority， some-languages has custom git hooks)
+
 ## Development
 
 workflow:
