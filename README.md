@@ -16,10 +16,11 @@ todo:
  - [ ] parser
  - [x] interface / trait supports
  - [ ] languages
-    - [ ] Java normal
-    - [ ] Java ArchUnit generator
-    - [ ] JavaScript / TypeScript
+    - [x] Java
+    - [x] JavaScript
+    - [ ] TypeScript
     - [ ] Rust
+ - [ ] ArchUnit code generator?
  - [ ] git hooks for staged files (low-priority， some-languages has custom git hooks)
 
 ## Development
