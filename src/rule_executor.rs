@@ -143,7 +143,6 @@ impl RuleExecutor {
         }
 
         match &rule.ops[0] {
-            Operator::ResideIn => {}
             Operator::Accessed => {
                 let mut assert_models: Vec<CodeFile> = vec![];
                 match &rule.assert {
@@ -166,22 +165,31 @@ impl RuleExecutor {
                     _ => {}
                 }
 
+                let mut error = RuleError {
+                    expected: format!("{}", ""),
+                    actual: format!("{}", ""),
+                    error_type: "accessed".to_string(),
+                    msg: "".to_string(),
+                    items: vec![],
+                    rule: index,
+                };
 
                 let mut assert_success = true;
                 match &rule.ops[0] {
                     Operator::Accessed => {
-                        assert_models.iter().for_each(|clz| {
-                            // todo: use imports;
-                            // if !is_package_match(pkg_identifier.clone(), clz.package.as_str()) {
-                            //     assert_success = false;
-                            // }
-                        });
+                        let paths = self.search_by_access(&mut assert_models, pkg_identifier);
+                        if paths.len() > 0 {
+                            assert_success = false;
+                            paths.iter().for_each(|p| {
+                               error.items.push(p.clone());
+                            });
+                        }
                     }
                     _ => {}
                 }
 
                 if !assert_success {
-                    println!("handle error");
+                    self.errors.push(error);
                 }
 
                 return;
@@ -228,6 +236,28 @@ impl RuleExecutor {
                 }
             }
         }
+    }
+
+    fn search_by_access(&mut self, assert_models: &mut Vec<CodeFile>, pkg_identifier: String) -> Vec<String> {
+        let mut error_paths = vec![];
+        self.models.iter().for_each(|clz| {
+            for imp in &clz.imports {
+                let is_file_import = is_package_match(pkg_identifier.clone(), imp.as_str());
+                if is_file_import {
+                    let mut has_file_in_assert = false;
+                    &assert_models.iter().for_each(|file| {
+                        if file.path == clz.path {
+                            has_file_in_assert = true;
+                        }
+                    });
+                    if !has_file_in_assert {
+                        error_paths.push(clz.path.clone());
+                    }
+                }
+            }
+        });
+
+        error_paths
     }
 
     fn capture_package(&mut self, rule: &GuardRule, index: usize) {

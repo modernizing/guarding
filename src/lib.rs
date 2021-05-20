@@ -122,12 +122,12 @@ class(\".\")::len should > 20;";
         assert_eq!(0, errors.len());
     }
 
-    #[ignore]
     #[test]
     fn should_support_for_accessed() {
-        let content = "class(\"..service..\") only accessed([\"..controller..\", \"..service..\"]);";
+        let content = "class(\"java.util.Map\") only accessed([\"com.phodal.pepper.refactor.staticclass\"]);";
         let errors = RuleExecutor::execute(content.to_string(), test_dir());
 
         assert_eq!(1, errors.len());
+        assert!(errors[0].items[0].contains("MyDictionary.java"))
     }
 }
