@@ -56,16 +56,23 @@ impl RuleExecutor {
 
             let ext = entry.path().extension().unwrap().to_str().unwrap();
             let content = fs::read_to_string(entry.path()).expect("not such file");
+            let path = format!("{}", entry.path().display());
 
             match ext {
                 "java" => {
-                    models.push(JavaIdent::parse(content.as_str()));
+                    let mut file = JavaIdent::parse(content.as_str());
+                    file.path = path;
+                    models.push(file);
                 }
                 "js" => {
-                    models.push(JsIdent::parse(content.as_str()));
+                    let mut file = JsIdent::parse(content.as_str());
+                    file.path = path;
+                    models.push(file);
                 }
                 "rs" => {
-                    models.push(RustIdent::parse(content.as_str()));
+                    let mut file = RustIdent::parse(content.as_str());
+                    file.path = path;
+                    models.push(file);
                 }
                 &_ => {}
             }
