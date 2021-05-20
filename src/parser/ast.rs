@@ -138,5 +138,6 @@ pub enum RuleAssert {
     Empty,
     Stringed(String),
     Leveled(RuleLevel, String),
+    ArrayStringed(Vec<String>),
     Sized(usize),
 }

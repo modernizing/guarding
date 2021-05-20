@@ -12,7 +12,7 @@ declaration = {
 // file is a container of classes and functions
 // classes is a container of functions and field
 normal_rule = {
-	rule_level ~ ("(" ~ scope ~ ")")? ~ (use_symbol ~ expression)? ~ should? ~ operator ~ assert ~ ";"?
+	rule_level ~ ("(" ~ scope ~ ")")? ~ (use_symbol ~ expression)? ~ should? ~ only? ~ operator ~ assert ~ ";"?
 }
 
 rule_level = {
@@ -78,7 +78,12 @@ fn_call = {
 assert = {
     leveled |
     stringed |
+    array_stringed |
     sized
+}
+
+array_stringed = {
+    "(" ~ "[" ~ string ~ ("," ~ string)* ~ "]" ~ ")"
 }
 
 stringed = {
@@ -130,9 +135,8 @@ op_gt             = { ">" }
 op_eq             = { "=" }
 op_ineq           = { "!=" }
 
-should = {
-    "should"
-}
+should            = { "should" }
+only              = { "only" }
 
 double_quoted_string  = @{ "\"" ~ (!("\"") ~ ANY)* ~ "\""}
 single_quoted_string  = @{ "\'" ~ (!("\'") ~ ANY)* ~ "\'"}

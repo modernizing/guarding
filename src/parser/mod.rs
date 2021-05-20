@@ -105,15 +105,15 @@ fn parse_operator(parent: Pair<Rule>) -> Vec<Operator> {
     let ops = match pair.as_rule() {
         Rule::op_lte => { Operator::Lte }
         Rule::op_gte => { Operator::Gte }
-        Rule::op_lt  => { Operator::Lt }
-        Rule::op_gt  => { Operator::Gt }
-        Rule::op_eq  => { Operator::Eq }
+        Rule::op_lt => { Operator::Lt }
+        Rule::op_gt => { Operator::Gt }
+        Rule::op_eq => { Operator::Eq }
 
-        Rule::op_contains   => { Operator::Contains }
-        Rule::op_endsWith   => { Operator::Endswith }
+        Rule::op_contains => { Operator::Contains }
+        Rule::op_endsWith => { Operator::Endswith }
         Rule::op_startsWith => { Operator::StartsWith }
 
-        Rule::op_inside   => { Operator::Inside }
+        Rule::op_inside => { Operator::Inside }
         Rule::op_resideIn => { Operator::ResideIn }
         Rule::op_accessed => { Operator::Accessed }
         Rule::op_dependBy => { Operator::DependBy }
@@ -165,16 +165,16 @@ fn parse_assert(parent: Pair<Rule>) -> RuleAssert {
                 match p.as_rule() {
                     Rule::rule_level => {
                         level = parse_rule_level(p);
-                    },
+                    }
                     Rule::string => {
                         str = str_support::replace_string_markers(p.as_str());
-                    },
+                    }
                     _ => {}
                 }
             }
 
             RuleAssert::Leveled(level, str)
-        },
+        }
         Rule::sized => {
             let mut pairs = pair.into_inner();
             let pair = pairs.next().unwrap();
@@ -183,14 +183,28 @@ fn parse_assert(parent: Pair<Rule>) -> RuleAssert {
                 .expect("convert int error");
 
             RuleAssert::Sized(size)
-        },
+        }
         Rule::stringed => {
             let mut pairs = pair.into_inner();
             let pair = pairs.next().unwrap();
 
             let str = str_support::replace_string_markers(pair.as_str());
             RuleAssert::Stringed(str.to_string())
-        },
+        }
+        Rule::array_stringed => {
+            let mut array = vec![];
+            for p in pair.into_inner() {
+                match p.as_rule() {
+                    Rule::string => {
+                        let str = str_support::replace_string_markers(p.as_str());
+                        array.push(str);
+                    }
+                    _ => {}
+                }
+            }
+
+            RuleAssert::ArrayStringed(array)
+        }
         _ => { RuleAssert::Empty }
     }
 }
@@ -204,19 +218,19 @@ fn parse_scope(parent: Pair<Rule>) -> RuleScope {
             let without_markers = str_support::replace_string_markers(pair.as_str());
             let string = str_support::unescape(without_markers.as_str()).expect("incorrect string literal");
             RuleScope::PathDefine(string)
-        },
+        }
         Rule::assignable_scope => {
             let string = string_from_pair(pair);
             RuleScope::Assignable(string)
-        },
+        }
         Rule::extend_scope => {
             let string = string_from_pair(pair);
             RuleScope::Extend(string)
-        },
+        }
         Rule::match_scope => {
             let string = string_from_pair(pair);
             RuleScope::MatchRegex(string)
-        },
+        }
         Rule::impl_scope => {
             let string = string_from_pair(pair);
             RuleScope::Implementation(string)
@@ -235,7 +249,7 @@ fn string_from_pair(pair: Pair<Rule>) -> String {
             Rule::string => {
                 let without_markers = str_support::replace_string_markers(p.as_str());
                 string = str_support::unescape(without_markers.as_str()).expect("incorrect string literal");
-            },
+            }
             _ => {}
         }
     }
@@ -321,6 +335,15 @@ mod tests {
         let code = "package(match(\"^/app\")) endsWith \"Connection\";";
         let vec = parse(code);
         assert_eq!(RuleScope::MatchRegex("^/app".to_string()), vec[0].scope);
+    }
+
+    #[test]
+    fn should_parse_array_stringed() {
+        let code = "class(\"..service..\") only accessed([\"..controller..\", \"..service..\"]);";
+        let vec = parse(code);
+
+        let results = vec!["..controller..".to_string(), "..service..".to_string()];
+        assert_eq!(RuleAssert::ArrayStringed(results), vec[0].assert);
     }
 
     #[test]

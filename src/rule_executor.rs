@@ -375,12 +375,10 @@ impl RuleExecutor {
     fn get_assert_sized(rule: &GuardRule) -> usize {
         let mut size = 0;
         match &rule.assert {
-            RuleAssert::Empty => {}
-            RuleAssert::Stringed(_) => {}
-            RuleAssert::Leveled(_, _) => {}
             RuleAssert::Sized(sized) => {
                 size = *sized;
             }
+            _ => {}
         }
         size
     }
