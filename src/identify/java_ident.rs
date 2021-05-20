@@ -65,9 +65,12 @@ impl CodeIdent for JavaIdent {
         let mut class = CodeClass::default();
         let mut is_last_node = false;
 
+
+        let capture_names = ident.query.capture_names();
+
         for (mat, capture_index) in captures {
             let capture = mat.captures[capture_index];
-            let capture_name = &ident.query.capture_names()[capture.index as usize];
+            let capture_name = &capture_names[capture.index as usize];
 
             let text = capture.node.utf8_text((&code).as_ref()).unwrap_or("");
             match capture_name.as_str() {
