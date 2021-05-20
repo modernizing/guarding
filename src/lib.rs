@@ -88,6 +88,7 @@ class(implementation \"BaseParser\")::len = 2
 class(implementation \"BaseParser\")::name should endsWith \"Parser2\";
 ";
         let errors = RuleExecutor::execute(content.to_string(), test_dir());
+        println!("{:?}", errors);
         assert_eq!(1, errors.len());
 
         let correct_content = "

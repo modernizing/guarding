@@ -19,6 +19,7 @@ pub struct RuleError {
     pub actual: String,
     pub error_type: String,
     pub msg: String,
+    pub items: Vec<String>,
     pub rule: usize,
 }
 
@@ -213,6 +214,7 @@ impl RuleExecutor {
             actual: format!("{}", ""),
             error_type: "file name".to_string(),
             msg: "".to_string(),
+            items: vec![],
             rule: index,
         };
 
@@ -220,13 +222,15 @@ impl RuleExecutor {
         match ops {
             Operator::StartsWith => {}
             Operator::Endswith => {
+                error.msg = format!("endsWith: {:?}", excepted);
+
                 models.iter().for_each(|clz| {
                     if !clz.name.ends_with(&excepted) {
                         assert_success = false;
+                        let item = format!("path: {}, name: {}", clz.path.clone(), clz.name.clone());
+                        error.items.push(item)
                     }
                 });
-
-                error.msg = format!("endsWith: {:?}", excepted);
             }
             Operator::Contains => {}
             _ => {}
@@ -243,6 +247,7 @@ impl RuleExecutor {
             actual: format!("{}", actual_len),
             error_type: "file.len size".to_string(),
             msg: "".to_string(),
+            items: vec![],
             rule: index,
         };
 
