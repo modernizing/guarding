@@ -234,7 +234,7 @@ impl RuleExecutor {
                 models.iter().for_each(|clz| {
                     if !clz.name.ends_with(&excepted) {
                         assert_success = false;
-                        let item = format!("path: {}, name: {}", clz.path.clone(), clz.name.clone());
+                        let item = format!("path: {}, name: {}", clz.package.clone(), clz.name.clone());
                         error.items.push(item)
                     }
                 });

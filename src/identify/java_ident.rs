@@ -82,6 +82,8 @@ impl JavaIdent {
                     }
 
                     class.name = text.to_string();
+                    class.package = code_file.package.clone();
+
                     let class_node = capture.node.parent().unwrap();
                     JavaIdent::insert_location(&mut class, class_node);
                     if !is_last_node {

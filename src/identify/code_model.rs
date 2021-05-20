@@ -46,7 +46,7 @@ pub struct CodeImport {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct CodeClass {
     pub name: String,
-    pub path: String,
+    pub package: String,
     pub extends: Vec<String>,
     pub implements: Vec<String>,
     pub constant: Vec<ClassConstant>,
@@ -86,7 +86,7 @@ impl Default for CodeClass {
     fn default() -> Self {
         CodeClass {
             name: "".to_string(),
-            path: "".to_string(),
+            package: "".to_string(),
             extends: vec![],
             implements: vec![],
             constant: vec![],
