@@ -142,13 +142,52 @@ impl RuleExecutor {
             _ => {}
         }
 
-        // query first for assert packages?
         match &rule.ops[0] {
             Operator::ResideIn => {}
             Operator::Accessed => {
+                let mut assert_models: Vec<CodeFile> = vec![];
+                match &rule.assert {
+                    RuleAssert::Stringed(pkg_identifier) => {
+                        assert_models = self.filter_by_package_identifier(pkg_identifier);
+                    }
+                    RuleAssert::ArrayStringed(identifiers) => {
+                        for ident in identifiers {
+                            assert_models.extend(self.filter_by_package_identifier(ident));
+                        }
+                    }
+                    _ => {}
+                }
+
+                let mut pkg_identifier = "".to_string();
+                match &rule.scope {
+                    RuleScope::PathDefine(str) => {
+                        pkg_identifier = str.clone();
+                    }
+                    _ => {}
+                }
+
+
+                let mut assert_success = true;
+                match &rule.ops[0] {
+                    Operator::Accessed => {
+                        assert_models.iter().for_each(|clz| {
+                            // todo: use imports;
+                            // if !is_package_match(pkg_identifier.clone(), clz.package.as_str()) {
+                            //     assert_success = false;
+                            // }
+                        });
+                    }
+                    _ => {}
+                }
+
+                if !assert_success {
+                    println!("handle error");
+                }
+
                 return;
             }
             Operator::DependBy => {
+                println!("DependBy");
                 return;
             }
             _ => {}
@@ -263,10 +302,6 @@ impl RuleExecutor {
                     }
                 });
             }
-            Operator::Accessed => {
-
-            }
-            Operator::DependBy => {}
             _ => {}
         }
 
