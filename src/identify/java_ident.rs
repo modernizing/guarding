@@ -6,9 +6,7 @@ use crate::identify::code_ident::CodeIdent;
 
 pub struct JavaIdent {}
 
-impl CodeIdent for JavaIdent {
-    fn parse(code: &str) -> CodeFile {
-        let query_source = "
+const JAVA_QUERY: &'static str = "
 (package_declaration
 	(scoped_identifier) @package-name)
 
@@ -32,15 +30,17 @@ impl CodeIdent for JavaIdent {
 )
 
 ";
-        let mut parser = Parser::new();
 
+impl CodeIdent for JavaIdent {
+    fn parse(code: &str) -> CodeFile {
+        let mut parser = Parser::new();
         let language = unsafe { tree_sitter_java() };
         parser.set_language(language).unwrap();
         let text_callback = |n: Node| &code[n.byte_range()];
 
         let tree = parser.parse(code, None).unwrap();
 
-        let query = Query::new(language, &query_source)
+        let query = Query::new(language, &JAVA_QUERY)
             .map_err(|e| println!("{}", format!("Query compilation failed: {:?}", e))).unwrap();
 
         let mut query_cursor = QueryCursor::new();

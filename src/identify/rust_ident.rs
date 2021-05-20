@@ -9,9 +9,7 @@ pub struct RustIdent {
 
 }
 
-impl CodeIdent for RustIdent {
-    fn parse(code: &str) -> CodeFile {
-        let query_source = "
+const RUST_QUERY: &'static str = "
 (use_declaration
 	(scoped_identifier) @import-name)
 
@@ -34,6 +32,9 @@ impl CodeIdent for RustIdent {
     )
 )
 ";
+
+impl CodeIdent for RustIdent {
+    fn parse(code: &str) -> CodeFile {
         let mut parser = Parser::new();
 
         let language = unsafe { tree_sitter_rust() };
@@ -42,7 +43,7 @@ impl CodeIdent for RustIdent {
 
         let tree = parser.parse(code, None).unwrap();
 
-        let query = Query::new(language, &query_source)
+        let query = Query::new(language, &RUST_QUERY)
             .map_err(|e| println!("{}", format!("Query compilation failed: {:?}", e))).unwrap();
 
         let mut query_cursor = QueryCursor::new();

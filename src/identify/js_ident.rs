@@ -8,9 +8,7 @@ pub struct JsIdent {
 
 }
 
-impl CodeIdent for JsIdent {
-    fn parse(code: &str) -> CodeFile {
-        let query_source = "
+const JS_QUERY: &'static str = "
 (import_specifier
 	name: (identifier) @import-name)
 (namespace_import (identifier) @import-name)
@@ -31,6 +29,9 @@ impl CodeIdent for JsIdent {
 (program (function_declaration
       name: * @function-name))
 ";
+
+impl CodeIdent for JsIdent {
+    fn parse(code: &str) -> CodeFile {
         let mut parser = Parser::new();
 
         let language = unsafe { tree_sitter_javascript() };
@@ -39,7 +40,7 @@ impl CodeIdent for JsIdent {
 
         let tree = parser.parse(code, None).unwrap();
 
-        let query = Query::new(language, &query_source)
+        let query = Query::new(language, &JS_QUERY)
             .map_err(|e| println!("{}", format!("Query compilation failed: {:?}", e))).unwrap();
 
         let mut query_cursor = QueryCursor::new();
