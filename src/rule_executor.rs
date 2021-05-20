@@ -140,12 +140,12 @@ impl RuleExecutor {
                     "len" => {
                         let size = RuleExecutor::get_assert_sized(&rule);
                         let ops = &rule.ops[0];
-                        self.processing_file_len(index, size, ops, filtered_models.len())
+                        self.processing_len(index, size, ops, filtered_models.len())
                     }
                     "name" => {
                         let string = RuleExecutor::get_assert_string(&rule);
                         let ops = &rule.ops[0];
-                        self.processing_file_name(index, ops, filtered_models, string)
+                        self.processing_name(index, ops, filtered_models, string)
                     }
                     _ => {
                         println!("todo: expr {:?}", props[0].as_str());
@@ -181,14 +181,14 @@ impl RuleExecutor {
                     "len" => {
                         let size = RuleExecutor::get_assert_sized(&rule);
                         let ops = &rule.ops[0];
-                        self.processing_file_len(index, size, ops, filtered_models.len())
+                        self.processing_len(index, size, ops, filtered_models.len())
                     }
                     "file" => {
                         match props[1].as_str() {
                             "len" => {
                                 let size = RuleExecutor::get_assert_sized(&rule);
                                 let ops = &rule.ops[0];
-                                self.processing_file_len(index, size, ops, filtered_models.len())
+                                self.processing_len(index, size, ops, filtered_models.len())
                             }
                             &_ => {}
                         };
@@ -207,7 +207,7 @@ impl RuleExecutor {
             .collect()
     }
 
-    fn processing_file_name(&mut self, index: usize, ops: &Operator, models: Vec<CodeClass>, excepted: String) {
+    fn processing_name(&mut self, index: usize, ops: &Operator, models: Vec<CodeClass>, excepted: String) {
         let mut error = RuleError {
             expected: format!("{}", excepted),
             actual: format!("{}", ""),
@@ -216,27 +216,28 @@ impl RuleExecutor {
             rule: index,
         };
 
+        let mut assert_success = true;
         match ops {
             Operator::StartsWith => {}
             Operator::Endswith => {
-                let mut assert_success = true;
                 models.iter().for_each(|clz| {
                     if !clz.name.ends_with(&excepted) {
                         assert_success = false;
                     }
                 });
 
-                if !assert_success {
-                    error.msg = format!("endsWith: {:?}", excepted);
-                    self.errors.insert(index, error);
-                }
+                error.msg = format!("endsWith: {:?}", excepted);
             }
             Operator::Contains => {}
             _ => {}
         }
+
+        if !assert_success {
+            self.errors.insert(index, error);
+        }
     }
 
-    fn processing_file_len(&mut self, index: usize, excepted_size: usize, ops: &Operator, actual_len: usize) {
+    fn processing_len(&mut self, index: usize, excepted_size: usize, ops: &Operator, actual_len: usize) {
         let mut error = RuleError {
             expected: format!("{}", excepted_size),
             actual: format!("{}", actual_len),
