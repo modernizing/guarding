@@ -4,10 +4,6 @@ use crate::identify::code_model::{CodeClass, CodeFile};
 use crate::tree_sitter_javascript;
 use crate::identify::code_ident::CodeIdent;
 
-pub struct JsIdent {
-
-}
-
 const JS_QUERY: &'static str = "
 (import_specifier
 	name: (identifier) @import-name)
@@ -30,21 +26,34 @@ const JS_QUERY: &'static str = "
       name: * @function-name))
 ";
 
-impl CodeIdent for JsIdent {
-    fn parse(code: &str) -> CodeFile {
+pub struct JsIdent {
+    parser: Parser,
+    query: Query,
+}
+
+
+impl JsIdent {
+    fn new() -> JsIdent {
         let mut parser = Parser::new();
 
         let language = unsafe { tree_sitter_javascript() };
         parser.set_language(language).unwrap();
-        let text_callback = |n: Node| &code[n.byte_range()];
-
-        let tree = parser.parse(code, None).unwrap();
 
         let query = Query::new(language, &JS_QUERY)
             .map_err(|e| println!("{}", format!("Query compilation failed: {:?}", e))).unwrap();
+        JsIdent { parser, query }
+    }
+}
+
+impl CodeIdent for JsIdent {
+    fn parse(code: &str) -> CodeFile {
+        let mut ident = JsIdent::new();
+
+        let text_callback = |n: Node| &code[n.byte_range()];
+        let tree = ident.parser.parse(code, None).unwrap();
 
         let mut query_cursor = QueryCursor::new();
-        let captures = query_cursor.captures(&query, tree.root_node(), text_callback);
+        let captures = query_cursor.captures(&ident.query, tree.root_node(), text_callback);
 
         let mut code_file = CodeFile::default();
         let mut last_class_end_line = 0;
@@ -52,7 +61,7 @@ impl CodeIdent for JsIdent {
 
         for (mat, capture_index) in captures {
             let capture = mat.captures[capture_index];
-            let capture_name = &query.capture_names()[capture.index as usize];
+            let capture_name = &ident.query.capture_names()[capture.index as usize];
 
             let text = capture.node.utf8_text((&code).as_ref()).unwrap_or("");
             match capture_name.as_str() {
@@ -71,8 +80,8 @@ impl CodeIdent for JsIdent {
                 "function-name" => {
                     code_file.functions.push(JsIdent::create_function(capture, text));
                 }
-                "import-name" => {},
-                "parameter" => {},
+                "import-name" => {}
+                "parameter" => {}
                 &_ => {
                     println!(
                         "    pattern: {}, capture: {}, row: {}, text: {:?}",
@@ -95,6 +104,7 @@ impl CodeIdent for JsIdent {
         code_file
     }
 }
+
 
 #[cfg(test)]
 mod tests {

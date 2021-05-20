@@ -5,10 +5,6 @@ use crate::identify::code_model::{CodeClass, CodeFile, CodeFunction};
 use std::collections::HashMap;
 use crate::identify::code_ident::CodeIdent;
 
-pub struct RustIdent {
-
-}
-
 const RUST_QUERY: &'static str = "
 (use_declaration
 	(scoped_identifier) @import-name)
@@ -33,21 +29,35 @@ const RUST_QUERY: &'static str = "
 )
 ";
 
-impl CodeIdent for RustIdent {
-    fn parse(code: &str) -> CodeFile {
+
+pub struct RustIdent {
+    parser: Parser,
+    query: Query
+}
+
+impl RustIdent {
+    fn new() -> RustIdent {
         let mut parser = Parser::new();
 
         let language = unsafe { tree_sitter_rust() };
         parser.set_language(language).unwrap();
-        let text_callback = |n: Node| &code[n.byte_range()];
-
-        let tree = parser.parse(code, None).unwrap();
 
         let query = Query::new(language, &RUST_QUERY)
             .map_err(|e| println!("{}", format!("Query compilation failed: {:?}", e))).unwrap();
+        RustIdent { parser, query }
+    }
+}
+
+
+impl CodeIdent for RustIdent {
+    fn parse(code: &str) -> CodeFile {
+        let mut ident = RustIdent::new();
+
+        let text_callback = |n: Node| &code[n.byte_range()];
+        let tree = ident.parser.parse(code, None).unwrap();
 
         let mut query_cursor = QueryCursor::new();
-        let captures = query_cursor.captures(&query, tree.root_node(), text_callback);
+        let captures = query_cursor.captures(&ident.query, tree.root_node(), text_callback);
 
         let mut code_file = CodeFile::default();
         let mut last_class_end_line = 0;
@@ -60,7 +70,7 @@ impl CodeIdent for RustIdent {
 
         for (mat, capture_index) in captures {
             let capture = mat.captures[capture_index];
-            let capture_name = &query.capture_names()[capture.index as usize];
+            let capture_name = &ident.query.capture_names()[capture.index as usize];
 
             let text = capture.node.utf8_text((&code).as_ref()).unwrap_or("");
             match capture_name.as_str() {
@@ -123,6 +133,7 @@ impl CodeIdent for RustIdent {
         code_file
     }
 }
+
 
 #[cfg(test)]
 mod tests {
