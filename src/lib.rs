@@ -4,9 +4,6 @@ extern crate pest_derive;
 extern crate serde;
 
 use tree_sitter::Language;
-use std::fs;
-use std::path::PathBuf;
-use crate::rule_executor::RuleExecutor;
 
 extern "C" { fn tree_sitter_rust() -> Language; }
 
@@ -18,13 +15,6 @@ pub mod identify;
 pub mod parser;
 pub mod rule_executor;
 pub mod package_matcher;
-
-fn main() {
-    let buf = PathBuf::from(".");
-    let guarding = buf.clone().join("guarding.guarding");
-    let content = fs::read_to_string(guarding).unwrap();
-    RuleExecutor::execute(content, buf);
-}
 
 #[cfg(test)]
 mod tests {
