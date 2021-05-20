@@ -68,6 +68,9 @@ fn parse_normal_rule(pair: Pair<Rule>) -> GuardRule {
             Rule::should => {
                 // should do nothing
             }
+            Rule::only => {
+                // should do nothing
+            }
             _ => {
                 println!("implementing rule: {:?}, level: {:?}", p.as_rule(), p.as_span());
             }
