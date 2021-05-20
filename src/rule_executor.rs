@@ -118,6 +118,9 @@ impl RuleExecutor {
     fn capture_class(&mut self, rule: &GuardRule, index: usize) {
         let mut filtered_models: Vec<CodeClass> = vec![];
 
+        /// for such as
+        ///  - accessed(["..controller..", "..service.."]);
+        ///  - dependBy "";
         if self.capture_package_to_package(&rule, index) {
             return;
         }
@@ -136,9 +139,11 @@ impl RuleExecutor {
             }
             RuleScope::Implementation(str) => {
                 &self.models.iter().for_each(|file| {
-                    let classes: Vec<CodeClass> = file.classes.iter().filter(|class| {
-                        class.implements.contains(str)
-                    }).map(|s| s.clone())
+                    let classes: Vec<CodeClass> = file.classes.iter()
+                        .filter(|class| {
+                            class.implements.contains(str)
+                        })
+                        .map(|s| s.clone())
                         .collect();
                     filtered_models.extend(classes);
                 });
