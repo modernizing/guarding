@@ -65,8 +65,7 @@ mod tests {
     #[test]
     fn should_support_for_class_filter() {
         let content = "class(\".\")::len should < 25;
-class(\".\")::len should > 20;
-";
+class(\".\")::len should > 20;";
         let errors = RuleExecutor::execute(content.to_string(), test_dir());
 
         assert_eq!(0, errors.len());
@@ -74,9 +73,7 @@ class(\".\")::len should > 20;
 
     #[test]
     fn should_support_for_extends_count() {
-        let content = "
-class(implementation \"BaseParser\")::len = 2
-";
+        let content = "class(implementation \"BaseParser\")::len = 2";
         let errors = RuleExecutor::execute(content.to_string(), test_dir());
 
         assert_eq!(0, errors.len());
