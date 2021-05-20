@@ -249,7 +249,17 @@ impl RuleExecutor {
                     }
                 });
             }
-            Operator::Contains => {}
+            Operator::Contains => {
+                error.msg = format!("contains: {:?}", excepted);
+
+                models.iter().for_each(|clz| {
+                    if !clz.name.contains(&excepted) {
+                        assert_success = false;
+                        let item = format!("path: {}, name: {}", clz.package.clone(), clz.name.clone());
+                        error.items.push(item)
+                    }
+                });
+            }
             _ => {}
         }
 

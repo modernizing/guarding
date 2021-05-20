@@ -37,7 +37,7 @@ mod tests {
         let content = fs::read_to_string(path).expect("not file");
         let code_dir = test_dir();
 
-        let errors =  RuleExecutor::execute(content, code_dir);
+        let errors = RuleExecutor::execute(content, code_dir);
 
         assert_eq!(1, errors.len());
         assert_eq!("50".to_string(), errors[0].expected);
@@ -100,5 +100,17 @@ class(implementation \"BaseParser\")::len = 2
         let errors = RuleExecutor::execute(content.to_string(), test_dir());
         assert_eq!(1, errors.len());
         assert_eq!(1, errors[0].items.len());
+    }
+
+    #[test]
+    fn should_support_for_contains() {
+        let content = "class(implementation \"BaseParser\")::name should contains \"Lexer\";";
+        let errors = RuleExecutor::execute(content.to_string(), test_dir());
+        assert_eq!(1, errors.len());
+        assert_eq!(2, errors[0].items.len());
+
+        let content = "class(implementation \"BaseParser\")::name should contains \"Parser\";";
+        let errors = RuleExecutor::execute(content.to_string(), test_dir());
+        assert_eq!(0, errors.len());
     }
 }
