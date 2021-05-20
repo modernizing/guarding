@@ -50,10 +50,8 @@ impl JavaIdent {
     }
 }
 
-
-impl CodeIdent for JavaIdent {
-    fn parse(code: &str) -> CodeFile {
-        let mut ident = JavaIdent::new();
+impl JavaIdent {
+    fn do_parse(code: &&str, ident: &mut JavaIdent) -> CodeFile {
         let text_callback = |n: Node| &code[n.byte_range()];
 
         let tree = ident.parser.parse(code, None).unwrap();
@@ -117,6 +115,14 @@ impl CodeIdent for JavaIdent {
         code_file
     }
 }
+
+impl CodeIdent for JavaIdent {
+    fn parse(code: &str) -> CodeFile {
+        let mut ident = JavaIdent::new();
+        JavaIdent::do_parse(&code, &mut ident)
+    }
+}
+
 
 #[cfg(test)]
 mod tests {

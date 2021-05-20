@@ -45,10 +45,8 @@ impl JsIdent {
     }
 }
 
-impl CodeIdent for JsIdent {
-    fn parse(code: &str) -> CodeFile {
-        let mut ident = JsIdent::new();
-
+impl JsIdent {
+    fn do_parse(code: &str, ident: &mut JsIdent) -> CodeFile {
         let text_callback = |n: Node| &code[n.byte_range()];
         let tree = ident.parser.parse(code, None).unwrap();
 
@@ -105,6 +103,13 @@ impl CodeIdent for JsIdent {
     }
 }
 
+impl CodeIdent for JsIdent {
+    fn parse(code: &str) -> CodeFile {
+        let mut ident = JsIdent::new();
+
+        JsIdent::do_parse(code, &mut ident)
+    }
+}
 
 #[cfg(test)]
 mod tests {
