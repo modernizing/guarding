@@ -106,7 +106,6 @@ impl JsIdent {
 impl CodeIdent for JsIdent {
     fn parse(code: &str) -> CodeFile {
         let mut ident = JsIdent::new();
-
         JsIdent::do_parse(code, &mut ident)
     }
 }

@@ -48,72 +48,6 @@ impl RustIdent {
     }
 }
 
-
-impl CodeIdent for RustIdent {
-    fn parse(code: &str) -> CodeFile {
-        let mut ident = RustIdent::new();
-        RustIdent::do_parse(code, &mut ident)
-    }
-}
-
-
-#[cfg(test)]
-mod tests {
-    use crate::identify::rust_ident::RustIdent;
-    use crate::identify::code_ident::CodeIdent;
-
-    #[test]
-    fn should_parse_import() {
-        let source_code = "use crate::identify::rust_ident::RustIdent;
-";
-        let file = RustIdent::parse(source_code);
-        assert_eq!(1, file.imports.len());
-    }
-
-    #[test]
-    fn should_parse_basic_struct() {
-        let source_code = "pub struct RustIdent {
-}
-";
-        let file = RustIdent::parse(source_code);
-        assert_eq!(1, file.classes.len());
-    }
-
-    #[test]
-    fn should_parse_struct() {
-        let source_code = "pub struct RustIdent {}
-
-impl RustIdent {
-    pub fn parse(code: &str) -> CodeFile {
-        CodeFile::default()
-    }
-}
-";
-        let file = RustIdent::parse(source_code);
-
-        assert_eq!(1, file.classes.len());
-        assert_eq!("RustIdent", file.classes[0].name);
-        let functions = &file.classes[0].functions;
-        assert_eq!(1, functions.len());
-        assert_eq!("parse", functions[0].name);
-    }
-
-    #[test]
-    fn should_parse_for_trait_impl() {
-        let source_code = "pub struct RustIdent {}
-
-impl Default for RustIdent {
-    fn default() -> Self {
-        RustIdent {}
-    }
-}
-";
-        let file = RustIdent::parse(source_code);
-
-        assert_eq!("Default", file.classes[0].implements[0]);
-    }
-}
-
 impl RustIdent {
     fn do_parse(code: &str, ident: &mut RustIdent) -> CodeFile {
         let text_callback = |n: Node| &code[n.byte_range()];
@@ -194,5 +128,69 @@ impl RustIdent {
         }
 
         code_file
+    }
+}
+
+impl CodeIdent for RustIdent {
+    fn parse(code: &str) -> CodeFile {
+        let mut ident = RustIdent::new();
+        RustIdent::do_parse(code, &mut ident)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::identify::rust_ident::RustIdent;
+    use crate::identify::code_ident::CodeIdent;
+
+    #[test]
+    fn should_parse_import() {
+        let source_code = "use crate::identify::rust_ident::RustIdent;
+";
+        let file = RustIdent::parse(source_code);
+        assert_eq!(1, file.imports.len());
+    }
+
+    #[test]
+    fn should_parse_basic_struct() {
+        let source_code = "pub struct RustIdent {
+}
+";
+        let file = RustIdent::parse(source_code);
+        assert_eq!(1, file.classes.len());
+    }
+
+    #[test]
+    fn should_parse_struct() {
+        let source_code = "pub struct RustIdent {}
+
+impl RustIdent {
+    pub fn parse(code: &str) -> CodeFile {
+        CodeFile::default()
+    }
+}
+";
+        let file = RustIdent::parse(source_code);
+
+        assert_eq!(1, file.classes.len());
+        assert_eq!("RustIdent", file.classes[0].name);
+        let functions = &file.classes[0].functions;
+        assert_eq!(1, functions.len());
+        assert_eq!("parse", functions[0].name);
+    }
+
+    #[test]
+    fn should_parse_for_trait_impl() {
+        let source_code = "pub struct RustIdent {}
+
+impl Default for RustIdent {
+    fn default() -> Self {
+        RustIdent {}
+    }
+}
+";
+        let file = RustIdent::parse(source_code);
+
+        assert_eq!("Default", file.classes[0].implements[0]);
     }
 }

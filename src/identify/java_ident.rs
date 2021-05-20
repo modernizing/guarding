@@ -52,17 +52,14 @@ impl JavaIdent {
 
 impl JavaIdent {
     fn do_parse(code: &&str, ident: &mut JavaIdent) -> CodeFile {
-        let text_callback = |n: Node| &code[n.byte_range()];
-
         let tree = ident.parser.parse(code, None).unwrap();
-
+        let text_callback = |n: Node| &code[n.byte_range()];
         let mut query_cursor = QueryCursor::new();
         let captures = query_cursor.captures(&ident.query, tree.root_node(), text_callback);
 
         let mut code_file = CodeFile::default();
         let mut class = CodeClass::default();
         let mut is_last_node = false;
-
 
         let capture_names = ident.query.capture_names();
 
@@ -84,7 +81,6 @@ impl JavaIdent {
                         class = CodeClass::default();
                     }
 
-                    // todo: add check for inner class
                     class.name = text.to_string();
                     let class_node = capture.node.parent().unwrap();
                     JavaIdent::insert_location(&mut class, class_node);
