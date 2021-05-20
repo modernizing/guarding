@@ -97,6 +97,15 @@ class(\".\")::len should > 20;";
         assert_eq!(1, errors[0].items.len());
     }
 
+    #[ignore]
+    #[test]
+    fn should_support_for_reside_in() {
+        let content = "class(implementation \"EntityManager.class\") resideIn package(\"..persistence.\");";
+        let errors = RuleExecutor::execute(content.to_string(), test_dir());
+
+        assert_eq!(0, errors.len());
+    }
+
     #[test]
     fn should_support_for_contains() {
         let content = "class(implementation \"BaseParser\")::name should contains \"Lexer\";";

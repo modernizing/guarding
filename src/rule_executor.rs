@@ -161,7 +161,14 @@ impl RuleExecutor {
                 }
             }
             Expr::Identifier(ident) => {
-                println!("{:?}", ident);
+                match ident.as_str() {
+                    "" => {
+                        println!("Empty Identifier: {:?}", ident);
+                    }
+                    &_ => {
+                        println!("Expr::Identifier: {:?}", ident);
+                    }
+                }
             }
         }
     }

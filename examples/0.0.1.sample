@@ -11,6 +11,11 @@ class("..myapp..")::function.vars.len should <= 20;
 
 class(implementation "Connection.class")::name should endsWith "Connection";
 class(extends "Connection.class")::name endsWith "Connection";
+
+# todo: define in = inside = resideIn
+class(assignable "EntityManager.class") in package("..persistence.");
+class(assignable "EntityManager.class") inside package("..persistence.");
+
 class(assignable "EntityManager.class") resideIn package("..persistence.");
 
 class("com.myapp.(*)..") should freeOfCycles;
