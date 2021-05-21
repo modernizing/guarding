@@ -12,11 +12,22 @@ description = """
 Guarding is a guardians for code, architecture, layered. Guarding crate a architecture aguard DSL which based on ArchUnit.
 """
 categories = ["text-processing", "command-line-interface", "development-tools"]
-exclude = [
-    ".github/*",
-    ".gitattributes",
-    ".adr.json",
+#exclude = [
+#    ".github/*",
+#    ".gitattributes",
+#    ".adr.json",
+#]
+
+include = [
+    "tree-sitter-java/*",
+    "tree-sitter-javascript/*",
+    "tree-sitter-rust/*",
+    "src/*"
 ]
+
+[lib]
+path = "src/lib.rs"
+
 
 [dependencies]
 tree-sitter = "0.19.3"
