@@ -1,5 +1,8 @@
-use crate::identify::code_model::{CodeFile, Location, CodeFunction};
 use tree_sitter::{Node, QueryCapture};
+
+use crate::domain::code_function::CodeFunction;
+use crate::domain::code_file::CodeFile;
+use crate::domain::Location;
 use crate::identify::rust_ident::RustIdent;
 
 pub trait CodeIdent {

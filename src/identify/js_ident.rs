@@ -1,6 +1,7 @@
 use tree_sitter::{Node, Parser, Query, QueryCursor};
 
-use crate::identify::code_model::{CodeClass, CodeFile};
+use crate::domain::code_file::CodeFile;
+use crate::domain::code_class::CodeClass;
 use crate::identify::code_ident::CodeIdent;
 
 const JS_QUERY: &'static str = "
@@ -111,8 +112,8 @@ impl CodeIdent for JsIdent {
 
 #[cfg(test)]
 mod tests {
-    use crate::identify::js_ident::JsIdent;
     use crate::identify::code_ident::CodeIdent;
+    use crate::identify::js_ident::JsIdent;
 
     #[test]
     fn should_parse_import() {

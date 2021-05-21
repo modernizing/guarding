@@ -1,7 +1,10 @@
+use std::collections::HashMap;
+
 use tree_sitter::{Node, Parser, Query, QueryCursor};
 
-use crate::identify::code_model::{CodeClass, CodeFile, CodeFunction};
-use std::collections::HashMap;
+use crate::domain::code_file::CodeFile;
+use crate::domain::code_function::CodeFunction;
+use crate::domain::code_class::CodeClass;
 use crate::identify::code_ident::CodeIdent;
 
 const RUST_QUERY: &'static str = "
@@ -139,8 +142,8 @@ impl CodeIdent for RustIdent {
 
 #[cfg(test)]
 mod tests {
-    use crate::identify::rust_ident::RustIdent;
     use crate::identify::code_ident::CodeIdent;
+    use crate::identify::rust_ident::RustIdent;
 
     #[test]
     fn should_parse_import() {
