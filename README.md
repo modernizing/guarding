@@ -23,6 +23,27 @@ todo:
  - [ ] ArchUnit code generator?
  - [ ] git hooks for staged files (low-priority， some-languages has custom git hooks)
 
+## Usage
+
+1. install
+
+```
+cargo install guarding
+```
+
+2. create `guarding.guarding` file
+
+```
+package(".")::file.len should < 200;
+package(".")::file.len should > 50;
+```
+
+3. run 
+
+```
+guarding .
+```
+
 ## Development
 
 workflow:
