@@ -128,6 +128,8 @@ op_dependBy	      = { "dependBy" }
 
 op_not            = @{ "not" }
 op_not_symbol     = @{ "!" }
+
+// todo: move to comparison;
 op_lte            = { "<=" }
 op_gte            = { ">=" }
 op_lt             = { "<" }
