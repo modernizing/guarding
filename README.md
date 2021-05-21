@@ -13,13 +13,16 @@ todo:
  - [x] setup projects
  - [x] parser
     - [x] tree-sitter
- - [ ] parser
+ - [x] parser
  - [x] interface / trait supports
  - [ ] languages
     - [x] Java
     - [x] JavaScript
     - [ ] TypeScript
     - [ ] Rust
+
+Others:
+
  - [ ] ArchUnit code generator?
  - [ ] git hooks for staged files (low-priority， some-languages has custom git hooks)
 
