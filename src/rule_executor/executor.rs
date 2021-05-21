@@ -127,12 +127,12 @@ impl RuleExecutor {
 
         // filter package to class assert
         // filter class to class assert
-        self.filter_classes(&rule, &mut filtered_models);
+        self.filter_classes_by_scope(&rule, &mut filtered_models);
 
         self.execute_classes_assert(&rule, index, filtered_models)
     }
 
-    fn filter_classes(&mut self, rule: &&GuardRule, filtered_models: &mut Vec<CodeClass>) {
+    fn filter_classes_by_scope(&mut self, rule: &&GuardRule, filtered_models: &mut Vec<CodeClass>) {
         match &rule.scope {
             RuleScope::PathDefine(str) => {
                 if str.as_str() == "." {

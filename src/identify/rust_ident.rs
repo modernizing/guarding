@@ -1,6 +1,5 @@
 use tree_sitter::{Node, Parser, Query, QueryCursor};
 
-use crate::tree_sitter_rust;
 use crate::identify::code_model::{CodeClass, CodeFile, CodeFunction};
 use std::collections::HashMap;
 use crate::identify::code_ident::CodeIdent;
@@ -39,7 +38,7 @@ impl RustIdent {
     fn new() -> RustIdent {
         let mut parser = Parser::new();
 
-        let language = unsafe { tree_sitter_rust() };
+        let language = tree_sitter_rust::language();
         parser.set_language(language).unwrap();
 
         let query = Query::new(language, &RUST_QUERY)

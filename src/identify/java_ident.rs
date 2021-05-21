@@ -1,6 +1,5 @@
 use tree_sitter::{Node, Parser, Query, QueryCursor};
 
-use crate::tree_sitter_java;
 use crate::identify::code_model::{CodeClass, CodeFile};
 use crate::identify::code_ident::CodeIdent;
 
@@ -37,7 +36,7 @@ pub struct JavaIdent {
 impl JavaIdent {
     pub fn new() -> JavaIdent {
         let mut parser = Parser::new();
-        let language = unsafe { tree_sitter_java() };
+        let language = tree_sitter_java::language();
         parser.set_language(language).unwrap();
 
         let query = Query::new(language, &JAVA_QUERY)

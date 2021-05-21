@@ -1,7 +1,6 @@
 use tree_sitter::{Node, Parser, Query, QueryCursor};
 
 use crate::identify::code_model::{CodeClass, CodeFile};
-use crate::tree_sitter_javascript;
 use crate::identify::code_ident::CodeIdent;
 
 const JS_QUERY: &'static str = "
@@ -36,7 +35,7 @@ impl JsIdent {
     fn new() -> JsIdent {
         let mut parser = Parser::new();
 
-        let language = unsafe { tree_sitter_javascript() };
+        let language = tree_sitter_javascript::language();
         parser.set_language(language).unwrap();
 
         let query = Query::new(language, &JS_QUERY)

@@ -139,6 +139,9 @@ dependencies = [
  "serde",
  "serde_json",
  "tree-sitter",
+ "tree-sitter-java",
+ "tree-sitter-javascript",
+ "tree-sitter-rust",
  "walkdir",
 ]
 
@@ -421,6 +424,36 @@ checksum = "1f41201fed3db3b520405a9c01c61773a250d4c3f43e9861c14b2bb232c981ab"
 dependencies = [
  "cc",
  "regex",
+]
+
+[[package]]
+name = "tree-sitter-java"
+version = "0.19.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "301ae2ee7813e1bf935dc06db947642400645bbea8878431e1b31131488d5430"
+dependencies = [
+ "cc",
+ "tree-sitter",
+]
+
+[[package]]
+name = "tree-sitter-javascript"
+version = "0.19.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "840bb4d5f3c384cb76b976ff07297f5a24b6e61a708baa4464f53e395caaa5f9"
+dependencies = [
+ "cc",
+ "tree-sitter",
+]
+
+[[package]]
+name = "tree-sitter-rust"
+version = "0.19.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "784f7ef9cdbd4c895dc2d4bb785e95b4a5364a602eec803681db83d1927ddf15"
+dependencies = [
+ "cc",
+ "tree-sitter",
 ]
 
 [[package]]
