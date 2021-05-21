@@ -386,7 +386,6 @@ function -> name.len should < 30;
         parse(code);
     }
 
-    #[ignore]
     #[test]
     fn should_ignore_comments() {
         let code = "// path: src/*
