@@ -1,7 +1,7 @@
 # Guarding
 
 [![Build](https://github.com/inherd/guarding/actions/workflows/build.yml/badge.svg)](https://github.com/inherd/guarding/actions/workflows/build.yml)
-[![crates.io](https://meritbadge.herokuapp.com/guarding)](https://crates.io/crates/guarding)
+[![crates.io](https://img.shields.io/badge/crates.io-v0.2.1-orange.svg)](https://crates.io/crates/guarding)
 [![docs.rs](https://docs.rs/guarding/badge.svg)](https://docs.rs/guarding/)
 [![license](https://img.shields.io/crates/l/guarding)](https://github.com/inherd/guarding/blob/master/LICENSE)
 
