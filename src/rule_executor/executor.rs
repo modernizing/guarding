@@ -118,13 +118,21 @@ impl RuleExecutor {
     fn capture_class(&mut self, rule: &GuardRule, index: usize) {
         let mut filtered_models: Vec<CodeClass> = vec![];
 
-        // for such as
+        // filter package to filter package assert
         // - accessed(["..controller..", "..service.."]);
         // - dependBy ""
         if self.capture_package_to_package(&rule, index) {
             return;
         }
 
+        // filter package to class assert
+        // filter class to class assert
+        self.filter_classes(&rule, &mut filtered_models);
+
+        self.execute_class_assert(&rule, index, filtered_models)
+    }
+
+    fn filter_classes(&mut self, rule: &&GuardRule, filtered_models: &mut Vec<CodeClass>) {
         match &rule.scope {
             RuleScope::PathDefine(str) => {
                 if str.as_str() == "." {
@@ -150,7 +158,9 @@ impl RuleExecutor {
             }
             _ => {}
         }
+    }
 
+    fn execute_class_assert(&mut self, rule: &&GuardRule, index: usize, mut filtered_models: Vec<CodeClass>) {
         match &rule.expr {
             Expr::PropsCall(props) => {
                 match props[0].as_str() {
