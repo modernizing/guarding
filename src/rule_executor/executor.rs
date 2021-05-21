@@ -129,7 +129,7 @@ impl RuleExecutor {
         // filter class to class assert
         self.filter_classes(&rule, &mut filtered_models);
 
-        self.execute_class_assert(&rule, index, filtered_models)
+        self.execute_classes_assert(&rule, index, filtered_models)
     }
 
     fn filter_classes(&mut self, rule: &&GuardRule, filtered_models: &mut Vec<CodeClass>) {
@@ -140,7 +140,7 @@ impl RuleExecutor {
                         filtered_models.extend(file.classes.clone());
                     }
                 } else {
-                    for file in &self.filter_by_package_identifier(str) {
+                    for file in &self.filter_classes_by_package_identifier(str) {
                         filtered_models.extend(file.classes.clone());
                     }
                 }
@@ -160,7 +160,7 @@ impl RuleExecutor {
         }
     }
 
-    fn execute_class_assert(&mut self, rule: &&GuardRule, index: usize, mut filtered_models: Vec<CodeClass>) {
+    fn execute_classes_assert(&mut self, rule: &&GuardRule, index: usize, mut filtered_models: Vec<CodeClass>) {
         match &rule.expr {
             Expr::PropsCall(props) => {
                 match props[0].as_str() {
@@ -207,11 +207,11 @@ impl RuleExecutor {
             Operator::Accessed => {
                 match &rule.assert {
                     RuleAssert::Stringed(pkg_identifier) => {
-                        assert_models = self.filter_by_package_identifier(pkg_identifier);
+                        assert_models = self.filter_classes_by_package_identifier(pkg_identifier);
                     }
                     RuleAssert::ArrayStringed(identifiers) => {
                         for ident in identifiers {
-                            assert_models.extend(self.filter_by_package_identifier(ident));
+                            assert_models.extend(self.filter_classes_by_package_identifier(ident));
                         }
                     }
                     _ => {}
@@ -295,7 +295,7 @@ impl RuleExecutor {
                 if path == "." {
                     filtered_models = self.models.clone();
                 } else {
-                    filtered_models = self.filter_by_package_identifier(str);
+                    filtered_models = self.filter_classes_by_package_identifier(str);
                 };
             }
             RuleScope::MatchRegex(_) => {}
@@ -328,7 +328,7 @@ impl RuleExecutor {
         }
     }
 
-    fn filter_by_package_identifier(&mut self, str: &String) -> Vec<CodeFile> {
+    fn filter_classes_by_package_identifier(&mut self, str: &String) -> Vec<CodeFile> {
         self.models.iter()
             .filter(|s| { is_package_match(str.to_string(), s.package.as_str()) })
             .map(|s| { s.clone() })
