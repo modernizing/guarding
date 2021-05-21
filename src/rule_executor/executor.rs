@@ -397,56 +397,45 @@ impl RuleExecutor {
             rule: index,
         };
 
+        let match_func: fn(String, &String) -> bool;
+        fn starts_with(input: String, condition: &String) -> bool {
+            return input.starts_with(condition)
+        }
+        fn ends_with(input: String, condition: &String) -> bool {
+            return input.ends_with(condition)
+        }
+        fn contains(input: String, condition: &String) -> bool {
+            return input.contains(condition)
+        }
+
         let mut assert_success = true;
         match ops {
             Operator::StartsWith => {
                 error.msg = format!("startsWith: {:?}", excepted);
-
-                models.iter().for_each(|clz| {
-                    let mut is_starts_with = clz.name.starts_with(&excepted);
-                    if has_not {
-                        is_starts_with = !is_starts_with
-                    }
-                    if !is_starts_with {
-                        assert_success = false;
-                        let item = format!("path: {}, name: {}", clz.package.clone(), clz.name.clone());
-                        error.items.push(item)
-                    }
-                });
+                match_func = starts_with;
             }
             Operator::Endswith => {
                 error.msg = format!("endsWith: {:?}", excepted);
-
-                models.iter().for_each(|clz| {
-                    let mut is_ends_with = clz.name.ends_with(&excepted);
-                    if has_not {
-                        is_ends_with = !is_ends_with
-                    }
-                    if !is_ends_with {
-                        assert_success = false;
-                        let item = format!("path: {}, name: {}", clz.package.clone(), clz.name.clone());
-                        error.items.push(item)
-                    }
-                });
+                match_func = ends_with;
             }
             Operator::Contains => {
                 error.msg = format!("contains: {:?}", excepted);
-
-                models.iter().for_each(|clz| {
-                    let mut is_contains = clz.name.contains(&excepted);
-                    if has_not {
-                        is_contains = !is_contains
-                    }
-
-                    if !is_contains {
-                        assert_success = false;
-                        let item = format!("path: {}, name: {}", clz.package.clone(), clz.name.clone());
-                        error.items.push(item)
-                    }
-                });
+                match_func = contains;
             }
-            _ => {}
+            _ => { return; }
         }
+
+        models.iter().for_each(|clz| {
+            let mut is_starts_with = match_func(clz.name.clone(), &excepted);
+            if has_not {
+                is_starts_with = !is_starts_with
+            }
+            if !is_starts_with {
+                assert_success = false;
+                let item = format!("path: {}, name: {}", clz.package.clone(), clz.name.clone());
+                error.items.push(item)
+            }
+        });
 
         if !assert_success {
             self.errors.insert(index, error);
