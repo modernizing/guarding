@@ -34,6 +34,8 @@ package("..home..") -> file.len should < 20;
 # 正则表达式
 package(match("^/app")) endsWith "Connection";
 
+package("..home..")::name should not contains(matching(""));
+
 # 简化的比较
 class::name.len should < 20;
 function::name.len should < 30;

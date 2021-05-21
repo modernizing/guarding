@@ -91,6 +91,19 @@ fn should_support_for_reside_in() {
 }
 
 #[test]
+fn should_support_for_not_reside_in() {
+    let content = "class(implementation \"BaseParser\") not resideIn package(\"....parser2\");";
+    let errors = RuleExecutor::execute(content.to_string(), test_dir());
+
+    assert_eq!(0, errors.len());
+
+    let content = "class(implementation \"BaseParser\") not resideIn package(\"....parser\");";
+    let errors = RuleExecutor::execute(content.to_string(), test_dir());
+
+    assert_eq!(1, errors.len());
+}
+
+#[test]
 fn should_support_for_contains() {
     let content = "class(implementation \"BaseParser\")::name should contains \"Lexer\";";
     let errors = RuleExecutor::execute(content.to_string(), test_dir());
@@ -100,6 +113,17 @@ fn should_support_for_contains() {
     let content = "class(implementation \"BaseParser\")::name should contains \"Parser\";";
     let errors = RuleExecutor::execute(content.to_string(), test_dir());
     assert_eq!(0, errors.len());
+}
+
+#[test]
+fn should_support_for_not_contains() {
+    let content = "class(implementation \"BaseParser\")::name should not contains \"Lexer\";";
+    let errors = RuleExecutor::execute(content.to_string(), test_dir());
+    assert_eq!(0, errors.len());
+
+    let content = "class(implementation \"BaseParser\")::name should not contains \"Parser\";";
+    let errors = RuleExecutor::execute(content.to_string(), test_dir());
+    assert_eq!(1, errors.len());
 }
 
 #[test]

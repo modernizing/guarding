@@ -160,19 +160,17 @@ impl RuleExecutor {
         }
     }
 
-    fn execute_classes_assert(&mut self, rule: &&GuardRule, index: usize, mut filtered_models: Vec<CodeClass>) {
+    fn execute_classes_assert(&mut self, rule: &&GuardRule, index: usize, filtered_models: Vec<CodeClass>) {
         match &rule.expr {
             Expr::PropsCall(props) => {
                 match props[0].as_str() {
                     "len" => {
                         let size = RuleExecutor::get_assert_sized(&rule);
-                        let ops = &rule.ops[0];
-                        self.processing_len(index, size, ops, filtered_models.len())
+                        self.processing_len(index, size, &rule.ops, filtered_models.len())
                     }
                     "name" => {
                         let string = RuleExecutor::get_assert_string(&rule);
-                        let ops = &rule.ops[0];
-                        self.processing_name(index, ops, filtered_models, string)
+                        self.processing_name(index, &rule.ops, filtered_models, string)
                     }
                     _ => {
                         println!("todo: expr {:?}", props[0].as_str());
@@ -184,8 +182,7 @@ impl RuleExecutor {
                     "" => {
                         let (has_capture, _level, ident) = RuleExecutor::get_package_level(&rule);
                         if has_capture {
-                            let ops = &rule.ops[0];
-                            self.process_captures(index, ops, filtered_models, ident)
+                            self.process_captures(index, &rule.ops, filtered_models, ident)
                         } else {
                             println!("Empty Identifier: {:?}", ident);
                         }
@@ -203,7 +200,8 @@ impl RuleExecutor {
 
         let mut assert_models: Vec<CodeFile> = vec![];
 
-        match &rule.ops[0] {
+        let operator = &rule.ops[0];
+        match operator {
             Operator::Accessed => {
                 match &rule.assert {
                     RuleAssert::Stringed(pkg_identifier) => {
@@ -243,7 +241,7 @@ impl RuleExecutor {
         };
 
         let mut assert_success = true;
-        match &rule.ops[0] {
+        match operator {
             Operator::Accessed => {
                 let paths = self.search_by_access(&mut assert_models, pkg_identifier);
                 if paths.len() > 0 {
@@ -308,15 +306,13 @@ impl RuleExecutor {
                 match props[0].as_str() {
                     "len" => {
                         let size = RuleExecutor::get_assert_sized(&rule);
-                        let ops = &rule.ops[0];
-                        self.processing_len(index, size, ops, filtered_models.len())
+                        self.processing_len(index, size, &rule.ops, filtered_models.len())
                     }
                     "file" => {
                         match props[1].as_str() {
                             "len" => {
                                 let size = RuleExecutor::get_assert_sized(&rule);
-                                let ops = &rule.ops[0];
-                                self.processing_len(index, size, ops, filtered_models.len())
+                                self.processing_len(index, size, &rule.ops, filtered_models.len())
                             }
                             &_ => {}
                         };
@@ -335,7 +331,17 @@ impl RuleExecutor {
             .collect()
     }
 
-    fn process_captures(&mut self, index: usize, ops: &Operator, models: Vec<CodeClass>, identifier: String) {
+    fn process_captures(&mut self, index: usize, all_ops: &Vec<Operator>, models: Vec<CodeClass>, identifier: String) {
+        let mut ops = &all_ops[0];
+        let mut has_not = false;
+        match ops {
+            Operator::Not => {
+                ops = &all_ops[1];
+                has_not = true;
+            }
+            _ => {}
+        }
+
         let mut error = RuleError {
             expected: format!("{}", ""),
             actual: format!("{}", ""),
@@ -351,7 +357,12 @@ impl RuleExecutor {
             Operator::ResideIn => {
                 error.msg = format!("resideIn: {:?}", identifier);
                 models.iter().for_each(|clz| {
-                    if !is_package_match(identifier.clone(), clz.package.as_str()) {
+                    let mut package_match = is_package_match(identifier.clone(), clz.package.as_str());
+                    if has_not {
+                        package_match = !package_match;
+                    }
+
+                    if !package_match {
                         let item = format!("path: {}, name: {}", clz.package.clone(), clz.name.clone());
                         error.items.push(item);
                         assert_success = false;
@@ -366,7 +377,17 @@ impl RuleExecutor {
         }
     }
 
-    fn processing_name(&mut self, index: usize, ops: &Operator, models: Vec<CodeClass>, excepted: String) {
+    fn processing_name(&mut self, index: usize, all_ops: &Vec<Operator>, models: Vec<CodeClass>, excepted: String) {
+        let mut ops = &all_ops[0];
+        let mut has_not = false;
+        match ops {
+            Operator::Not => {
+                ops = &all_ops[1];
+                has_not = true;
+            }
+            _ => {}
+        }
+
         let mut error = RuleError {
             expected: format!("{}", excepted),
             actual: format!("{}", ""),
@@ -382,7 +403,11 @@ impl RuleExecutor {
                 error.msg = format!("startsWith: {:?}", excepted);
 
                 models.iter().for_each(|clz| {
-                    if !clz.name.starts_with(&excepted) {
+                    let mut is_starts_with = clz.name.starts_with(&excepted);
+                    if has_not {
+                        is_starts_with = !is_starts_with
+                    }
+                    if !is_starts_with {
                         assert_success = false;
                         let item = format!("path: {}, name: {}", clz.package.clone(), clz.name.clone());
                         error.items.push(item)
@@ -393,7 +418,11 @@ impl RuleExecutor {
                 error.msg = format!("endsWith: {:?}", excepted);
 
                 models.iter().for_each(|clz| {
-                    if !clz.name.ends_with(&excepted) {
+                    let mut is_ends_with = clz.name.ends_with(&excepted);
+                    if has_not {
+                        is_ends_with = !is_ends_with
+                    }
+                    if !is_ends_with {
                         assert_success = false;
                         let item = format!("path: {}, name: {}", clz.package.clone(), clz.name.clone());
                         error.items.push(item)
@@ -404,7 +433,12 @@ impl RuleExecutor {
                 error.msg = format!("contains: {:?}", excepted);
 
                 models.iter().for_each(|clz| {
-                    if !clz.name.contains(&excepted) {
+                    let mut is_contains = clz.name.contains(&excepted);
+                    if has_not {
+                        is_contains = !is_contains
+                    }
+
+                    if !is_contains {
                         assert_success = false;
                         let item = format!("path: {}, name: {}", clz.package.clone(), clz.name.clone());
                         error.items.push(item)
@@ -419,7 +453,17 @@ impl RuleExecutor {
         }
     }
 
-    fn processing_len(&mut self, index: usize, excepted_size: usize, ops: &Operator, actual_len: usize) {
+    fn processing_len(&mut self, index: usize, excepted_size: usize, all_ops: &Vec<Operator>, actual_len: usize) {
+        let mut ops = &all_ops[0];
+        let mut has_not = false;
+        match ops {
+            Operator::Not => {
+                ops = &all_ops[1];
+                has_not = true;
+            }
+            _ => {}
+        }
+
         let mut error = RuleError {
             expected: format!("{}", excepted_size),
             actual: format!("{}", actual_len),
@@ -431,27 +475,47 @@ impl RuleExecutor {
 
         match ops {
             Operator::Gt => {
-                if excepted_size > actual_len {
+                let mut is_gt = excepted_size > actual_len;
+                if has_not {
+                    is_gt = !is_gt;
+                }
+                if is_gt {
                     error.msg = format!("file.len = {}, expected: len > {}", actual_len, excepted_size);
                 }
             }
             Operator::Gte => {
-                if excepted_size >= actual_len {
+                let mut is_gte = excepted_size >= actual_len;
+                if has_not {
+                    is_gte = !is_gte;
+                }
+                if is_gte {
                     error.msg = format!("file.len = {}, expected: len >= {}", actual_len, excepted_size);
                 }
             }
             Operator::Lt => {
-                if excepted_size < actual_len {
+                let mut is_lt = excepted_size < actual_len;
+                if has_not {
+                    is_lt = !is_lt;
+                }
+                if is_lt {
                     error.msg = format!("file.len = {}, expected: len < {}", actual_len, excepted_size);
                 }
             }
             Operator::Lte => {
-                if excepted_size <= actual_len {
+                let mut is_lte = excepted_size <= actual_len;
+                if has_not {
+                    is_lte = !is_lte;
+                }
+                if is_lte {
                     error.msg = format!("file.len = {}, expected: len <=  {}", actual_len, excepted_size);
                 }
             }
             Operator::Eq => {
-                if excepted_size != actual_len {
+                let mut is_eq = excepted_size != actual_len;
+                if has_not {
+                    is_eq = !is_eq;
+                }
+                if is_eq {
                     error.msg = format!("file.len = {}, expected: len = {}", actual_len, excepted_size);
                 }
             }
