@@ -5,6 +5,7 @@ use crate::parser::ast::{Expr, GuardRule, Operator, RuleAssert, RuleLevel, RuleS
 
 pub mod ast;
 pub mod str_support;
+pub mod validator;
 
 #[derive(Parser)]
 #[grammar = "parser/guarding.pest"]
@@ -385,6 +386,13 @@ function -> name.len should < 30;
     ::adapter(\"com.phodal.com\", \"zero\");
 
 ";
+        parse(code);
+    }
+
+    #[test]
+    fn should_ignore_comments() {
+        let code = "# path: src/*";
+
         parse(code);
     }
 }
