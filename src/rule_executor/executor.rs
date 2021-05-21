@@ -462,56 +462,52 @@ impl RuleExecutor {
             rule: index,
         };
 
+        let match_func: fn(usize, usize) -> bool;
+        fn gt(excepted: usize, actual: usize) -> bool {
+            return excepted > actual
+        }
+        fn gte(excepted: usize, actual: usize) -> bool {
+            return excepted >= actual
+        }
+        fn lt(excepted: usize, actual: usize) -> bool {
+            return excepted < actual
+        }
+        fn lte(excepted: usize, actual: usize) -> bool {
+            return excepted <= actual
+        }
+        fn not_eq(excepted: usize, actual: usize) -> bool {
+            return excepted != actual
+        }
         match ops {
             Operator::Gt => {
-                let mut is_gt = excepted_size > actual_len;
-                if has_not {
-                    is_gt = !is_gt;
-                }
-                if is_gt {
-                    error.msg = format!("file.len = {}, expected: len > {}", actual_len, excepted_size);
-                }
+                error.msg = format!("file.len = {}, expected: len > {}", actual_len, excepted_size);
+                match_func = gt;
             }
             Operator::Gte => {
-                let mut is_gte = excepted_size >= actual_len;
-                if has_not {
-                    is_gte = !is_gte;
-                }
-                if is_gte {
-                    error.msg = format!("file.len = {}, expected: len >= {}", actual_len, excepted_size);
-                }
+                error.msg = format!("file.len = {}, expected: len >= {}", actual_len, excepted_size);
+                match_func = gte;
             }
             Operator::Lt => {
-                let mut is_lt = excepted_size < actual_len;
-                if has_not {
-                    is_lt = !is_lt;
-                }
-                if is_lt {
-                    error.msg = format!("file.len = {}, expected: len < {}", actual_len, excepted_size);
-                }
+                error.msg = format!("file.len = {}, expected: len < {}", actual_len, excepted_size);
+                match_func = lt;
             }
             Operator::Lte => {
-                let mut is_lte = excepted_size <= actual_len;
-                if has_not {
-                    is_lte = !is_lte;
-                }
-                if is_lte {
-                    error.msg = format!("file.len = {}, expected: len <=  {}", actual_len, excepted_size);
-                }
+                error.msg = format!("file.len = {}, expected: len <=  {}", actual_len, excepted_size);
+                match_func = lte;
             }
             Operator::Eq => {
-                let mut is_eq = excepted_size != actual_len;
-                if has_not {
-                    is_eq = !is_eq;
-                }
-                if is_eq {
-                    error.msg = format!("file.len = {}, expected: len = {}", actual_len, excepted_size);
-                }
+                error.msg = format!("file.len = {}, expected: len = {}", actual_len, excepted_size);
+                match_func = not_eq;
             }
-            _ => {}
+            _ => { return; }
         }
 
-        if !error.msg.is_empty() {
+        let mut is_match = match_func(excepted_size, actual_len);
+        if has_not {
+            is_match = !is_match;
+        }
+
+        if is_match {
             self.errors.push(error);
         }
     }
