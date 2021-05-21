@@ -13,14 +13,14 @@ jobs:
       matrix:
         include:
           - os: ubuntu-latest
-            artifact_name: modeling
-            asset_name: modeling-linux-amd64
+            artifact_name: guarding
+            asset_name: guarding-linux-amd64
           - os: windows-latest
-            artifact_name: modeling.exe
-            asset_name: modeling-windows-amd64
+            artifact_name: guarding.exe
+            asset_name: guarding-windows-amd64
           - os: macos-latest
-            artifact_name: modeling
-            asset_name: modeling-macos-amd64
+            artifact_name: guarding
+            asset_name: guarding-macos-amd64
 
     steps:
       - uses: actions/checkout@v1
