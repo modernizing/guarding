@@ -389,7 +389,8 @@ function -> name.len should < 30;
     #[ignore]
     #[test]
     fn should_ignore_comments() {
-        let code = "# path: src/*";
+        let code = "// path: src/*
+";
 
         parse(code);
     }

@@ -155,8 +155,8 @@ semicolon           = { ";" }
 opening_paren       = { "(" }
 closing_paren       = { ")" }
 
+
 newline    = _{ "\n" | "\r\n" }
 WHITESPACE = _{ " " | "\t" | newline }
-
 block_comment = _{ "/*" ~ (block_comment | !"*/" ~ ANY)* ~ "*/" }
 COMMENT    = _{ block_comment | ("//" ~ (!newline ~ ANY)*) }
