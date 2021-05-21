@@ -1,6 +1,6 @@
 [package]
 name = "guarding"
-version = "0.1.1"
+version = "0.2.0"
 authors = ["Inherd Group <group@inherd.org>"]
 edition = "2018"
 license = "MIT"
@@ -9,7 +9,7 @@ repository = "https://github.com/inherd/guarding"
 documentation = "https://github.com/inherd/guarding"
 homepage = "https://github.com/inherd/guarding"
 description = """
-Guarding is a guardians for code, architecture, layered. Using git hooks and DSL for design guard rules.
+Guarding is a guardians for code, architecture, layered. Guarding crate a architecture aguard DSL which based on ArchUnit.
 """
 categories = ["text-processing", "command-line-interface", "development-tools"]
 exclude = [
