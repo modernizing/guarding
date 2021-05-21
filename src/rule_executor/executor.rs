@@ -399,13 +399,13 @@ impl RuleExecutor {
 
         let match_func: fn(String, &String) -> bool;
         fn starts_with(input: String, condition: &String) -> bool {
-            return input.starts_with(condition)
+            return input.starts_with(condition);
         }
         fn ends_with(input: String, condition: &String) -> bool {
-            return input.ends_with(condition)
+            return input.ends_with(condition);
         }
         fn contains(input: String, condition: &String) -> bool {
-            return input.contains(condition)
+            return input.contains(condition);
         }
 
         let mut assert_success = true;
@@ -462,52 +462,53 @@ impl RuleExecutor {
             rule: index,
         };
 
-        let match_func: fn(usize, usize) -> bool;
-        fn gt(excepted: usize, actual: usize) -> bool {
-            return excepted > actual
+        let is_assert_success: fn(usize, usize) -> bool;
+        fn gt(actual: usize, excepted: usize) -> bool {
+            return actual > excepted;
         }
-        fn gte(excepted: usize, actual: usize) -> bool {
-            return excepted >= actual
+        fn gte(actual: usize, excepted: usize) -> bool {
+            return actual >= excepted;
         }
-        fn lt(excepted: usize, actual: usize) -> bool {
-            return excepted < actual
+        fn lt(actual: usize, excepted: usize) -> bool {
+            return actual < excepted;
         }
-        fn lte(excepted: usize, actual: usize) -> bool {
-            return excepted <= actual
+        fn lte(actual: usize, excepted: usize) -> bool {
+            return actual <= excepted;
         }
-        fn not_eq(excepted: usize, actual: usize) -> bool {
-            return excepted != actual
+        fn eq(actual: usize, excepted: usize) -> bool {
+            return actual == excepted;
         }
+
         match ops {
             Operator::Gt => {
                 error.msg = format!("file.len = {}, expected: len > {}", actual_len, excepted_size);
-                match_func = gt;
+                is_assert_success = gt;
             }
             Operator::Gte => {
                 error.msg = format!("file.len = {}, expected: len >= {}", actual_len, excepted_size);
-                match_func = gte;
+                is_assert_success = gte;
             }
             Operator::Lt => {
                 error.msg = format!("file.len = {}, expected: len < {}", actual_len, excepted_size);
-                match_func = lt;
+                is_assert_success = lt;
             }
             Operator::Lte => {
                 error.msg = format!("file.len = {}, expected: len <=  {}", actual_len, excepted_size);
-                match_func = lte;
+                is_assert_success = lte;
             }
             Operator::Eq => {
                 error.msg = format!("file.len = {}, expected: len = {}", actual_len, excepted_size);
-                match_func = not_eq;
+                is_assert_success = eq;
             }
             _ => { return; }
         }
 
-        let mut is_match = match_func(excepted_size, actual_len);
+        let mut is_assert_fail = !is_assert_success(actual_len, excepted_size);
         if has_not {
-            is_match = !is_match;
+            is_assert_fail = !is_assert_fail;
         }
 
-        if is_match {
+        if is_assert_fail {
             self.errors.push(error);
         }
     }
