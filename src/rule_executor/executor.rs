@@ -157,11 +157,11 @@ impl RuleExecutor {
                 match props[0].as_str() {
                     "len" => {
                         let size = RuleExecutor::get_assert_sized(&rule);
-                        self.processing_len(index, size, &rule.ops, filtered_models.len())
+                        self.process_len(index, size, &rule.ops, filtered_models.len())
                     }
                     "name" => {
                         let string = RuleExecutor::get_assert_string(&rule);
-                        self.processing_name(index, &rule.ops, filtered_models, string)
+                        self.process_name(index, &rule.ops, filtered_models, string)
                     }
                     _ => {
                         println!("todo: expr {:?}", props[0].as_str());
@@ -173,7 +173,7 @@ impl RuleExecutor {
                     "" => {
                         let (has_capture, _level, ident) = RuleExecutor::get_package_level(&rule);
                         if has_capture {
-                            self.process_captures(index, &rule.ops, filtered_models, ident)
+                            self.process_package_captures(index, &rule.ops, filtered_models, ident)
                         } else {
                             println!("Empty Identifier: {:?}", ident);
                         }
@@ -242,7 +242,6 @@ impl RuleExecutor {
             self.errors.push(error);
         }
 
-
         has_capture_assert
     }
 
@@ -290,13 +289,13 @@ impl RuleExecutor {
                 match props[0].as_str() {
                     "len" => {
                         let size = RuleExecutor::get_assert_sized(&rule);
-                        self.processing_len(index, size, &rule.ops, filtered_models.len())
+                        self.process_len(index, size, &rule.ops, filtered_models.len())
                     }
                     "file" => {
                         match props[1].as_str() {
                             "len" => {
                                 let size = RuleExecutor::get_assert_sized(&rule);
-                                self.processing_len(index, size, &rule.ops, filtered_models.len())
+                                self.process_len(index, size, &rule.ops, filtered_models.len())
                             }
                             &_ => {}
                         };
@@ -315,7 +314,7 @@ impl RuleExecutor {
             .collect()
     }
 
-    fn process_captures(&mut self, index: usize, all_ops: &Vec<Operator>, models: Vec<CodeClass>, identifier: String) {
+    fn process_package_captures(&mut self, index: usize, all_ops: &Vec<Operator>, models: Vec<CodeClass>, identifier: String) {
         let mut ops = &all_ops[0];
         let mut has_not = false;
         match ops {
@@ -354,7 +353,7 @@ impl RuleExecutor {
         }
     }
 
-    fn processing_name(&mut self, index: usize, all_ops: &Vec<Operator>, models: Vec<CodeClass>, excepted: String) {
+    fn process_name(&mut self, index: usize, all_ops: &Vec<Operator>, models: Vec<CodeClass>, excepted: String) {
         let mut ops = &all_ops[0];
         let mut has_not = false;
         match ops {
@@ -412,7 +411,7 @@ impl RuleExecutor {
         }
     }
 
-    fn processing_len(&mut self, index: usize, excepted_size: usize, all_ops: &Vec<Operator>, actual_size: usize) {
+    fn process_len(&mut self, index: usize, excepted_size: usize, all_ops: &Vec<Operator>, actual_size: usize) {
         let mut ops = &all_ops[0];
         let mut has_not = false;
         match ops {
