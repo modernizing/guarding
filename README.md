@@ -35,6 +35,8 @@ todo:
    - [ ] Rust (on Going)
      - [x] class & functions
      - [ ] imports
+        - [ ] basic import
+        - [ ] mods import restructure
      - [ ] package convert
 
 others:

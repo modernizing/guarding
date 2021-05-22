@@ -18,6 +18,22 @@ impl PackageUnify {
         package.remove(0);
         package
     }
+
+    pub fn from_rust_import(str: &str, remove_last: bool) -> String {
+        let mut package = "".to_string();
+
+        let mut vec = str.split("::").collect::<Vec<&str>>();
+        if remove_last {
+            vec.remove(vec.len() - 1);
+        }
+
+        vec.iter().for_each(|sub| {
+            package = format!("{}.{}", package, sub);
+        });
+
+        package.remove(0);
+        package
+    }
 }
 
 #[cfg(test)]
@@ -29,5 +45,14 @@ mod tests {
     fn should_convert_path_to_package() {
         let buf = PathBuf::from("src").join("core").join("domain");
         assert_eq!("src.core.domain".to_string(), PackageUnify::from_path(buf));
+    }
+
+    #[test]
+    fn should_convert_rust_import() {
+        let imp = "std::path::PathBuf";
+        assert_eq!("std.path".to_string(), PackageUnify::from_rust_import(imp, true));
+
+        let imp = "std::path";
+        assert_eq!("std.path".to_string(), PackageUnify::from_rust_import(imp, false));
     }
 }
