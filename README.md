@@ -9,19 +9,32 @@
 
 todo:
 
- - [x] guarding DSL design
- - [x] setup projects
- - [x] parser
-    - [x] tree-sitter
- - [x] parser
- - [x] interface / trait supports
- - [ ] languages
-    - [x] Java
-    - [x] JavaScript
-    - [ ] TypeScript
-    - [ ] Rust
+- [x] filter
+   - [x] filter by package identifier
+   - [ ] filter by regex
+   - [x] filter by implementation
+   - [x] filter by extends
+   - [ ] filter by trait
+- [x] limit impl naming
+- [x] limit files num
+- [ ] limit package's sub-package size (for example, Clean Architecture).
+- [x] assert
+  - [x] comparison for size / len
+  - [x] string comparison
+     - [x] contains
+     - [x] startsWith
+     - [x] endsWith
+  - [ ] package ops
+     - [x] accessed
+     - [x] resideIn
+     - [ ] dependBy
+- [ ] languages
+   - [x] Java
+   - [x] JavaScript
+   - [ ] TypeScript
+   - [ ] Rust
 
-Others:
+others:
 
  - [ ] ArchUnit code generator?
  - [ ] git hooks for staged files (low-priority， some-languages has custom git hooks)
