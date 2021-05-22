@@ -33,6 +33,9 @@ todo:
    - [ ] JavaScript (on Going)
    - [ ] TypeScript
    - [ ] Rust (on Going)
+     - [x] class & functions
+     - [ ] imports
+     - [ ] package convert
 
 others:
 

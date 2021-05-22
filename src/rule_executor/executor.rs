@@ -223,8 +223,8 @@ impl RuleExecutor {
         }
 
         let mut error = RuleError::new("access", index);
-
         let mut assert_success = true;
+
         match operator {
             Operator::Accessed => {
                 let paths = self.search_by_access(&mut assert_models, pkg_identifier);
@@ -257,6 +257,7 @@ impl RuleExecutor {
                             has_file_in_assert = true;
                         }
                     });
+
                     if !has_file_in_assert {
                         error_paths.push(clz.path.clone());
                     }
