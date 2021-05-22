@@ -30,9 +30,9 @@ todo:
      - [ ] dependBy
 - [ ] languages
    - [x] Java
-   - [x] JavaScript
+   - [ ] JavaScript (on Going)
    - [ ] TypeScript
-   - [ ] Rust
+   - [ ] Rust (on Going)
 
 others:
 
