@@ -1,7 +1,6 @@
 use std::fs;
 use std::path::PathBuf;
 
-use serde::{Deserialize, Serialize};
 use walkdir::WalkDir;
 
 use crate::domain::code_class::CodeClass;
@@ -223,14 +222,7 @@ impl RuleExecutor {
             _ => {}
         }
 
-        let mut error = RuleError {
-            expected: format!("{}", ""),
-            actual: format!("{}", ""),
-            error_type: "accessed".to_string(),
-            msg: "".to_string(),
-            items: vec![],
-            rule: index,
-        };
+        let mut error = RuleError::new("access", index);
 
         let mut assert_success = true;
         match operator {
@@ -334,14 +326,7 @@ impl RuleExecutor {
             _ => {}
         }
 
-        let mut error = RuleError {
-            expected: format!("{}", ""),
-            actual: format!("{}", ""),
-            error_type: "file name".to_string(),
-            msg: "".to_string(),
-            items: vec![],
-            rule: index,
-        };
+        let mut error = RuleError::new("file name", index);
 
         let mut assert_success = true;
         match ops {
@@ -380,14 +365,7 @@ impl RuleExecutor {
             _ => {}
         }
 
-        let mut error = RuleError {
-            expected: format!("{}", excepted),
-            actual: format!("{}", ""),
-            error_type: "file name".to_string(),
-            msg: "".to_string(),
-            items: vec![],
-            rule: index,
-        };
+        let mut error = RuleError::new("file name", index);
 
         let match_func: fn(String, &String) -> bool;
         fn starts_with(input: String, condition: &String) -> bool {
@@ -434,7 +412,7 @@ impl RuleExecutor {
         }
     }
 
-    fn processing_len(&mut self, index: usize, excepted_size: usize, all_ops: &Vec<Operator>, actual_len: usize) {
+    fn processing_len(&mut self, index: usize, excepted_size: usize, all_ops: &Vec<Operator>, actual_size: usize) {
         let mut ops = &all_ops[0];
         let mut has_not = false;
         match ops {
@@ -445,14 +423,9 @@ impl RuleExecutor {
             _ => {}
         }
 
-        let mut error = RuleError {
-            expected: format!("{}", excepted_size),
-            actual: format!("{}", actual_len),
-            error_type: "file.len size".to_string(),
-            msg: "".to_string(),
-            items: vec![],
-            rule: index,
-        };
+        let mut error = RuleError::new("file.len size", index);
+        error.expected = excepted_size.to_string();
+        error.actual = actual_size.to_string();
 
         let is_assert_success: fn(usize, usize) -> bool;
         fn gt(actual: usize, excepted: usize) -> bool {
@@ -473,29 +446,29 @@ impl RuleExecutor {
 
         match ops {
             Operator::Gt => {
-                error.msg = format!("file.len = {}, expected: len > {}", actual_len, excepted_size);
+                error.msg = format!("file.len = {}, expected: len > {}", actual_size, excepted_size);
                 is_assert_success = gt;
             }
             Operator::Gte => {
-                error.msg = format!("file.len = {}, expected: len >= {}", actual_len, excepted_size);
+                error.msg = format!("file.len = {}, expected: len >= {}", actual_size, excepted_size);
                 is_assert_success = gte;
             }
             Operator::Lt => {
-                error.msg = format!("file.len = {}, expected: len < {}", actual_len, excepted_size);
+                error.msg = format!("file.len = {}, expected: len < {}", actual_size, excepted_size);
                 is_assert_success = lt;
             }
             Operator::Lte => {
-                error.msg = format!("file.len = {}, expected: len <=  {}", actual_len, excepted_size);
+                error.msg = format!("file.len = {}, expected: len <=  {}", actual_size, excepted_size);
                 is_assert_success = lte;
             }
             Operator::Eq => {
-                error.msg = format!("file.len = {}, expected: len = {}", actual_len, excepted_size);
+                error.msg = format!("file.len = {}, expected: len = {}", actual_size, excepted_size);
                 is_assert_success = eq;
             }
             _ => { return; }
         }
 
-        let mut is_assert_fail = !is_assert_success(actual_len, excepted_size);
+        let mut is_assert_fail = !is_assert_success(actual_size, excepted_size);
         if has_not {
             is_assert_fail = !is_assert_fail;
         }
