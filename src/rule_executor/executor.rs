@@ -111,9 +111,6 @@ impl RuleExecutor {
     }
 
     fn capture_class(&mut self, rule: &GuardRule, index: usize) {
-        let mut filtered_models: Vec<CodeClass> = vec![];
-
-        // filter package to filter package assert
         // - accessed(["..controller..", "..service.."]);
         // - dependBy ""
         if self.capture_package_to_package(&rule, index) {
@@ -122,25 +119,26 @@ impl RuleExecutor {
 
         // filter package to class assert
         // filter class to class assert
-        self.filter_classes_by_scope(&rule, &mut filtered_models);
+        self.filter_classes_by_scope(&rule);
 
-        self.execute_classes_assert(&rule, index, filtered_models)
+        self.execute_classes_assert(&rule, index)
     }
 
-    fn filter_classes_by_scope(&mut self, rule: &&GuardRule, filtered_models: &mut Vec<CodeClass>) {
+    fn filter_classes_by_scope(&mut self, rule: &&GuardRule) {
         match &rule.scope {
             RuleScope::PathDefine(str) => {
                 if str.as_str() == "." {
                     for file in &self.models {
-                        filtered_models.extend(file.classes.clone());
+                        self.filtered_classes.extend(file.classes.clone());
                     }
                 } else {
                     for file in &self.filter_classes_by_package_identifier(str) {
-                        filtered_models.extend(file.classes.clone());
+                        self.filtered_classes.extend(file.classes.clone());
                     }
                 }
             }
             RuleScope::Implementation(str) => {
+                let mut filtered_classes = vec![];
                 &self.models.iter().for_each(|file| {
                     let classes: Vec<CodeClass> = file.classes.iter()
                         .filter(|class| {
@@ -148,24 +146,27 @@ impl RuleExecutor {
                         })
                         .map(|s| s.clone())
                         .collect();
-                    filtered_models.extend(classes);
+
+                    filtered_classes.extend(classes);
                 });
+
+                self.filtered_classes.extend(filtered_classes);
             }
             _ => {}
         }
     }
 
-    fn execute_classes_assert(&mut self, rule: &&GuardRule, index: usize, filtered_models: Vec<CodeClass>) {
+    fn execute_classes_assert(&mut self, rule: &&GuardRule, index: usize) {
         match &rule.expr {
             Expr::PropsCall(props) => {
                 match props[0].as_str() {
                     "len" => {
                         let size = RuleExecutor::get_assert_sized(&rule);
-                        self.process_len(index, size, &rule.ops, filtered_models.len())
+                        self.process_len(index, size, &rule.ops, self.filtered_classes.len())
                     }
                     "name" => {
                         let string = RuleExecutor::get_assert_string(&rule);
-                        self.process_name(index, &rule.ops, filtered_models, string)
+                        self.process_name(index, &rule.ops, string)
                     }
                     _ => {
                         println!("todo: expr {:?}", props[0].as_str());
@@ -177,7 +178,7 @@ impl RuleExecutor {
                     "" => {
                         let (has_capture, _level, ident) = RuleExecutor::get_package_level(&rule);
                         if has_capture {
-                            self.process_package_captures(index, &rule.ops, filtered_models, ident)
+                            self.process_package_captures(index, &rule.ops, ident)
                         } else {
                             println!("Empty Identifier: {:?}", ident);
                         }
@@ -321,7 +322,7 @@ impl RuleExecutor {
             .collect()
     }
 
-    fn process_package_captures(&mut self, index: usize, all_ops: &Vec<Operator>, models: Vec<CodeClass>, identifier: String) {
+    fn process_package_captures(&mut self, index: usize, all_ops: &Vec<Operator>, identifier: String) {
         let mut ops = &all_ops[0];
         let mut has_not = false;
         match ops {
@@ -339,7 +340,7 @@ impl RuleExecutor {
             Operator::Inside |
             Operator::ResideIn => {
                 error.msg = format!("resideIn: {:?}", identifier);
-                models.iter().for_each(|clz| {
+                self.filtered_classes.iter().for_each(|clz| {
                     let mut package_match = is_package_match(identifier.clone(), clz.package.as_str());
                     if has_not {
                         package_match = !package_match;
@@ -360,7 +361,7 @@ impl RuleExecutor {
         }
     }
 
-    fn process_name(&mut self, index: usize, all_ops: &Vec<Operator>, models: Vec<CodeClass>, excepted: String) {
+    fn process_name(&mut self, index: usize, all_ops: &Vec<Operator>, excepted: String) {
         let mut ops = &all_ops[0];
         let mut has_not = false;
         match ops {
@@ -401,7 +402,7 @@ impl RuleExecutor {
             _ => { return; }
         }
 
-        models.iter().for_each(|clz| {
+        self.filtered_classes.iter().for_each(|clz| {
             let mut is_starts_with = match_func(clz.name.clone(), &excepted);
             if has_not {
                 is_starts_with = !is_starts_with
