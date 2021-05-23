@@ -216,6 +216,8 @@ impl RuleExecutor {
             _ => {}
         }
 
+        self.filtered_models = assert_models;
+
         let mut pkg_identifier = "".to_string();
         match &rule.scope {
             RuleScope::PathDefine(str) => {
@@ -229,7 +231,7 @@ impl RuleExecutor {
 
         match operator {
             Operator::Accessed => {
-                let paths = self.search_by_access(&mut assert_models, pkg_identifier);
+                let paths = self.search_by_access(pkg_identifier);
                 if paths.len() > 0 {
                     assert_success = false;
                     paths.iter().for_each(|p| {
@@ -247,14 +249,14 @@ impl RuleExecutor {
         has_capture_assert
     }
 
-    fn search_by_access(&mut self, assert_models: &mut Vec<CodeFile>, pkg_identifier: String) -> Vec<String> {
+    fn search_by_access(&mut self, pkg_identifier: String) -> Vec<String> {
         let mut error_paths = vec![];
         self.models.iter().for_each(|clz| {
             for imp in &clz.imports {
                 let is_file_import = is_package_match(pkg_identifier.clone(), imp.as_str());
                 if is_file_import {
                     let mut has_file_in_assert = false;
-                    &assert_models.iter().for_each(|file| {
+                    &self.filtered_models.iter().for_each(|file| {
                         if file.path == clz.path {
                             has_file_in_assert = true;
                         }
