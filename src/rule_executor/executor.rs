@@ -19,7 +19,8 @@ pub struct RuleExecutor {
     pub errors: Vec<RuleError>,
     pub rules: Vec<GuardRule>,
     pub models: Vec<CodeFile>,
-    pub filtered_models: Vec<CodeFile>,
+    pub filtered_files: Vec<CodeFile>,
+    pub filtered_classes: Vec<CodeClass>,
 }
 
 impl Default for RuleExecutor {
@@ -28,7 +29,8 @@ impl Default for RuleExecutor {
             errors: Default::default(),
             rules: vec![],
             models: vec![],
-            filtered_models: vec![]
+            filtered_files: vec![],
+            filtered_classes: vec![]
         }
     }
 }
@@ -216,7 +218,7 @@ impl RuleExecutor {
             _ => {}
         }
 
-        self.filtered_models = assert_models;
+        self.filtered_files = assert_models;
 
         let mut pkg_identifier = "".to_string();
         match &rule.scope {
@@ -256,7 +258,7 @@ impl RuleExecutor {
                 let is_file_import = is_package_match(pkg_identifier.clone(), imp.as_str());
                 if is_file_import {
                     let mut has_file_in_assert = false;
-                    &self.filtered_models.iter().for_each(|file| {
+                    &self.filtered_files.iter().for_each(|file| {
                         if file.path == clz.path {
                             has_file_in_assert = true;
                         }
