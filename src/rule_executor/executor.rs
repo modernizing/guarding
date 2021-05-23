@@ -19,6 +19,7 @@ pub struct RuleExecutor {
     pub errors: Vec<RuleError>,
     pub rules: Vec<GuardRule>,
     pub models: Vec<CodeFile>,
+    pub filtered_models: Vec<CodeFile>,
 }
 
 impl Default for RuleExecutor {
@@ -27,6 +28,7 @@ impl Default for RuleExecutor {
             errors: Default::default(),
             rules: vec![],
             models: vec![],
+            filtered_models: vec![]
         }
     }
 }
