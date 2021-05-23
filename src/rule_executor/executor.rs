@@ -276,15 +276,13 @@ impl RuleExecutor {
     }
 
     fn capture_package(&mut self, rule: &GuardRule, index: usize) {
-        let mut filtered_models: Vec<CodeFile> = vec![];
-
         match &rule.scope {
             RuleScope::PathDefine(str) => {
                 let path = str.as_str();
                 if path == "." {
-                    filtered_models = self.models.clone();
+                    self.filtered_files = self.models.clone();
                 } else {
-                    filtered_models = self.filter_classes_by_package_identifier(str);
+                    self.filtered_files = self.filter_classes_by_package_identifier(str);
                 };
             }
             RuleScope::MatchRegex(_) => {}
@@ -297,13 +295,13 @@ impl RuleExecutor {
                 match props[0].as_str() {
                     "len" => {
                         let size = RuleExecutor::get_assert_sized(&rule);
-                        self.process_len(index, size, &rule.ops, filtered_models.len())
+                        self.process_len(index, size, &rule.ops, self.filtered_files.len())
                     }
                     "file" => {
                         match props[1].as_str() {
                             "len" => {
                                 let size = RuleExecutor::get_assert_sized(&rule);
-                                self.process_len(index, size, &rule.ops, filtered_models.len())
+                                self.process_len(index, size, &rule.ops, self.filtered_files.len())
                             }
                             &_ => {}
                         };
