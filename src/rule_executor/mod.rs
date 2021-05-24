@@ -1,4 +1,4 @@
-pub use rule_error::RuleError;
+pub use rule_error::RuleErrorMsg;
 pub use executor::RuleExecutor;
 
 pub mod executor;

@@ -1,21 +1,29 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct RuleError {
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+pub enum MismatchType {
+    None,
+    Access,
+    FileName,
+    FileSize,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+pub struct RuleErrorMsg {
     pub expected: String,
     pub actual: String,
-    pub error_type: String,
+    pub mismatch_type: MismatchType,
     pub msg: String,
     pub items: Vec<String>,
     pub rule_index: usize,
 }
 
-impl RuleError {
-    pub fn new(error_type: &str, index: usize) -> RuleError {
-        RuleError {
+impl RuleErrorMsg {
+    pub fn new(mismatch_type: MismatchType, index: usize) -> RuleErrorMsg {
+        RuleErrorMsg {
             expected: "".to_string(),
             actual: "".to_string(),
-            error_type: error_type.to_string(),
+            mismatch_type,
             msg: "".to_string(),
             items: vec![],
             rule_index: index
@@ -23,12 +31,12 @@ impl RuleError {
     }
 }
 
-impl Default for RuleError {
+impl Default for RuleErrorMsg {
     fn default() -> Self {
-        RuleError {
+        RuleErrorMsg {
             expected: "".to_string(),
             actual: "".to_string(),
-            error_type: "".to_string(),
+            mismatch_type: MismatchType::None,
             msg: "".to_string(),
             items: vec![],
             rule_index: 0

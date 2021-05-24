@@ -2,6 +2,7 @@ use std::fs;
 use std::path::PathBuf;
 
 use crate::rule_executor::RuleExecutor;
+use crate::rule_executor::rule_error::MismatchType;
 
 fn test_dir() -> PathBuf {
     PathBuf::from(env!("CARGO_MANIFEST_DIR"))
@@ -20,7 +21,7 @@ fn should_working_in_process() {
     assert_eq!(1, errors.len());
     assert_eq!("50".to_string(), errors[0].expected);
     assert_eq!("26".to_string(), errors[0].actual);
-    assert_eq!("file.len size".to_string(), errors[0].error_type);
+    assert_eq!(MismatchType::FileSize, errors[0].mismatch_type);
     assert_eq!("file.len = 26, expected: len > 50".to_string(), errors[0].msg);
 }
 

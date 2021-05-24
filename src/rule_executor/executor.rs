@@ -12,11 +12,11 @@ use crate::identify::rust_ident::RustIdent;
 use crate::parser;
 use crate::parser::ast::{Expr, GuardRule, Operator, RuleAssert, RuleLevel, RuleScope};
 use crate::rule_executor::package_matcher::is_package_match;
-use crate::rule_executor::rule_error::RuleError;
+use crate::rule_executor::rule_error::{RuleErrorMsg, MismatchType};
 
 #[derive(Debug, Clone)]
 pub struct RuleExecutor {
-    pub errors: Vec<RuleError>,
+    pub errors: Vec<RuleErrorMsg>,
     pub rules: Vec<GuardRule>,
     pub models: Vec<CodeFile>,
     pub filtered_files: Vec<CodeFile>,
@@ -36,7 +36,7 @@ impl Default for RuleExecutor {
 }
 
 impl RuleExecutor {
-    pub fn execute(rule_content: String, code_dir: PathBuf) -> Vec<RuleError> {
+    pub fn execute(rule_content: String, code_dir: PathBuf) -> Vec<RuleErrorMsg> {
         let rules = parser::parse(rule_content.as_str());
         let mut models = vec![];
         for entry in WalkDir::new(code_dir) {
@@ -45,13 +45,14 @@ impl RuleExecutor {
                 continue;
             }
 
-            if let None = entry.path().extension() {
+            let path = entry.path();
+            if let None = path.extension() {
                 continue;
             }
 
-            let ext = entry.path().extension().unwrap().to_str().unwrap();
-            let content = fs::read_to_string(entry.path()).expect("not such file");
-            let path = format!("{}", entry.path().display());
+            let ext = path.extension().unwrap().to_str().unwrap();
+            let content = fs::read_to_string(path).expect("not such file");
+            let path = format!("{}", path.display());
 
             match ext {
                 "java" => {
@@ -229,7 +230,7 @@ impl RuleExecutor {
             _ => {}
         }
 
-        let mut error = RuleError::new("access", index);
+        let mut error = RuleErrorMsg::new(MismatchType::Access, index);
         let mut assert_success = true;
 
         match operator {
@@ -331,7 +332,7 @@ impl RuleExecutor {
             _ => {}
         }
 
-        let mut error = RuleError::new("file name", index);
+        let mut error = RuleErrorMsg::new(MismatchType::FileName, index);
 
         let mut assert_success = true;
         match ops {
@@ -370,7 +371,7 @@ impl RuleExecutor {
             _ => {}
         }
 
-        let mut error = RuleError::new("file name", index);
+        let mut error = RuleErrorMsg::new(MismatchType::FileName, index);
 
         let match_func: fn(String, &String) -> bool;
         fn starts_with(input: String, condition: &String) -> bool {
@@ -428,7 +429,7 @@ impl RuleExecutor {
             _ => {}
         }
 
-        let mut error = RuleError::new("file.len size", index);
+        let mut error = RuleErrorMsg::new(MismatchType::FileSize, index);
         error.expected = excepted_size.to_string();
         error.actual = actual_size.to_string();
 
