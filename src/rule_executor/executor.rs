@@ -19,7 +19,7 @@ pub struct RuleExecutor {
     pub errors: Vec<RuleErrorMsg>,
     pub rules: Vec<GuardRule>,
     pub models: Vec<CodeFile>,
-    pub filtered_files: Vec<CodeFile>,
+    pub filtered_models: Vec<CodeFile>,
     pub filtered_classes: Vec<CodeClass>,
 }
 
@@ -29,7 +29,7 @@ impl Default for RuleExecutor {
             errors: Default::default(),
             rules: vec![],
             models: vec![],
-            filtered_files: vec![],
+            filtered_models: vec![],
             filtered_classes: vec![]
         }
     }
@@ -220,7 +220,7 @@ impl RuleExecutor {
             _ => {}
         }
 
-        self.filtered_files = assert_models;
+        self.filtered_models = assert_models;
 
         let mut pkg_identifier = "".to_string();
         match &rule.scope {
@@ -260,7 +260,7 @@ impl RuleExecutor {
                 let is_file_import = is_package_match(pkg_identifier.clone(), imp.as_str());
                 if is_file_import {
                     let mut has_file_in_assert = false;
-                    &self.filtered_files.iter().for_each(|file| {
+                    &self.filtered_models.iter().for_each(|file| {
                         if file.path == clz.path {
                             has_file_in_assert = true;
                         }
@@ -281,9 +281,9 @@ impl RuleExecutor {
             RuleScope::PathDefine(str) => {
                 let path = str.as_str();
                 if path == "." {
-                    self.filtered_files = self.models.clone();
+                    self.filtered_models = self.models.clone();
                 } else {
-                    self.filtered_files = self.filter_classes_by_package_identifier(str);
+                    self.filtered_models = self.filter_classes_by_package_identifier(str);
                 };
             }
             RuleScope::MatchRegex(_) => {}
@@ -296,13 +296,13 @@ impl RuleExecutor {
                 match props[0].as_str() {
                     "len" => {
                         let size = RuleExecutor::get_assert_sized(&rule);
-                        self.process_len(index, size, &rule.ops, self.filtered_files.len())
+                        self.process_len(index, size, &rule.ops, self.filtered_models.len())
                     }
                     "file" => {
                         match props[1].as_str() {
                             "len" => {
                                 let size = RuleExecutor::get_assert_sized(&rule);
-                                self.process_len(index, size, &rule.ops, self.filtered_files.len())
+                                self.process_len(index, size, &rule.ops, self.filtered_models.len())
                             }
                             &_ => {}
                         };
