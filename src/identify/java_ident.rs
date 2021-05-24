@@ -200,6 +200,7 @@ class DateTimeImpl2 {
         assert_eq!(1, file.classes.len());
     }
 
+    #[ignore]
     #[test]
     fn should_support_annotation() {
         let source_code = "public class HelloController {
