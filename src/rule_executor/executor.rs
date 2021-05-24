@@ -1,18 +1,12 @@
-use std::fs;
 use std::path::PathBuf;
-
-use walkdir::WalkDir;
 
 use crate::domain::code_class::CodeClass;
 use crate::domain::code_file::CodeFile;
-use crate::identify::code_ident::CodeIdent;
-use crate::identify::java_ident::JavaIdent;
-use crate::identify::js_ident::JsIdent;
-use crate::identify::rust_ident::RustIdent;
 use crate::parser;
 use crate::parser::ast::{Expr, GuardRule, Operator, RuleAssert, RuleLevel, RuleScope};
+use crate::rule_executor::model_builder::ModelBuilder;
 use crate::rule_executor::package_matcher::is_package_match;
-use crate::rule_executor::rule_error::{RuleErrorMsg, MismatchType};
+use crate::rule_executor::rule_error::{MismatchType, RuleErrorMsg};
 
 #[derive(Debug, Clone)]
 pub struct RuleExecutor {
@@ -38,41 +32,7 @@ impl Default for RuleExecutor {
 impl RuleExecutor {
     pub fn execute(rule_content: String, code_dir: PathBuf) -> Vec<RuleErrorMsg> {
         let rules = parser::parse(rule_content.as_str());
-        let mut models = vec![];
-        for entry in WalkDir::new(code_dir) {
-            let entry = entry.unwrap();
-            if !entry.file_type().is_file() {
-                continue;
-            }
-
-            let path = entry.path();
-            if let None = path.extension() {
-                continue;
-            }
-
-            let ext = path.extension().unwrap().to_str().unwrap();
-            let content = fs::read_to_string(path).expect("not such file");
-            let path = format!("{}", path.display());
-
-            match ext {
-                "java" => {
-                    let mut file = JavaIdent::parse(content.as_str());
-                    file.path = path;
-                    models.push(file);
-                }
-                "js" => {
-                    let mut file = JsIdent::parse(content.as_str());
-                    file.path = path;
-                    models.push(file);
-                }
-                "rs" => {
-                    let mut file = RustIdent::parse(content.as_str());
-                    file.path = path;
-                    models.push(file);
-                }
-                &_ => {}
-            }
-        }
+        let models = ModelBuilder::build_models_by_dir(code_dir);
 
         let mut executor = RuleExecutor::default();
         executor.models = models;
