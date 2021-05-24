@@ -7,12 +7,7 @@ impl PackageUnify {
         let mut package = "".to_string();
         let path_iter = path.iter();
         path_iter.for_each(|str| {
-            match str.to_str() {
-                None => {}
-                Some(sub) => {
-                    package = format!("{}.{}", package, sub);
-                }
-            }
+            package = format!("{}.{}", package, str.to_str().expect("error path"));
         });
 
         package.remove(0);
