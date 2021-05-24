@@ -28,16 +28,11 @@ pub fn is_assert_match(package_identifier: String, text: &str, assert_package: S
     let regex = Regex::new(package.as_str())
         .expect("regex error");
 
-    match regex.captures(text) {
-        None => {
-            println!("None");
-        }
-        Some(caps) => {
-            for ma in caps.iter() {
-                if let Some(match_) = ma {
-                    if match_.as_str() == assert_package {
-                        return true
-                    }
+    if let Some(caps) = regex.captures(text) {
+        for ma in caps.iter() {
+            if let Some(match_) = ma {
+                if match_.as_str() == assert_package {
+                    return true
                 }
             }
         }

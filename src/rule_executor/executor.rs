@@ -30,15 +30,23 @@ impl Default for RuleExecutor {
 }
 
 impl RuleExecutor {
+    pub fn new(models: Vec<CodeFile>, rules: Vec<GuardRule>) -> RuleExecutor {
+        RuleExecutor {
+            errors: vec![],
+            rules,
+            models,
+            filtered_models: vec![],
+            filtered_classes: vec![]
+        }
+    }
+
     pub fn execute(rule_content: String, code_dir: PathBuf) -> Vec<RuleErrorMsg> {
         let rules = parser::parse(rule_content.as_str());
         let models = ModelBuilder::build_models_by_dir(code_dir);
 
-        let mut executor = RuleExecutor::default();
-        executor.models = models;
-        executor.rules = rules;
-
+        let mut executor = RuleExecutor::new(models, rules);
         executor.run();
+
         executor.errors
     }
 
