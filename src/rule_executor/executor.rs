@@ -24,7 +24,7 @@ impl Default for RuleExecutor {
             rules: vec![],
             models: vec![],
             filtered_models: vec![],
-            filtered_classes: vec![]
+            filtered_classes: vec![],
         }
     }
 }
@@ -36,18 +36,24 @@ impl RuleExecutor {
             rules,
             models,
             filtered_models: vec![],
-            filtered_classes: vec![]
+            filtered_classes: vec![],
         }
     }
 
     pub fn execute(rule_content: String, code_dir: PathBuf) -> Vec<RuleErrorMsg> {
-        let rules = parser::parse(rule_content.as_str());
-        let models = ModelBuilder::build_models_by_dir(code_dir);
+        match parser::parse(rule_content.as_str()) {
+            None => {
+                panic!("parse rules error")
+            },
+            Some(rules) => {
+                let models = ModelBuilder::build_models_by_dir(code_dir);
 
-        let mut executor = RuleExecutor::new(models, rules);
-        executor.run();
+                let mut executor = RuleExecutor::new(models, rules);
+                executor.run();
 
-        executor.errors
+                return executor.errors;
+            }
+        }
     }
 
     pub fn run(&mut self) {

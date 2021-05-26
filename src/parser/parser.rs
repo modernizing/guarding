@@ -8,9 +8,17 @@ use crate::parser::str_support;
 #[grammar = "parser/guarding.pest"]
 struct IdentParser;
 
-pub fn parse(code: &str) -> Vec<GuardRule> {
-    let pairs = IdentParser::parse(Rule::start, code).unwrap_or_else(|e| panic!("{}", e));
-    consume_rules_with_spans(pairs)
+pub fn parse(code: &str) -> Option<Vec<GuardRule>> {
+    match IdentParser::parse(Rule::start, code) {
+        Err(e) => {
+            // Err(e)
+            println!("{:?}", e);
+            None
+        },
+        Ok(pairs) => {
+            Some(consume_rules_with_spans(pairs))
+        }
+    }
 }
 
 fn consume_rules_with_spans(pairs: Pairs<Rule>) -> Vec<GuardRule> {
@@ -265,7 +273,7 @@ mod tests {
     #[test]
     fn should_parse_rule_level() {
         let code = "class::name contains \"Controller\";";
-        let rules = parse(code);
+        let rules = parse(code).unwrap();
 
         assert_eq!(1, rules.len());
         assert_eq!(RuleLevel::Class, rules[0].level);
@@ -275,7 +283,7 @@ mod tests {
     #[test]
     fn should_parse_string_assert() {
         let code = "class::name contains \"Controller\";";
-        let rules = parse(code);
+        let rules = parse(code).unwrap();
 
         assert_eq!(RuleAssert::Stringed("Controller".to_string()), rules[0].assert);
     }
@@ -283,7 +291,7 @@ mod tests {
     #[test]
     fn should_parse_struct() {
         let code = "struct::name contains \"Controller\";";
-        let rules = parse(code);
+        let rules = parse(code).unwrap();
 
         assert_eq!(RuleLevel::Struct, rules[0].level);
         assert_eq!(RuleAssert::Stringed("Controller".to_string()), rules[0].assert);
@@ -292,7 +300,7 @@ mod tests {
     #[test]
     fn should_parse_package_asset() {
         let code = "class(\"..myapp..\")::function.name should contains(\"\");";
-        let rules = parse(code);
+        let rules = parse(code).unwrap();
 
         assert_eq!(RuleScope::PathDefine(("..myapp..").to_string()), rules[0].scope);
         let chains = vec!["function".to_string(), "name".to_string()];
@@ -302,7 +310,7 @@ mod tests {
     #[test]
     fn should_parse_package_extends() {
         let code = "class(extends \"Connection.class\")::name endsWith \"Connection\";";
-        let vec = parse(code);
+        let vec = parse(code).unwrap();
         assert_eq!(1, vec[0].ops.len());
         assert_eq!(Operator::Endswith, vec[0].ops[0])
     }
@@ -310,7 +318,7 @@ mod tests {
     #[test]
     fn should_parse_not_symbol() {
         let code = "class(extends \"Connection.class\")::name should not endsWith \"Connection\";";
-        let vec = parse(code);
+        let vec = parse(code).unwrap();
         assert_eq!(2, vec[0].ops.len());
         assert_eq!(Operator::Not, vec[0].ops[0]);
         assert_eq!(Operator::Endswith, vec[0].ops[1]);
@@ -320,28 +328,28 @@ mod tests {
     #[test]
     fn should_parse_sized_assert() {
         let code = "class(\"..myapp..\")::function.vars.len should <= 20;";
-        let vec = parse(code);
+        let vec = parse(code).unwrap();
         assert_eq!(RuleAssert::Sized(20), vec[0].assert);
     }
 
     #[test]
     fn should_parse_package_container_scope() {
         let code = "class(assignable \"EntityManager.class\") resideIn package(\"..persistence.\");";
-        let vec = parse(code);
+        let vec = parse(code).unwrap();
         assert_eq!(RuleAssert::Leveled(RuleLevel::Package, "..persistence.".to_string()), vec[0].assert);
     }
 
     #[test]
     fn should_parse_package_regex() {
         let code = "package(match(\"^/app\")) endsWith \"Connection\";";
-        let vec = parse(code);
+        let vec = parse(code).unwrap();
         assert_eq!(RuleScope::MatchRegex("^/app".to_string()), vec[0].scope);
     }
 
     #[test]
     fn should_parse_array_stringed() {
         let code = "class(\"..service..\") only accessed([\"..controller..\", \"..service..\"]);";
-        let vec = parse(code);
+        let vec = parse(code).unwrap();
 
         let results = vec!["..controller..".to_string(), "..service..".to_string()];
         assert_eq!(RuleAssert::ArrayStringed(results), vec[0].assert);
@@ -355,7 +363,7 @@ class(\"..myapp..\")::function.name !contains(\"\");
 class(\"..myapp..\")::vars.len should <= 20;
 class(\"..myapp..\")::function.vars.len should <= 20;
 ";
-        parse(code);
+        parse(code).unwrap();
     }
 
     #[test]
@@ -363,7 +371,7 @@ class(\"..myapp..\")::function.vars.len should <= 20;
         let code = "class::name.len should < 20;
 function::name.len should < 30;
 ";
-        parse(code);
+        parse(code).unwrap();
     }
 
     #[test]
@@ -371,7 +379,7 @@ function::name.len should < 30;
         let code = "class -> name.len should < 20;
 function -> name.len should < 30;
 ";
-        parse(code);
+        parse(code).unwrap();
     }
 
     #[test]
@@ -383,7 +391,7 @@ function -> name.len should < 30;
     ::adapter(\"com.phodal.com\", \"zero\");
 
 ";
-        parse(code);
+        parse(code).unwrap();
     }
 
     #[test]
@@ -391,6 +399,6 @@ function -> name.len should < 30;
         let code = "// path: src/*
 ";
 
-        parse(code);
+        parse(code).unwrap();
     }
 }
