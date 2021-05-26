@@ -42,11 +42,11 @@ impl RuleExecutor {
 
     pub fn execute(rule_content: String, code_dir: PathBuf) -> Vec<RuleErrorMsg> {
         match parser::parse(rule_content.as_str()) {
-            None => {
-                // panic!("parse rules error")
+            Err(e) => {
+                println!("{}", e);
                 vec![]
             },
-            Some(rules) => {
+            Ok(rules) => {
                 let models = ModelBuilder::build_models_by_dir(code_dir);
 
                 let mut executor = RuleExecutor::new(models, rules);

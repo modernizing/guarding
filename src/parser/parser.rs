@@ -1,6 +1,7 @@
 use pest::iterators::{Pair, Pairs};
 use pest::Parser;
 
+use crate::parser::errors::{Error, Result as GuardingResult};
 use crate::parser::ast::{Expr, GuardRule, Operator, RuleAssert, RuleLevel, RuleScope};
 use crate::parser::support::str_support;
 
@@ -8,7 +9,7 @@ use crate::parser::support::str_support;
 #[grammar = "parser/guarding.pest"]
 struct IdentParser;
 
-pub fn parse(code: &str) -> Option<Vec<GuardRule>> {
+pub fn parse(code: &str) -> GuardingResult<Vec<GuardRule>> {
     match IdentParser::parse(Rule::start, code) {
         Err(e) => {
             let fancy_e = e.renamed_rules(|rule| {
@@ -19,11 +20,10 @@ pub fn parse(code: &str) -> Option<Vec<GuardRule>> {
                     }
                 }
             });
-            println!("{:?}", fancy_e);
-            None
+            return Err(Error::msg(fancy_e));
         }
         Ok(pairs) => {
-            Some(consume_rules_with_spans(pairs))
+            Ok(consume_rules_with_spans(pairs))
         }
     }
 }
