@@ -34,7 +34,7 @@ impl PackageUnify {
 #[cfg(test)]
 mod tests {
     use std::path::PathBuf;
-    use crate::parser::package_unify::PackageUnify;
+    use crate::parser::support::package_unify::PackageUnify;
 
     #[test]
     fn should_convert_path_to_package() {

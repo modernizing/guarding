@@ -2,7 +2,7 @@ use pest::iterators::{Pair, Pairs};
 use pest::Parser;
 
 use crate::parser::ast::{Expr, GuardRule, Operator, RuleAssert, RuleLevel, RuleScope};
-use crate::parser::str_support;
+use crate::parser::support::str_support;
 
 #[derive(Parser)]
 #[grammar = "parser/guarding.pest"]
