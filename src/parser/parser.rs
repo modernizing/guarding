@@ -11,10 +11,17 @@ struct IdentParser;
 pub fn parse(code: &str) -> Option<Vec<GuardRule>> {
     match IdentParser::parse(Rule::start, code) {
         Err(e) => {
-            // Err(e)
-            println!("{:?}", e);
+            let fancy_e = e.renamed_rules(|rule| {
+                match *rule {
+                    // Rule::declaration =>
+                    _ => {
+                        format!("{:?}", rule)
+                    }
+                }
+            });
+            println!("{:?}", fancy_e);
             None
-        },
+        }
         Ok(pairs) => {
             Some(consume_rules_with_spans(pairs))
         }

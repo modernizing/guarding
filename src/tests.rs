@@ -136,7 +136,7 @@ fn should_support_for_accessed() {
     assert!(errors[0].items[0].contains("MyDictionary.java"))
 }
 
-#[ignore]
+// #[ignore]
 #[test]
 fn should_ignore_error() {
     let content = "class(\"java.util.Map\") only something([\"com.phodal.pepper.refactor.staticclass\"]);";
