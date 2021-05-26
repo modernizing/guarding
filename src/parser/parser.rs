@@ -14,7 +14,9 @@ pub fn parse(code: &str) -> GuardingResult<Vec<GuardRule>> {
         Err(e) => {
             let fancy_e = e.renamed_rules(|rule| {
                 match *rule {
-                    // Rule::declaration =>
+                    Rule::operator => {
+                        format!("{:?}", rule)
+                    }
                     _ => {
                         format!("{:?}", rule)
                     }
@@ -399,6 +401,20 @@ function -> name.len should < 30;
 
 ";
         parse(code).unwrap();
+    }
+
+    #[test]
+    fn should_ignore_error() {
+        let content = "class(\"java.util.Map\") only something([\"com.phodal.pepper.refactor.staticclass\"]);";
+        match parse(content) {
+            Ok(_) => {
+                assert!(false);
+            }
+            Err(err) => {
+                let string = format!("{:?}", err);
+                assert!(string.contains("^---"));
+            }
+        }
     }
 
     #[test]

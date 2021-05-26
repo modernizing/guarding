@@ -135,12 +135,3 @@ fn should_support_for_accessed() {
     assert_eq!(1, errors.len());
     assert!(errors[0].items[0].contains("MyDictionary.java"))
 }
-
-// #[ignore]
-#[test]
-fn should_ignore_error() {
-    let content = "class(\"java.util.Map\") only something([\"com.phodal.pepper.refactor.staticclass\"]);";
-    let errors = RuleExecutor::execute(content.to_string(), test_dir());
-
-    assert_eq!(0, errors.len());
-}
