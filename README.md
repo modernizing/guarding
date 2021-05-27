@@ -9,43 +9,6 @@
 
 ![Guarding Process](docs/guarding-process.svg)
 
-todo:
-
-- [x] filter
-   - [x] filter by package identifier
-   - [ ] filter by regex
-   - [x] filter by implementation
-   - [x] filter by extends
-   - [ ] filter by trait
-- [x] limit impl naming
-- [x] limit files num
-- [ ] limit package's sub-package size (for example, Clean Architecture).
-- [x] assert
-  - [x] comparison for size / len
-  - [x] string comparison
-     - [x] contains
-     - [x] startsWith
-     - [x] endsWith
-  - [ ] package ops
-     - [x] accessed
-     - [x] resideIn
-     - [ ] dependBy
-- [ ] languages
-   - [x] Java
-   - [ ] JavaScript (on Going)
-   - [ ] TypeScript
-   - [ ] Rust (on Going)
-     - [x] class & functions
-     - [ ] imports
-        - [ ] basic import
-        - [ ] mods import restructure
-     - [ ] package convert
-
-others:
-
- - [ ] ArchUnit code generator?
- - [ ] git hooks for staged files (low-priority， some-languages has custom git hooks)
-
 ## Usage
 
 1. install
@@ -83,8 +46,6 @@ DSL capture logic:
 
 Queries Samples: [https://github.com/nvim-treesitter/nvim-treesitter/tree/master/queries](https://github.com/nvim-treesitter/nvim-treesitter/tree/master/queries)
 
-## Document
-
 ### Guarding - Class or Struct function-name
 
 for Java, JavaScript
@@ -104,6 +65,41 @@ struct("..myapp..")::function.name should contains("Model");
 # or
 struct("..myapp..")::function.name contains("");
 ```
+
+## Todos
+
+
+todo:
+
+- [x] filter
+  - [x] filter by package identifier
+  - [ ] filter by regex
+  - [x] filter by implementation
+  - [x] filter by extends
+  - [ ] filter by trait
+- [x] limit impl naming
+- [x] limit files num
+- [ ] limit package's sub-package size (for example, Clean Architecture).
+- [x] assert
+  - [x] comparison for size / len
+  - [x] string comparison
+    - [x] contains
+    - [x] startsWith
+    - [x] endsWith
+  - [ ] package ops
+    - [x] accessed
+    - [x] resideIn
+    - [ ] dependBy
+- [ ] languages
+  - [x] Java
+  - [ ] JavaScript (on Going)
+  - [ ] TypeScript
+  - [ ] Rust (on Going)
+    - [x] class & functions
+    - [ ] imports
+      - [ ] basic import
+      - [ ] mods import restructure
+    - [ ] package convert
 
 License
 ---
