@@ -280,20 +280,13 @@ mod tests {
     use crate::parser::parse;
 
     #[test]
-    fn should_parse_rule_level() {
+    fn should_parse_string_assert() {
         let code = "class::name contains \"Controller\";";
         let rules = parse(code).unwrap();
 
         assert_eq!(1, rules.len());
         assert_eq!(RuleLevel::Class, rules[0].level);
         assert_eq!(RuleScope::All, rules[0].scope);
-    }
-
-    #[test]
-    fn should_parse_string_assert() {
-        let code = "class::name contains \"Controller\";";
-        let rules = parse(code).unwrap();
-
         assert_eq!(RuleAssert::Stringed("Controller".to_string()), rules[0].assert);
     }
 
