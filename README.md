@@ -48,6 +48,15 @@ Queries Samples: [https://github.com/nvim-treesitter/nvim-treesitter/tree/master
 
 ### Guarding - Class or Struct function-name
 
+for packages:
+
+```
+class(implementation "BaseParser")::name should endsWith "Parser";
+
+class("java.util.Map") only accessed(["com.phodal.pepper.refactor.staticclass"]);
+class(implementation "BaseParser")::name should not contains "Lexer";
+```
+
 for Java, JavaScript
 
 ```
