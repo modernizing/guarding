@@ -82,6 +82,7 @@ struct("..myapp..")::function.name contains("");
 
 todo:
 
+- [ ] template
 - [x] filter
   - [x] filter by package identifier
   - [ ] filter by regex
