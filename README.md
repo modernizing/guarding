@@ -83,6 +83,7 @@ struct("..myapp..")::function.name contains("");
 todo:
 
 - [ ] template
+  - [ ] `include(standard.guarding)` syntax 
 - [x] filter
   - [x] filter by package identifier
   - [ ] filter by regex
