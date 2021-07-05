@@ -7,7 +7,7 @@
 
 > Guarding is a guardians for code, architecture, layered. Using git hooks and DSL for design guard rules.
 
-Inspired by [ArchUnit]
+Inspired by [ArchUnit](https://github.com/TNG/ArchUnit)
 
 ![Guarding Process](docs/guarding-process.svg)
 
