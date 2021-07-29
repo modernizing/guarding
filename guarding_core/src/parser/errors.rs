@@ -72,7 +72,7 @@ impl From<serde_json::Error> for Error {
     }
 }
 /// Convenient wrapper around std::Result.
-pub type Result<T> = ::std::result::Result<T, Error>;
+pub type Result<T> = std::prelude::v1::Result<T, Error>;
 
 #[cfg(test)]
 mod tests {
