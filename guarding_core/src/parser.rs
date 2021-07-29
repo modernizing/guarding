@@ -1,12 +1,12 @@
 use pest::iterators::{Pair, Pairs};
 use pest::Parser;
 
-use crate::parser::errors::{Error, Result as GuardingResult};
-use crate::parser::ast::{Expr, GuardRule, Operator, RuleAssert, RuleLevel, RuleScope};
-use crate::parser::support::str_support;
+use crate::errors::{Error, Result as GuardingResult};
+use crate::ast::{Expr, GuardRule, Operator, RuleAssert, RuleLevel, RuleScope};
+use crate::support::str_support;
 
 #[derive(Parser)]
-#[grammar = "parser/guarding.pest"]
+#[grammar = "guarding.pest"]
 struct IdentParser;
 
 pub fn parse(code: &str) -> GuardingResult<Vec<GuardRule>> {

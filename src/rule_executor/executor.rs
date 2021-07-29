@@ -1,12 +1,13 @@
 use std::path::PathBuf;
 
+// use guarding_core::ast::{Expr, GuardRule, Operator, RuleAssert, RuleLevel, RuleScope};
+
 use crate::domain::code_class::CodeClass;
 use crate::domain::code_file::CodeFile;
-use crate::parser;
-use crate::parser::ast::{Expr, GuardRule, Operator, RuleAssert, RuleLevel, RuleScope};
 use crate::rule_executor::model_builder::ModelBuilder;
 use crate::rule_executor::package_matcher::is_package_match;
 use crate::rule_executor::rule_error::{MismatchType, RuleErrorMsg};
+use guarding_core::ast::GuardRule;
 
 #[derive(Debug, Clone)]
 pub struct RuleExecutor {

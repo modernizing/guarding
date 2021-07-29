@@ -133,8 +133,7 @@ version = "0.2.1"
 dependencies = [
  "cc",
  "clap",
- "pest",
- "pest_derive",
+ "guarding_core",
  "regex",
  "serde",
  "serde_json",
@@ -148,6 +147,12 @@ dependencies = [
 [[package]]
 name = "guarding_core"
 version = "0.2.1"
+dependencies = [
+ "pest",
+ "pest_derive",
+ "serde",
+ "serde_json",
+]
 
 [[package]]
 name = "hashbrown"

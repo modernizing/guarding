@@ -38,7 +38,7 @@ mod tests {
 
     #[test]
     fn should_convert_path_to_package() {
-        let buf = PathBuf::from("src").join("core").join("domain");
+        let buf = PathBuf::from("../../../src").join("core").join("domain");
         assert_eq!("src.core.domain".to_string(), PackageUnify::from_path(buf));
     }
 
