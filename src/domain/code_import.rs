@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 
+#[repr(C)]
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct CodeImport {
     pub name: String,

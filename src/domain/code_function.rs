@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 use crate::domain::CodePoint;
 use crate::domain::Location;
 
+#[repr(C)]
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct CodeFunction {
     pub name: String,
