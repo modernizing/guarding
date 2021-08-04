@@ -1,7 +1,7 @@
 use tree_sitter::{Node, Parser, Query, QueryCursor};
 
-use crate::domain::code_file::CodeFile;
-use crate::domain::code_class::CodeClass;
+use guarding_core::domain::code_file::CodeFile;
+use guarding_core::domain::code_class::CodeClass;
 use crate::identify::code_ident::CodeIdent;
 
 const JAVA_QUERY: &'static str = "

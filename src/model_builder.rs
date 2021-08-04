@@ -3,7 +3,7 @@ use std::path::{Path, PathBuf};
 
 use walkdir::WalkDir;
 
-use crate::domain::code_file::CodeFile;
+use guarding_core::domain::code_file::CodeFile;
 use crate::identify::code_ident::CodeIdent;
 use crate::identify::java_ident::JavaIdent;
 use crate::identify::js_ident::JsIdent;

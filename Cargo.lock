@@ -149,6 +149,8 @@ dependencies = [
 name = "guarding_core"
 version = "0.2.3"
 dependencies = [
+ "guarding_parser",
+ "regex",
  "serde",
  "serde_json",
 ]

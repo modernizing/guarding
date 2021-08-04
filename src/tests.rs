@@ -1,7 +1,7 @@
 use std::fs;
 use std::path::PathBuf;
 
-use crate::rule_executor::rule_error::MismatchType;
+use guarding_core::rule_executor::rule_error::MismatchType;
 use crate::exec_guarding;
 
 fn test_dir() -> PathBuf {
