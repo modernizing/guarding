@@ -133,6 +133,7 @@ version = "0.2.1"
 dependencies = [
  "cc",
  "clap",
+ "guarding_exec",
  "guarding_parser",
  "regex",
  "serde",
@@ -142,6 +143,14 @@ dependencies = [
  "tree-sitter-javascript",
  "tree-sitter-rust",
  "walkdir",
+]
+
+[[package]]
+name = "guarding_exec"
+version = "0.2.3"
+dependencies = [
+ "serde",
+ "serde_json",
 ]
 
 [[package]]
