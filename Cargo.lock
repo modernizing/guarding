@@ -133,7 +133,7 @@ version = "0.2.1"
 dependencies = [
  "cc",
  "clap",
- "guarding_core",
+ "guarding_parser",
  "regex",
  "serde",
  "serde_json",
@@ -145,7 +145,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "guarding_core"
+name = "guarding_parser"
 version = "0.2.3"
 dependencies = [
  "pest",
