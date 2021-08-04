@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 
+#[repr(C)]
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 pub enum MismatchType {
     None,
@@ -8,6 +9,7 @@ pub enum MismatchType {
     FileSize,
 }
 
+#[repr(C)]
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 pub struct RuleErrorMsg {
     pub expected: String,
