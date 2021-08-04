@@ -2,8 +2,7 @@ use std::fs;
 use std::path::PathBuf;
 
 use clap::{AppSettings, Clap};
-
-use guarding::rule_executor::RuleExecutor;
+use guarding::exec_guarding;
 
 #[derive(Clap)]
 #[clap(version = "1.0", author = "Inherd Group <group@inherd.org>")]
@@ -23,10 +22,10 @@ fn main() {
     let opts: Opts = Opts::parse();
 
     let buf = PathBuf::from(opts.path);
-    let guarding = PathBuf::from(opts.config);
-    let content = fs::read_to_string(guarding).unwrap();
+    let conf = PathBuf::from(opts.config);
+    let content = fs::read_to_string(conf).unwrap();
 
-    let errors = RuleExecutor::execute(content, buf);
+    let errors = exec_guarding(content, buf);
     let content = serde_json::to_string_pretty(&errors).unwrap();
     let _ = fs::write(opts.output, content);
 }

@@ -1,11 +1,7 @@
-use std::path::PathBuf;
-
 use guarding_parser::ast::{Expr, GuardRule, Operator, RuleAssert, RuleLevel, RuleScope};
-use guarding_parser::parser;
 
 use crate::domain::code_class::CodeClass;
 use crate::domain::code_file::CodeFile;
-use crate::rule_executor::model_builder::ModelBuilder;
 use crate::rule_executor::package_matcher::is_package_match;
 use crate::rule_executor::rule_error::{MismatchType, RuleErrorMsg};
 
@@ -38,23 +34,6 @@ impl RuleExecutor {
             models,
             filtered_models: vec![],
             filtered_classes: vec![],
-        }
-    }
-
-    pub fn execute(rule_content: String, code_dir: PathBuf) -> Vec<RuleErrorMsg> {
-        match parser::parse(rule_content.as_str()) {
-            Err(e) => {
-                println!("{}", e);
-                vec![]
-            },
-            Ok(rules) => {
-                let models = ModelBuilder::build_models_by_dir(code_dir);
-
-                let mut executor = RuleExecutor::new(models, rules);
-                executor.run();
-
-                return executor.errors;
-            }
         }
     }
 
@@ -153,7 +132,7 @@ impl RuleExecutor {
             Expr::Identifier(ident) => {
                 match ident.as_str() {
                     "" => {
-                        let (has_capture, _level, ident) = RuleExecutor::get_package_level(&rule);
+                        let (has_capture, _level, ident) = RuleExecutor::package_level(&rule);
                         if has_capture {
                             self.process_package_captures(index, &rule.ops, ident)
                         } else {
@@ -482,7 +461,7 @@ impl RuleExecutor {
         string
     }
 
-    fn get_package_level(rule: &GuardRule) -> (bool, RuleLevel, String) {
+    fn package_level(rule: &GuardRule) -> (bool, RuleLevel, String) {
         let mut string = "".to_string();
         let mut level = RuleLevel::Package;
         let mut has_capture = false;
