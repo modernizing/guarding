@@ -1,6 +1,6 @@
 [package]
 name = "guarding_parser"
-version = "0.2.3"
+version = "0.2.4"
 authors = ["Inherd Group <group@inherd.org>"]
 edition = "2018"
 license = "MIT"
