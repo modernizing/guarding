@@ -117,11 +117,11 @@ impl RuleExecutor {
             Expr::PropsCall(props) => {
                 match props[0].as_str() {
                     "len" => {
-                        let size = RuleExecutor::get_assert_sized(&rule);
+                        let size = GuardRule::assert_sized(&rule);
                         self.process_len(index, size, &rule.ops, self.filtered_classes.len())
                     }
                     "name" => {
-                        let string = RuleExecutor::get_assert_string(&rule);
+                        let string = GuardRule::assert_string(&rule);
                         self.process_name(index, &rule.ops, string)
                     }
                     _ => {
@@ -132,7 +132,7 @@ impl RuleExecutor {
             Expr::Identifier(ident) => {
                 match ident.as_str() {
                     "" => {
-                        let (has_capture, _level, ident) = RuleExecutor::package_level(&rule);
+                        let (has_capture, _level, ident) = GuardRule::package_level(&rule);
                         if has_capture {
                             self.process_package_captures(index, &rule.ops, ident)
                         } else {
@@ -250,13 +250,13 @@ impl RuleExecutor {
             Expr::PropsCall(props) => {
                 match props[0].as_str() {
                     "len" => {
-                        let size = RuleExecutor::get_assert_sized(&rule);
+                        let size = GuardRule::assert_sized(&rule);
                         self.process_len(index, size, &rule.ops, self.filtered_models.len())
                     }
                     "file" => {
                         match props[1].as_str() {
                             "len" => {
-                                let size = RuleExecutor::get_assert_sized(&rule);
+                                let size = GuardRule::assert_sized(&rule);
                                 self.process_len(index, size, &rule.ops, self.filtered_models.len())
                             }
                             &_ => {}
@@ -437,43 +437,5 @@ impl RuleExecutor {
         if is_assert_fail {
             self.errors.push(error);
         }
-    }
-
-    fn get_assert_sized(rule: &GuardRule) -> usize {
-        let mut size = 0;
-        match &rule.assert {
-            RuleAssert::Sized(sized) => {
-                size = *sized;
-            }
-            _ => {}
-        }
-        size
-    }
-
-    fn get_assert_string(rule: &GuardRule) -> String {
-        let mut string = "".to_string();
-        match &rule.assert {
-            RuleAssert::Stringed(str) => {
-                string = str.clone();
-            }
-            _ => {}
-        }
-        string
-    }
-
-    fn package_level(rule: &GuardRule) -> (bool, RuleLevel, String) {
-        let mut string = "".to_string();
-        let mut level = RuleLevel::Package;
-        let mut has_capture = false;
-        match &rule.assert {
-            RuleAssert::Leveled(lv, package_ident) => {
-                has_capture = true;
-                level = lv.clone();
-                string = package_ident.clone();
-            }
-            _ => {}
-        }
-
-        return (has_capture, level, string);
     }
 }

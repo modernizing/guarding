@@ -42,6 +42,46 @@ impl Default for GuardRule {
     }
 }
 
+impl GuardRule {
+    pub fn assert_sized(rule: &GuardRule) -> usize {
+        let mut size = 0;
+        match &rule.assert {
+            RuleAssert::Sized(sized) => {
+                size = *sized;
+            }
+            _ => {}
+        }
+        size
+    }
+
+    pub fn assert_string(rule: &GuardRule) -> String {
+        let mut string = "".to_string();
+        match &rule.assert {
+            RuleAssert::Stringed(str) => {
+                string = str.clone();
+            }
+            _ => {}
+        }
+        string
+    }
+
+    pub fn package_level(rule: &GuardRule) -> (bool, RuleLevel, String) {
+        let mut string = "".to_string();
+        let mut level = RuleLevel::Package;
+        let mut has_capture = false;
+        match &rule.assert {
+            RuleAssert::Leveled(lv, package_ident) => {
+                has_capture = true;
+                level = lv.clone();
+                string = package_ident.clone();
+            }
+            _ => {}
+        }
+
+        return (has_capture, level, string);
+    }
+}
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum RuleType {
     Normal,
