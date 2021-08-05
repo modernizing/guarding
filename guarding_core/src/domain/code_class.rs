@@ -31,6 +31,7 @@ impl Default for CodeClass {
     }
 }
 
+#[repr(C)]
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct ClassConstant {
     pub name: String,

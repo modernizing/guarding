@@ -27,6 +27,7 @@ pub trait Location {
     fn set_end(&mut self, row: usize, column: usize);
 }
 
+#[repr(C)]
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct CodePoint {
     pub row: usize,
