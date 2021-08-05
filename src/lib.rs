@@ -7,7 +7,6 @@ use guarding_parser::parser;
 use model_builder::ModelBuilder;
 use guarding_parser::ast::GuardRule;
 use guarding_core::domain::code_file::CodeFile;
-use std::alloc::Global;
 
 pub mod identify;
 pub mod model_builder;
