@@ -147,7 +147,7 @@ dependencies = [
 
 [[package]]
 name = "guarding_core"
-version = "0.2.4"
+version = "0.2.5"
 dependencies = [
  "guarding_parser",
  "regex",
