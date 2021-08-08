@@ -29,7 +29,7 @@ serde_json = "1"
 
 regex = "1"
 
-guarding_parser = { path = "../guarding_parser", version = "0.2.4" }
+guarding_parser = { path = "../guarding_parser", version = "0.2.5" }
 
 [lib]
 name = "guarding_core"
