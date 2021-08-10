@@ -41,8 +41,8 @@ walkdir = "2"
 
 clap = "3.0.0-beta.2"
 
-guarding_parser = { path = "guarding_parser", version = "0.2.1" }
-guarding_core = { path = "guarding_core", version = "0.2.3" }
+guarding_parser = { path = "guarding_parser", version = "0.2.5" }
+guarding_core = { path = "guarding_core", version = "0.2.5" }
 
 [build-dependencies]
 cc = "1.0"

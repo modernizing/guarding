@@ -24,8 +24,8 @@ exclude = [
 
 [dependencies]
 
-guarding_parser = "0.2.5"
-guarding_core = "0.2.5"
+guarding_parser = { path = "../guarding_parser", version = "0.2.5" }
+guarding_core = { path = "../guarding_core", version = "0.2.5" }
 
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1"

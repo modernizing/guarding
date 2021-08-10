@@ -133,8 +133,8 @@ version = "0.2.3"
 dependencies = [
  "cc",
  "clap",
- "guarding_core 0.2.5",
- "guarding_parser 0.2.5",
+ "guarding_core",
+ "guarding_parser",
  "regex",
  "serde",
  "serde_json",
@@ -149,8 +149,8 @@ dependencies = [
 name = "guarding_adapter"
 version = "0.1.0"
 dependencies = [
- "guarding_core 0.2.5 (registry+https://github.com/rust-lang/crates.io-index)",
- "guarding_parser 0.2.5 (registry+https://github.com/rust-lang/crates.io-index)",
+ "guarding_core",
+ "guarding_parser",
  "serde",
  "serde_json",
 ]
@@ -159,19 +159,7 @@ dependencies = [
 name = "guarding_core"
 version = "0.2.5"
 dependencies = [
- "guarding_parser 0.2.5",
- "regex",
- "serde",
- "serde_json",
-]
-
-[[package]]
-name = "guarding_core"
-version = "0.2.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c34fa69f52cbd0855ac43b1ddc9f109215270cd2f32f02500dd0ca2f4762434f"
-dependencies = [
- "guarding_parser 0.2.5 (registry+https://github.com/rust-lang/crates.io-index)",
+ "guarding_parser",
  "regex",
  "serde",
  "serde_json",
@@ -180,18 +168,6 @@ dependencies = [
 [[package]]
 name = "guarding_parser"
 version = "0.2.5"
-dependencies = [
- "pest",
- "pest_derive",
- "serde",
- "serde_json",
-]
-
-[[package]]
-name = "guarding_parser"
-version = "0.2.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d50f3816ddafd9bdfbb8f1555bb7ba8f53ac07ebc6f93ac29e01ceba6c4c724d"
 dependencies = [
  "pest",
  "pest_derive",
