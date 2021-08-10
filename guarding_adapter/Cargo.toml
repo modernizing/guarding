@@ -3,8 +3,24 @@ name = "guarding_adapter"
 version = "0.1.0"
 authors = ["Phodal Huang <h@phodal.com>"]
 edition = "2018"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/inherd/guarding"
+documentation = "https://github.com/inherd/guarding"
+homepage = "https://github.com/inherd/guarding"
+description = """
+Guarding is a guardians for code, architecture, layered. Guarding crate a architecture aguard DSL which based on ArchUnit.
+"""
+categories = ["text-processing", "command-line-interface", "development-tools"]
+exclude = [
+    ".github/*",
+    ".gitattributes",
+    ".adr.json",
+    "guarding.guarding",
+    "_fixtures",
+    "docs",
+    "examples",
+]
 
 [dependencies]
 
