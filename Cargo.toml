@@ -49,6 +49,7 @@ cc = "1.0"
 
 [workspace]
 members = [
+    "guarding_adapter",
     "guarding_parser",
     "guarding_core"
 ]

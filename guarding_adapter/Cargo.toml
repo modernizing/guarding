@@ -1,0 +1,19 @@
+[package]
+name = "guarding_adapter"
+version = "0.1.0"
+authors = ["Phodal Huang <h@phodal.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+
+guarding_parser = "0.2.5"
+guarding_core = "0.2.5"
+
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1"
+
+[lib]
+name = "guarding_adapter"
+crate-type = ["lib", "cdylib"]
