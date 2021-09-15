@@ -34,12 +34,12 @@ impl PackageUnify {
 #[cfg(test)]
 mod tests {
     use std::path::PathBuf;
-    use crate::parser::support::package_unify::PackageUnify;
+    use crate::support::package_unify::PackageUnify;
 
     #[test]
     fn should_convert_path_to_package() {
         let buf = PathBuf::from("../../../src").join("core").join("domain");
-        assert_eq!("src.core.domain".to_string(), PackageUnify::from_path(buf));
+        assert_eq!(".........src.core.domain".to_string(), PackageUnify::from_path(buf));
     }
 
     #[test]

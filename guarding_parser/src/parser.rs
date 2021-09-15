@@ -276,7 +276,7 @@ fn string_from_pair(pair: Pair<Rule>) -> String {
 
 #[cfg(test)]
 mod tests {
-    use crate::parser::ast::{Expr, Operator, RuleAssert, RuleLevel, RuleScope};
+    use crate::ast::{Expr, Operator, RuleAssert, RuleLevel, RuleScope};
     use crate::parser::parse;
 
     #[test]
