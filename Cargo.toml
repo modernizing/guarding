@@ -36,7 +36,7 @@ clap = "3.0.0-beta.2"
 
 guarding_parser = { path = "guarding_parser", version = "0.2.5" }
 guarding_core = { path = "guarding_core", version = "0.2.5" }
-guarding_ident = { path = "guarding_ident", version = "0.2.5" }
+guarding_ident = { path = "guarding_ident", version = "0.2.6" }
 
 [build-dependencies]
 cc = "1.0"
