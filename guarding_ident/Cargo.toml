@@ -1,6 +1,6 @@
 [package]
 name = "guarding_ident"
-version = "0.0.1"
+version = "0.2.5"
 authors = ["Inherd Group <group@inherd.org>"]
 edition = "2018"
 license = "MIT"

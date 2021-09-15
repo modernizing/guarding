@@ -13,6 +13,8 @@ Inspired by [ArchUnit](https://github.com/TNG/ArchUnit)
 
 ## Usage
 
+### use CLI
+
 1. install
 
 ```
@@ -31,6 +33,13 @@ package(".")::file.len should > 50;
 ```
 guarding .
 ```
+
+### use API
+
+- `guarding_adapter`, FFI adapter, provide Guarding api,
+- `guarding_core`, core guarding model,
+- `guarding_ident`, identify different language: Java, JavaScript, Rust
+- `guarding_parser` parsing Guarding DSL
 
 ## Development
 
