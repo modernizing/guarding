@@ -34,26 +34,47 @@ impl ModelBuilder {
 
     pub fn build_model_by_file(models: &mut Vec<CodeFile>, path: &Path) {
         let ext = path.extension().unwrap().to_str().unwrap();
-        let content = fs::read_to_string(path).expect("not such file");
-        let path = format!("{}", path.display());
 
         match ext {
             "java" => {
-                let mut file = JavaIdent::parse(content.as_str());
-                file.path = path;
+                let mut file = JavaIdent::parse(ModelBuilder::read_content(path).as_str());
+                file.path = ModelBuilder::format_path(path);
                 models.push(file);
             }
             "js" => {
-                let mut file = JsIdent::parse(content.as_str());
-                file.path = path;
+                let mut file = JsIdent::parse(ModelBuilder::read_content(path).as_str());
+                file.path = format!("{}", path.display());
                 models.push(file);
             }
             "rs" => {
-                let mut file = RustIdent::parse(content.as_str());
-                file.path = path;
+                let mut file = RustIdent::parse(ModelBuilder::read_content(path).as_str());
+                file.path = format!("{}", path.display());
                 models.push(file);
             }
             &_ => {}
         }
+    }
+
+    fn read_content(path: &Path) -> String {
+        fs::read_to_string(path).expect("not such file")
+    }
+
+    fn format_path(path: &Path) -> String {
+        format!("{}", path.display())
+    }
+}
+
+
+#[cfg(test)]
+mod tests {
+    use std::env;
+    use crate::ModelBuilder;
+
+    #[test]
+    fn should_parse_current_dir() {
+        let dir = env::current_dir().unwrap();
+        let models = ModelBuilder::build_models_by_dir(dir);
+        println!("{:?}", models);
+        assert!(models.len() > 0);
     }
 }

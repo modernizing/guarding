@@ -142,8 +142,8 @@ impl CodeIdent for RustIdent {
 
 #[cfg(test)]
 mod tests {
-    use guarding_core::code_ident::CodeIdent;
-    use guarding_core::rust_ident::RustIdent;
+    use crate::code_ident::CodeIdent;
+    use crate::rust_ident::RustIdent;
 
     #[test]
     fn should_parse_import() {
