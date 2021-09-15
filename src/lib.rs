@@ -2,14 +2,11 @@ extern crate serde;
 
 use std::path::PathBuf;
 
-use guarding_core::rule_executor::{RuleErrorMsg, RuleExecutor};
-use guarding_parser::parser;
-use model_builder::ModelBuilder;
-use guarding_parser::ast::GuardRule;
 use guarding_core::domain::code_file::CodeFile;
-
-pub mod identify;
-pub mod model_builder;
+use guarding_ident::ModelBuilder;
+use guarding_core::rule_executor::{RuleErrorMsg, RuleExecutor};
+use guarding_parser::ast::GuardRule;
+use guarding_parser::parser;
 
 pub fn exec_guarding(rule_content: String, code_dir: PathBuf) -> Vec<RuleErrorMsg> {
     match parser::parse(rule_content.as_str()) {

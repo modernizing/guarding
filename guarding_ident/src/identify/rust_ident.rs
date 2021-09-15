@@ -5,7 +5,7 @@ use tree_sitter::{Node, Parser, Query, QueryCursor};
 use guarding_core::domain::code_file::CodeFile;
 use guarding_core::domain::code_function::CodeFunction;
 use guarding_core::domain::code_class::CodeClass;
-use crate::identify::code_ident::CodeIdent;
+use crate::code_ident::CodeIdent;
 
 const RUST_QUERY: &'static str = "
 (use_declaration
@@ -142,8 +142,8 @@ impl CodeIdent for RustIdent {
 
 #[cfg(test)]
 mod tests {
-    use crate::identify::code_ident::CodeIdent;
-    use crate::identify::rust_ident::RustIdent;
+    use guarding_core::code_ident::CodeIdent;
+    use guarding_core::rust_ident::RustIdent;
 
     #[test]
     fn should_parse_import() {

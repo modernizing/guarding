@@ -136,15 +136,11 @@ dependencies = [
  "cc",
  "clap",
  "guarding_core",
+ "guarding_ident",
  "guarding_parser",
  "regex",
  "serde",
  "serde_json",
- "tree-sitter",
- "tree-sitter-java",
- "tree-sitter-javascript",
- "tree-sitter-rust",
- "walkdir",
 ]
 
 [[package]]
@@ -174,6 +170,11 @@ dependencies = [
  "guarding_core",
  "serde",
  "serde_json",
+ "tree-sitter",
+ "tree-sitter-java",
+ "tree-sitter-javascript",
+ "tree-sitter-rust",
+ "walkdir",
 ]
 
 [[package]]

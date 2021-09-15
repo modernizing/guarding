@@ -2,7 +2,7 @@ use tree_sitter::{Node, Parser, Query, QueryCursor};
 
 use guarding_core::domain::code_file::CodeFile;
 use guarding_core::domain::code_class::CodeClass;
-use crate::identify::code_ident::CodeIdent;
+use crate::code_ident::CodeIdent;
 
 const JAVA_QUERY: &'static str = "
 (package_declaration
@@ -124,8 +124,8 @@ impl CodeIdent for JavaIdent {
 
 #[cfg(test)]
 mod tests {
-    use crate::identify::code_ident::CodeIdent;
-    use crate::identify::java_ident::JavaIdent;
+    use crate::code_ident::CodeIdent;
+    use crate::java_ident::JavaIdent;
 
     #[test]
     fn should_parse_import() {

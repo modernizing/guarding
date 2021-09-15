@@ -26,23 +26,17 @@ exclude = [
 path = "src/lib.rs"
 
 [dependencies]
-tree-sitter = "0.19.3"
-tree-sitter-java = "0.19.0"
-tree-sitter-javascript = "0.19.0"
-tree-sitter-rust = "0.19.0"
-
 # serialize
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1"
 
 regex = "1"
 
-walkdir = "2"
-
 clap = "3.0.0-beta.2"
 
 guarding_parser = { path = "guarding_parser", version = "0.2.5" }
 guarding_core = { path = "guarding_core", version = "0.2.5" }
+guarding_ident = { path = "guarding_ident", version = "0.0.1" }
 
 [build-dependencies]
 cc = "1.0"
