@@ -99,15 +99,8 @@ impl RustIdent {
                 "trait-name" => {
                     last_trait_name = text.to_string();
                 }
-                "parameter" => {},
                 &_ => {
-                    println!(
-                        "    pattern: {}, capture: {}, row: {}, text: {:?}",
-                        mat.pattern_index,
-                        capture_name,
-                        capture.node.start_position().row,
-                        capture.node.utf8_text((&code).as_ref()).unwrap_or("")
-                    );
+
                 }
             }
 
