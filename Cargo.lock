@@ -131,7 +131,7 @@ dependencies = [
 
 [[package]]
 name = "guarding"
-version = "0.2.3"
+version = "0.2.6"
 dependencies = [
  "cc",
  "clap",
@@ -155,7 +155,7 @@ dependencies = [
 
 [[package]]
 name = "guarding_core"
-version = "0.2.5"
+version = "0.2.6"
 dependencies = [
  "guarding_parser",
  "regex",
@@ -179,7 +179,7 @@ dependencies = [
 
 [[package]]
 name = "guarding_parser"
-version = "0.2.5"
+version = "0.2.6"
 dependencies = [
  "pest",
  "pest_derive",
