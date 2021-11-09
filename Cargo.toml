@@ -38,6 +38,13 @@ guarding_parser = { path = "guarding_parser", version = "0.2.6" }
 guarding_core = { path = "guarding_core", version = "0.2.6" }
 guarding_ident = { path = "guarding_ident", version = "0.2.6" }
 
+[dev-dependencies]
+criterion = { version = "0.3", features = ["html_reports"] }
+
+[[bench]]
+name = "my_benchmark"
+harness = false
+
 [build-dependencies]
 cc = "1.0"
 
