@@ -95,7 +95,7 @@ impl RuleExecutor {
             }
             RuleScope::Implementation(str) => {
                 let mut filtered_classes = vec![];
-                &self.models.iter().for_each(|file| {
+                let _ = &self.models.iter().for_each(|file| {
                     let classes: Vec<CodeClass> = file.classes.iter()
                         .filter(|class| {
                             class.implements.contains(str)
@@ -215,7 +215,7 @@ impl RuleExecutor {
                 let is_file_import = is_package_match(pkg_identifier.clone(), imp.as_str());
                 if is_file_import {
                     let mut has_file_in_assert = false;
-                    &self.filtered_models.iter().for_each(|file| {
+                    let _ = &self.filtered_models.iter().for_each(|file| {
                         if file.path == clz.path {
                             has_file_in_assert = true;
                         }
