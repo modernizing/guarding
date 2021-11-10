@@ -9,9 +9,7 @@ use crate::identify::java_ident::JavaIdent;
 use crate::identify::js_ident::JsIdent;
 use crate::identify::rust_ident::RustIdent;
 
-pub struct ModelBuilder {
-
-}
+pub struct ModelBuilder {}
 
 impl ModelBuilder {
     pub fn build_models_by_dir(code_dir: PathBuf) -> Vec<CodeFile> {
@@ -34,21 +32,25 @@ impl ModelBuilder {
 
     pub fn build_model_by_file(models: &mut Vec<CodeFile>, path: &Path) {
         let ext = path.extension().unwrap().to_str().unwrap();
+        let file_name = path.file_name().unwrap().to_str().unwrap();
 
         match ext {
             "java" => {
                 let mut file = JavaIdent::parse(ModelBuilder::read_content(path).as_str());
                 file.path = ModelBuilder::format_path(path);
+                file.file_name = file_name.to_string();
                 models.push(file);
             }
             "js" => {
                 let mut file = JsIdent::parse(ModelBuilder::read_content(path).as_str());
                 file.path = format!("{}", path.display());
+                file.file_name = file_name.to_string();
                 models.push(file);
             }
             "rs" => {
                 let mut file = RustIdent::parse(ModelBuilder::read_content(path).as_str());
                 file.path = format!("{}", path.display());
+                file.file_name = file_name.to_string();
                 models.push(file);
             }
             &_ => {}

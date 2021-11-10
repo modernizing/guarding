@@ -6,7 +6,7 @@ use crate::domain::code_class::CodeClass;
 #[repr(C)]
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct CodeFile {
-    pub name: String,
+    pub file_name: String,
     pub path: String,
     pub package: String,
     pub imports: Vec<String>,
@@ -17,7 +17,7 @@ pub struct CodeFile {
 impl Default for CodeFile {
     fn default() -> Self {
         CodeFile {
-            name: "".to_string(),
+            file_name: "".to_string(),
             path: "".to_string(),
             package: "".to_string(),
             imports: vec![],
