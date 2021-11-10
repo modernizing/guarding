@@ -1,6 +1,6 @@
 [package]
 name = "guarding_core"
-version = "0.2.6"
+version = "0.2.7"
 authors = ["Inherd Group <group@inherd.org>"]
 edition = "2018"
 license = "MIT"
