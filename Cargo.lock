@@ -318,7 +318,7 @@ dependencies = [
 
 [[package]]
 name = "guarding_ident"
-version = "0.2.6"
+version = "0.2.7"
 dependencies = [
  "guarding_core",
  "serde",
