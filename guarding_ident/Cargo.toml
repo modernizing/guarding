@@ -23,10 +23,10 @@ exclude = [
 ]
 
 [dependencies]
-tree-sitter = "0.19.3"
-tree-sitter-java = "0.19.0"
-tree-sitter-javascript = "0.19.0"
-tree-sitter-rust = "0.19.0"
+tree-sitter = "=0.19.3"
+tree-sitter-java = "=0.19.0"
+tree-sitter-javascript = "=0.19.0"
+tree-sitter-rust = "=0.19.0"
 
 # serialize
 serde = { version = "1.0", features = ["derive"] }
