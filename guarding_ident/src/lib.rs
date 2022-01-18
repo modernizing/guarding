@@ -7,3 +7,4 @@ pub use identify::code_ident;
 pub use identify::java_ident;
 pub use identify::js_ident;
 pub use identify::rust_ident;
+pub use identify::c_sharp_ident;

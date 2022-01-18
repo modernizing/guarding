@@ -4,6 +4,7 @@ use std::path::{Path, PathBuf};
 use walkdir::WalkDir;
 
 use guarding_core::domain::code_file::CodeFile;
+use crate::identify::c_sharp_ident::CSharpIdent;
 use crate::identify::code_ident::CodeIdent;
 use crate::identify::java_ident::JavaIdent;
 use crate::identify::js_ident::JsIdent;
@@ -53,6 +54,12 @@ impl ModelBuilder {
                 file.file_name = file_name.to_string();
                 models.push(file);
             }
+            "cs" => {
+                let mut file = CSharpIdent::parse(ModelBuilder::read_content(path).as_str());
+                file.path = format!("{}", path.display());
+                file.file_name = file_name.to_string();
+                models.push(file);
+            }
             &_ => {}
         }
     }
@@ -76,7 +83,7 @@ mod tests {
     fn should_parse_current_dir() {
         let dir = env::current_dir().unwrap();
         let models = ModelBuilder::build_models_by_dir(dir);
-        println!("{:?}", models);
+
         assert!(models.len() > 0);
     }
 }

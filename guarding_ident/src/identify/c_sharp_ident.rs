@@ -9,6 +9,8 @@ const C_SHARP_QUERY: &'static str = "
 
 (class_declaration
     name: (identifier) @class-name
+    bases: (base_list ((identifier) @impl-name))?
+    body: (declaration_list) @body
 )
 ";
 
@@ -40,10 +42,7 @@ impl CSharpIdent {
         let captures = query_cursor.captures(&ident.query, tree.root_node(), text_callback);
 
         let mut code_file = CodeFile::default();
-        #[allow(unused_mut)]
         let mut class = CodeClass::default();
-        #[allow(unused_mut)]
-        let mut is_last_node = false;
 
         let capture_names = ident.query.capture_names();
 
@@ -57,21 +56,21 @@ impl CSharpIdent {
                     code_file.imports.push(text.to_string());
                 }
                 "class-name" => {
-                    if !class.name.is_empty() {
-                        code_file.classes.push(class.clone());
-                        class = CodeClass::default();
-                    }
-
                     class.name = text.to_string();
                     class.package = code_file.package.clone();
 
                     let class_node = capture.node.parent().unwrap();
                     CSharpIdent::insert_location(&mut class, class_node);
-                    if !is_last_node {
-                        is_last_node = true;
+                }
+                "body" => {
+                    if !class.name.is_empty() {
+                        code_file.classes.push(class.clone());
+                        class = CodeClass::default();
                     }
                 }
-
+                "impl-name" => {
+                    class.implements.push(text.to_string());
+                }
                 &_ => {
                     println!(
                         "    pattern: {}, capture: {}, row: {}, text: {:?}",
@@ -84,7 +83,7 @@ impl CSharpIdent {
             }
         }
 
-        if is_last_node {
+        if class.name != "" {
             code_file.classes.push(class.clone());
         }
 
@@ -119,5 +118,17 @@ mod tests {
         let file = CSharpIdent::parse(source_code);
         assert_eq!(1, file.classes.len());
         assert_eq!("SharpingClassVisitor", file.classes[0].name);
+    }
+
+    #[test]
+    fn should_parse_class_impl_name() {
+        let source_code = "public class SharpingClassVisitor: CSharpSyntaxWalker, DemoInterface { }";
+
+        let file = CSharpIdent::parse(source_code);
+        assert_eq!(1, file.classes.len());
+
+        assert_eq!(2, file.classes[0].implements.len());
+        assert_eq!("CSharpSyntaxWalker", file.classes[0].implements[0]);
+        assert_eq!("DemoInterface", file.classes[0].implements[1]);
     }
 }
