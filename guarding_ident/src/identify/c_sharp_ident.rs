@@ -8,12 +8,23 @@ const C_SHARP_QUERY: &'static str = "
 	(qualified_name) @import-name)
 
 (class_declaration
-    (attribute_list (attribute name: (identifier) @attribute))?
+    (attribute_list (attribute name: (identifier) @annotation.name))?
     name: (identifier) @class-name
     bases: (base_list ((identifier) @impl-name))?
-    body: (declaration_list) @body
-)
-";
+    body: (declaration_list
+    	(property_declaration
+        	type: (identifier) @prop-type
+            name: (identifier) @prop-name
+        )?
+        (method_declaration
+        	name: (identifier) @method-name
+            parameters: (parameter_list (parameter
+            	type: (identifier) @param-type
+                name: (identifier) @param-name
+            ))?
+        )?
+    ) @body
+)";
 
 
 pub struct CSharpIdent {
