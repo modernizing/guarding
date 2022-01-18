@@ -8,6 +8,7 @@ const C_SHARP_QUERY: &'static str = "
 	(qualified_name) @import-name)
 
 (class_declaration
+    (attribute_list (attribute name: (identifier) @attribute))?
     name: (identifier) @class-name
     bases: (base_list ((identifier) @impl-name))?
     body: (declaration_list) @body
