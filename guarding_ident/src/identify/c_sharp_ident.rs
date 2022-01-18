@@ -7,6 +7,9 @@ const C_SHARP_QUERY: &'static str = "
 (using_directive
 	(qualified_name) @import-name)
 
+(class_declaration
+    name: (identifier) @class-name
+)
 ";
 
 
@@ -53,6 +56,22 @@ impl CSharpIdent {
                 "import-name" => {
                     code_file.imports.push(text.to_string());
                 }
+                "class-name" => {
+                    if !class.name.is_empty() {
+                        code_file.classes.push(class.clone());
+                        class = CodeClass::default();
+                    }
+
+                    class.name = text.to_string();
+                    class.package = code_file.package.clone();
+
+                    let class_node = capture.node.parent().unwrap();
+                    CSharpIdent::insert_location(&mut class, class_node);
+                    if !is_last_node {
+                        is_last_node = true;
+                    }
+                }
+
                 &_ => {
                     println!(
                         "    pattern: {}, capture: {}, row: {}, text: {:?}",
@@ -91,5 +110,14 @@ mod tests {
 
         let file = CSharpIdent::parse(source_code);
         assert_eq!(1, file.imports.len());
+    }
+
+    #[test]
+    fn should_parse_class_name() {
+        let source_code = "public class SharpingClassVisitor { }";
+
+        let file = CSharpIdent::parse(source_code);
+        assert_eq!(1, file.classes.len());
+        assert_eq!("SharpingClassVisitor", file.classes[0].name);
     }
 }
