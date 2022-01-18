@@ -58,7 +58,8 @@ impl CSharpIdent {
 
         let capture_names = ident.query.capture_names();
 
-        for (mat, capture_index) in captures {
+        let mut iters = captures.into_iter();
+        while let Some((mat, capture_index)) = iters.next() {
             let capture = mat.captures[capture_index];
             let capture_name = &capture_names[capture.index as usize];
 
@@ -82,6 +83,9 @@ impl CSharpIdent {
                 }
                 "impl-name" => {
                     class.implements.push(text.to_string());
+                }
+                "method-name" => {
+
                 }
                 &_ => {
                     println!(
