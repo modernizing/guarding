@@ -86,43 +86,6 @@ struct("..myapp..")::function.name should contains("Model");
 struct("..myapp..")::function.name contains("");
 ```
 
-## Todos
-
-
-todo:
-
-- [ ] template
-  - [ ] `include(standard.guarding)` syntax 
-- [x] filter
-  - [x] filter by package identifier
-  - [ ] filter by regex
-  - [x] filter by implementation
-  - [x] filter by extends
-  - [ ] filter by trait
-- [x] limit impl naming
-- [x] limit files num
-- [ ] limit package's sub-package size (for example, Clean Architecture).
-- [x] assert
-  - [x] comparison for size / len
-  - [x] string comparison
-    - [x] contains
-    - [x] startsWith
-    - [x] endsWith
-  - [ ] package ops
-    - [x] accessed
-    - [x] resideIn
-    - [ ] dependBy
-- [ ] languages
-  - [x] Java
-  - [ ] JavaScript (on Going)
-  - [ ] TypeScript
-  - [ ] Rust (on Going)
-    - [x] class & functions
-    - [ ] imports
-      - [ ] basic import
-      - [ ] mods import restructure
-    - [ ] package convert
-
 License
 ---
 
