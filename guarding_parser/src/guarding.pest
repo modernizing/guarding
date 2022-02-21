@@ -106,6 +106,7 @@ operator = {
     op_lt |
     op_gt |
     op_eq |
+    op_ineq |
 	op_contains |
 	op_endsWith |
 	op_startsWith |

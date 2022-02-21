@@ -404,6 +404,7 @@ impl RuleExecutor {
         fn eq(actual: usize, excepted: usize) -> bool {
             return actual == excepted;
         }
+        fn ineq(actual: usize, excepted: usize) -> bool { return actual != excepted; }
 
         match ops {
             Operator::Gt => {
@@ -425,6 +426,10 @@ impl RuleExecutor {
             Operator::Eq => {
                 error.msg = format!("file.len = {}, expected: len = {}", actual_size, excepted_size);
                 is_assert_success = eq;
+            }
+            Operator::Ineq => {
+                error.msg = format!("file.len = {}, expected: len != {}", actual_size, excepted_size);
+                is_assert_success = ineq;
             }
             _ => { return; }
         }

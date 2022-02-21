@@ -126,6 +126,7 @@ fn parse_operator(parent: Pair<Rule>) -> Vec<Operator> {
         Rule::op_lt => { Operator::Lt }
         Rule::op_gt => { Operator::Gt }
         Rule::op_eq => { Operator::Eq }
+        Rule::op_ineq => { Operator::Ineq }
 
         Rule::op_contains => { Operator::Contains }
         Rule::op_endsWith => { Operator::Endswith }

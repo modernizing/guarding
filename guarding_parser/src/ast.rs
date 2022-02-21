@@ -152,7 +152,7 @@ pub enum Operator {
     /// ==
     Eq,
     /// !=
-    NotEq,
+    Ineq,
     /// and
     And,
     /// or
